@@ -3,11 +3,8 @@
 * An SDL video game developed by Francis Tayag (zyenapz)
 * The source code for this game is available on my GitHub page
 * and is licensed under the GPLv3 license.
-*/
-
-/*      TODO        */
-/* 1. Create BaseState, StateContext, and concrete states
-*  2. Create a GTexture class
+* My GitHub Page: github.com/zyenapz
+* My E-mail: zyenapz@gmail.com
 */
 
 #include <SDL2/SDL.h>
@@ -18,6 +15,12 @@
 const std::string GAME_TITLE = "Whack-A-Goon!";
 const int WINDOW_WIDTH = 640;
 const int WINDOW_HEIGHT = 480;
+
+// States
+enum STATES {
+    ST_MENU,
+    ST_PLAYING
+};
 
 // Function prototypes
 bool initialize(SDL_Window* window, SDL_Renderer* renderer);
@@ -41,6 +44,7 @@ int main(int argv, char** args){
         else {
             // Game loop
             bool isRunning = true;
+            int gState = ST_MENU;
             SDL_Event e;
 
             while(isRunning) {
@@ -52,12 +56,22 @@ int main(int argv, char** args){
                     }
                 }
 
-                // Update
+                if(gState == ST_MENU) {
+                    // Update
 
-                // Draw
-                SDL_RenderClear(gRenderer);
+                    // Draw
+                    SDL_RenderClear(gRenderer);
+                    SDL_RenderPresent(gRenderer);
 
-                SDL_RenderPresent(gRenderer);
+                }
+                else if(gState == ST_PLAYING) {
+                    // Update
+
+                    // Draw
+                    SDL_RenderClear(gRenderer);
+                    SDL_RenderPresent(gRenderer);
+
+                }
             }
         }
     }
