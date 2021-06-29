@@ -10,6 +10,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
+#include "ZRect.h"
 
 // Constants
 const std::string GAME_TITLE = "Whack-A-Goon!";
@@ -27,10 +28,22 @@ bool initialize(SDL_Window* window, SDL_Renderer* renderer);
 bool loadAssets();
 void close(SDL_Window* window, SDL_Renderer* renderer);
 
+// State function prototypes
+void STMenu_GetInput(SDL_Event* e);
+void STMenu_Update();
+void STMenu_Draw(SDL_Window* window, SDL_Renderer* renderer);
+
+void STPlay_GetInput(SDL_Event* e);
+void STPlay_Update();
+void STPlay_Draw(SDL_Window* window, SDL_Renderer* renderer);
+
 int main(int argv, char** args){
     // Declare window and renderer pointers
     SDL_Window* gWindow = NULL;
     SDL_Renderer* gRenderer = NULL;
+
+    ZRect myRect (5, 10, 50, 50);
+    printf("%d", myRect.getTopRight().x);
 
     // Initialize SDL, window, renderer, and SDL_image
     if(!initialize(gWindow, gRenderer)) {
