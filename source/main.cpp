@@ -11,81 +11,36 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include "ZRect.h"
-
-// Constants
-const std::string GAME_TITLE = "Whack-A-Goon!";
-const int WINDOW_WIDTH = 640;
-const int WINDOW_HEIGHT = 480;
-
-// States
-enum STATES {
-    ST_MENU,
-    ST_PLAYING
-};
+#include "Scenes.h"
+#include "metadata.h"
 
 // Function prototypes
 bool initialize(SDL_Window* window, SDL_Renderer* renderer);
-bool loadAssets();
 void close(SDL_Window* window, SDL_Renderer* renderer);
-
-// State function prototypes
-void STMenu_GetInput(SDL_Event* e);
-void STMenu_Update();
-void STMenu_Draw(SDL_Window* window, SDL_Renderer* renderer);
-
-void STPlay_GetInput(SDL_Event* e);
-void STPlay_Update();
-void STPlay_Draw(SDL_Window* window, SDL_Renderer* renderer);
 
 int main(int argv, char** args){
     // Declare window and renderer pointers
     SDL_Window* gWindow = NULL;
     SDL_Renderer* gRenderer = NULL;
 
-    ZRect myRect (5, 10, 50, 50);
-    printf("%d", myRect.getTopRight().x);
-
     // Initialize SDL, window, renderer, and SDL_image
     if(!initialize(gWindow, gRenderer)) {
         printf("Game failed to initialize. :(\n");
     }
     else {
-        // Load textures, fonts, and music
-        if(!loadAssets()) {
-            printf("Game failed to load assets. :(\n");
-        }
-        else {
-            // Game loop
-            bool isRunning = true;
-            int gState = ST_MENU;
-            SDL_Event e;
+        // Construct Scene context
+        SceneContext gContext;
 
-            while(isRunning) {
+        // Game loop
+        SDL_Event e;
 
-                // Poll events
-                while(SDL_PollEvent(&e)) {
-                    if(e.type == SDL_QUIT) {
-                        isRunning = false;
-                    }
-                }
+        while(gContext.isExited()) {
 
-                if(gState == ST_MENU) {
-                    // Update
+            // Run context methods
+            gContext.HandleEvents(&e);
+            gContext.Update();
+            gContext.Draw(gRenderer);
 
-                    // Draw
-                    SDL_RenderClear(gRenderer);
-                    SDL_RenderPresent(gRenderer);
-
-                }
-                else if(gState == ST_PLAYING) {
-                    // Update
-
-                    // Draw
-                    SDL_RenderClear(gRenderer);
-                    SDL_RenderPresent(gRenderer);
-
-                }
-            }
         }
     }
 
@@ -128,13 +83,6 @@ bool initialize(SDL_Window* window, SDL_Renderer* renderer) {
             }
         }
     }
-
-    return isSuccessful;
-}
-
-bool loadAssets() {
-    // - Loads textures, fonts, and music
-    bool isSuccessful = true;
 
     return isSuccessful;
 }
