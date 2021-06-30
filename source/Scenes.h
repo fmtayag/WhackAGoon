@@ -7,24 +7,26 @@ public:
     virtual void initialize() = 0;
     virtual void handleEvents(SDL_Event* e) = 0;
     virtual void update() = 0;
-    virtual void draw(SDL_Renderer* renderer) = 0;
+    virtual void draw() = 0;
     virtual void close() = 0;
 };
 
 class SceneContext {
 public:
-    SceneContext();
+    SceneContext(SDL_Renderer** renderer);
     void changeScene(Scene* scene);
     void exit();
     bool isExited();
+    SDL_Renderer* getRenderer();
 
     void HandleEvents(SDL_Event* e);
     void Update();
-    void Draw(SDL_Renderer* renderer);
+    void Draw();
 
 private:
     Scene* mScene;
     bool isRunning;
+    SDL_Renderer* mRenderer;
 };
 
 class PlayScene : public Scene {
@@ -35,7 +37,7 @@ public:
     void initialize();
     void handleEvents(SDL_Event* e);
     void update();
-    void draw(SDL_Renderer* renderer);
+    void draw();
     void close();
 
 private:

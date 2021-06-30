@@ -1,12 +1,15 @@
 #include "Scenes.h"
 #include <iostream>
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_image.h"
 
 /*
 * SceneContext
 */
 
-SceneContext::SceneContext() {
+SceneContext::SceneContext(SDL_Renderer** renderer) {
     mScene = new PlayScene(this);
+    mRenderer = *renderer;
 }
 
 void SceneContext::changeScene(Scene* scene) {
@@ -22,8 +25,8 @@ void SceneContext::Update() {
     mScene->update();
 }
 
-void SceneContext::Draw(SDL_Renderer* renderer) {
-    mScene->draw(renderer);
+void SceneContext::Draw() {
+    mScene->draw();
 }
 
 void SceneContext::exit() {
@@ -33,6 +36,10 @@ void SceneContext::exit() {
 
 bool SceneContext::isExited() {
     return isRunning;
+}
+
+SDL_Renderer* SceneContext::getRenderer() {
+    return mRenderer;
 }
 
 /*
@@ -49,12 +56,12 @@ PlayScene::~PlayScene() {
 }
 
 void PlayScene::initialize() {
-    //printf("Play Scene - Initializing\n");
+
 }
 
 void PlayScene::handleEvents(SDL_Event* e) {
 
-    //printf("Play Scene - Handling events\n");
+    // Handle Events
 
     while(SDL_PollEvent(e)) {
         if(e->type == SDL_QUIT) {
@@ -63,7 +70,6 @@ void PlayScene::handleEvents(SDL_Event* e) {
         if(e->type == SDL_KEYDOWN) {
             switch(e->key.keysym.sym) {
             case SDLK_LEFT:
-                printf("pressed left.\n");
                 break;
             }
         }
@@ -72,13 +78,15 @@ void PlayScene::handleEvents(SDL_Event* e) {
 }
 
 void PlayScene::update() {
-    //printf("Play Scene - Updating\n");
+    // Update
 }
 
-void PlayScene::draw(SDL_Renderer* renderer) {
-    //printf("Play Scene - Drawing\n");
+void PlayScene::draw() {
+    SDL_SetRenderDrawColor(mContext->getRenderer(), 0, 50, 50, 255);
+    SDL_RenderClear(mContext->getRenderer());
+    SDL_RenderPresent(mContext->getRenderer());
 }
 
 void PlayScene::close() {
-    //printf("Play Scene - Closing\n");
+    // Close
 }
