@@ -13,17 +13,23 @@
 #include "ZRect.h"
 #include "Scenes.h"
 #include "metadata.h"
+#include "game_textures.h"
 
-void createRenderer(SDL_Window** window, SDL_Renderer** renderer);
+SDL_Texture* fooTexture;
 
 int main(int argv, char** args){
-    // Initialize
+    // Initialize ---------------
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_Window* gWindow = SDL_CreateWindow(GAME_TITLE.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
-    SDL_Renderer* gRenderer = NULL;
-    createRenderer(&gWindow, &gRenderer);
+    SDL_Renderer* gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
     IMG_Init(IMG_INIT_PNG);
     SceneContext gContext;
+
+    // Load assets --------------
+    SDL_Surface* fooSurface = IMG_Load("foo.png");
+    fooTexture = SDL_CreateTextureFromSurface(gRenderer, fooSurface);
+    SDL_FreeSurface(fooSurface);
+    fooSurface = NULL;
 
     // - Game loop --------------
     SDL_Event e;
@@ -31,7 +37,6 @@ int main(int argv, char** args){
     while(gContext.isExited()) {
 
         // Run context methods
-        gContext.Initialize(&gRenderer);
         gContext.HandleEvents(&e);
         gContext.Update();
         gContext.Draw(&gRenderer);
@@ -53,8 +58,4 @@ int main(int argv, char** args){
     SDL_Quit();
 
     return 0;
-}
-
-void createRenderer(SDL_Window** window, SDL_Renderer** renderer) {
-    *renderer = SDL_CreateRenderer(*window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
 }

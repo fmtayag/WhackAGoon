@@ -1,8 +1,9 @@
-#include "Scenes.h"
 #include <iostream>
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
-
+#include "Scenes.h"
+#include "metadata.h"
+#include "game_textures.h"
 /*
 * SceneContext
 */
@@ -15,10 +16,6 @@ void SceneContext::changeScene(Scene* scene) {
     mScene = scene;
 }
 
-void SceneContext::Initialize(SDL_Renderer** renderer) {
-    mScene->initialize(renderer);
-}
-
 void SceneContext::HandleEvents(SDL_Event* e) {
     mScene->handleEvents(e);
 }
@@ -28,7 +25,7 @@ void SceneContext::Update() {
 }
 
 void SceneContext::Draw(SDL_Renderer** renderer) {
-    mScene->draw(*renderer);
+    mScene->draw(renderer);
 }
 
 void SceneContext::exit() {
@@ -48,18 +45,6 @@ PlayScene::PlayScene(SceneContext* context) {
 }
 
 PlayScene::~PlayScene() {
-    close();
-}
-
-void PlayScene::initialize(SDL_Renderer** renderer) {
-    if(!isInitialized) {
-        SDL_Surface* fooSurface = IMG_Load("foo.png");
-        fooTexture = SDL_CreateTextureFromSurface(*renderer, fooSurface);
-        SDL_FreeSurface(fooSurface);
-        fooSurface = NULL;
-
-        isInitialized = true;
-    }
 
 }
 
@@ -71,39 +56,18 @@ void PlayScene::handleEvents(SDL_Event* e) {
         if(e->type == SDL_QUIT) {
             mContext->exit();
         }
-        if(e->type == SDL_KEYDOWN) {
-            switch(e->key.keysym.sym) {
-            case SDLK_LEFT:
-                fooRect.x -= 5;
-                break;
-            case SDLK_RIGHT:
-                fooRect.x += 5;
-                break;
-            case SDLK_UP:
-                fooRect.y -= 5;
-                break;
-            case SDLK_DOWN:
-                fooRect.y += 5;
-                break;
-            case SDLK_q:
-                break;
-            }
-        }
     }
-
 }
 
 void PlayScene::update() {
     // Update
 }
 
-void PlayScene::draw(SDL_Renderer*& renderer) {
-    SDL_SetRenderDrawColor(renderer, 0, 50, 50, 255);
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, fooTexture, NULL, &fooRect);
-    SDL_RenderPresent(renderer);
+void PlayScene::draw(SDL_Renderer** renderer) {
+    SDL_SetRenderDrawColor(*renderer, 0, 50, 50, 255);
+    SDL_RenderClear(*renderer);
+    SDL_RenderCopy(*renderer, fooTexture, NULL, NULL);
+    SDL_RenderPresent(*renderer);
 }
 
-void PlayScene::close() {
 
-}
