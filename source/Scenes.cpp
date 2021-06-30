@@ -6,15 +6,17 @@
 /*
 * SceneContext
 */
-
-SceneContext::SceneContext(SDL_Renderer** renderer) {
+SceneContext::SceneContext() {
     mScene = new PlayScene(this);
-    mRenderer = *renderer;
 }
 
 void SceneContext::changeScene(Scene* scene) {
     delete this->mScene;
     mScene = scene;
+}
+
+void SceneContext::Initialize(SDL_Renderer** renderer) {
+    mScene->initialize(renderer);
 }
 
 void SceneContext::HandleEvents(SDL_Event* e) {
@@ -25,8 +27,8 @@ void SceneContext::Update() {
     mScene->update();
 }
 
-void SceneContext::Draw() {
-    mScene->draw();
+void SceneContext::Draw(SDL_Renderer** renderer) {
+    mScene->draw(*renderer);
 }
 
 void SceneContext::exit() {
@@ -38,24 +40,26 @@ bool SceneContext::isExited() {
     return isRunning;
 }
 
-SDL_Renderer* SceneContext::getRenderer() {
-    return mRenderer;
-}
-
 /*
 * PlayScene
 */
-
 PlayScene::PlayScene(SceneContext* context) {
     mContext = context;
-    initialize();
 }
 
 PlayScene::~PlayScene() {
     close();
 }
 
-void PlayScene::initialize() {
+void PlayScene::initialize(SDL_Renderer** renderer) {
+    if(!isInitialized) {
+        SDL_Surface* fooSurface = IMG_Load("foo.png");
+        fooTexture = SDL_CreateTextureFromSurface(*renderer, fooSurface);
+        SDL_FreeSurface(fooSurface);
+        fooSurface = NULL;
+
+        isInitialized = true;
+    }
 
 }
 
@@ -70,6 +74,18 @@ void PlayScene::handleEvents(SDL_Event* e) {
         if(e->type == SDL_KEYDOWN) {
             switch(e->key.keysym.sym) {
             case SDLK_LEFT:
+                fooRect.x -= 5;
+                break;
+            case SDLK_RIGHT:
+                fooRect.x += 5;
+                break;
+            case SDLK_UP:
+                fooRect.y -= 5;
+                break;
+            case SDLK_DOWN:
+                fooRect.y += 5;
+                break;
+            case SDLK_q:
                 break;
             }
         }
@@ -81,12 +97,13 @@ void PlayScene::update() {
     // Update
 }
 
-void PlayScene::draw() {
-    SDL_SetRenderDrawColor(mContext->getRenderer(), 0, 50, 50, 255);
-    SDL_RenderClear(mContext->getRenderer());
-    SDL_RenderPresent(mContext->getRenderer());
+void PlayScene::draw(SDL_Renderer*& renderer) {
+    SDL_SetRenderDrawColor(renderer, 0, 50, 50, 255);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, fooTexture, NULL, &fooRect);
+    SDL_RenderPresent(renderer);
 }
 
 void PlayScene::close() {
-    // Close
+
 }

@@ -18,11 +18,12 @@ void createRenderer(SDL_Window** window, SDL_Renderer** renderer);
 
 int main(int argv, char** args){
     // Initialize
+    SDL_Init(SDL_INIT_EVERYTHING);
     SDL_Window* gWindow = SDL_CreateWindow(GAME_TITLE.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
     SDL_Renderer* gRenderer = NULL;
     createRenderer(&gWindow, &gRenderer);
     IMG_Init(IMG_INIT_PNG);
-    SceneContext gContext(&gRenderer);
+    SceneContext gContext;
 
     // - Game loop --------------
     SDL_Event e;
@@ -30,9 +31,10 @@ int main(int argv, char** args){
     while(gContext.isExited()) {
 
         // Run context methods
+        gContext.Initialize(&gRenderer);
         gContext.HandleEvents(&e);
         gContext.Update();
-        gContext.Draw();
+        gContext.Draw(&gRenderer);
 
     }
 
