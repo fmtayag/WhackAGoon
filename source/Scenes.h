@@ -6,7 +6,7 @@
 
 class Scene {
 public:
-    virtual void handleEvents(SDL_Event* e) = 0;
+    virtual void handleEvents(SDL_Event* e, bool& isRunning) = 0;
     virtual void update() = 0;
     virtual void draw(SDL_Renderer* renderer) = 0;
 };
@@ -15,13 +15,10 @@ class SceneContext {
 public:
     SceneContext();
     void changeScene(Scene* scene);
-    void exit();
-    bool isExited();
 
-    void HandleEvents(SDL_Event* e);
+    void HandleEvents(SDL_Event* e, bool& isRunning);
     void Update();
     void Draw(SDL_Renderer* renderer);
-    SDL_Renderer* mRenderer;
 
 private:
     Scene* mScene;
@@ -33,7 +30,7 @@ public:
     PlayScene(SceneContext* mContext);
     ~PlayScene();
 
-    void handleEvents(SDL_Event* e);
+    void handleEvents(SDL_Event* e, bool& isRunning);
     void update();
     void draw(SDL_Renderer* renderer);
 

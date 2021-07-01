@@ -16,32 +16,94 @@
 #include "game_textures.h"
 #include "utils.h"
 
+SDL_Window* gWindow;
+SDL_Renderer* gRenderer;
 SDL_Texture* fooTexture;
 
+bool initialize();
+bool loadAssets();
+void cleanUp();
+
 int main(int argv, char** args){
-    // Initialize ---------------
-    SDL_Init(SDL_INIT_EVERYTHING);
-    SDL_Window* gWindow = SDL_CreateWindow(GAME_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
-    SDL_Renderer* gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
-    IMG_Init(IMG_INIT_PNG);
-    SceneContext gContext;
+    // Initialize and load assets
+    bool isInitialized = initialize();
+    bool hasLoadedAssets = loadAssets();
 
-    // Load assets --------------
-    fooTexture = loadTextureFromFile(gRenderer, "foo.png");
+    // Game loop
+    if(isInitialized & hasLoadedAssets) {
+        SceneContext gContext;
+        SDL_Event e;
+        bool isRunning = true;
 
-    // - Game loop --------------
-    SDL_Event e;
+        while(isRunning) {
 
-    while(gContext.isExited()) {
+            // Run context methods
+            gContext.HandleEvents(&e, isRunning);
+            gContext.Update();
+            gContext.Draw(gRenderer);
 
-        // Run context methods
-        gContext.HandleEvents(&e);
-        gContext.Update();
-        gContext.Draw(gRenderer);
-
+        }
     }
 
-    // - Close SDL ---------------
+    // Clean up
+    cleanUp();
+
+    return 0;
+}
+
+bool initialize() {
+    bool isSuccessful = true;
+
+    // Initialize SDL subsystems
+    if(SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+        printf("SDL failed to initialize. Error: %s.\n", SDL_GetError());
+        isSuccessful = false;
+    }
+    else {
+        // Create window
+        gWindow = SDL_CreateWindow(GAME_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+        if(gWindow == NULL) {
+            printf("SDL failed to create window. Error: %s.\n", SDL_GetError());
+            isSuccessful = false;
+        }
+        else {
+            // Create renderer
+            gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+            if(gRenderer == NULL) {
+                printf("SDL failed to create renderer. Error: %s.\n", SDL_GetError());
+                isSuccessful = false;
+            }
+            else {
+                // Initialize SDL_image
+                int flags = IMG_INIT_JPG | IMG_INIT_PNG;
+                if( (IMG_Init(flags) & flags) != flags ) {
+                    printf("SDL_image failed to initialize. Error: %s.\n", IMG_GetError());
+                    isSuccessful = false;
+;               }
+            }
+        }
+    }
+
+    // Return isSuccessful
+    return isSuccessful;
+}
+
+bool loadAssets() {
+    bool isSuccessful = true;
+
+    fooTexture = loadTextureFromFile(gRenderer, "foo.png");
+    if(fooTexture == NULL) {
+        printf("Failed to load fooTexture.\n");
+        isSuccessful = false;
+    }
+
+    return isSuccessful;
+}
+
+void cleanUp() {
+    // Destroy textures
+    SDL_DestroyTexture(fooTexture);
+    fooTexture = NULL;
 
     // Destroy window
     SDL_DestroyWindow(gWindow);
@@ -54,6 +116,4 @@ int main(int argv, char** args){
     // Quit SDL_image, and SDL
     IMG_Quit();
     SDL_Quit();
-
-    return 0;
 }

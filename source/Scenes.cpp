@@ -17,8 +17,8 @@ void SceneContext::changeScene(Scene* scene) {
     mScene = scene;
 }
 
-void SceneContext::HandleEvents(SDL_Event* e) {
-    mScene->handleEvents(e);
+void SceneContext::HandleEvents(SDL_Event* e, bool& isRunning) {
+    mScene->handleEvents(e, isRunning);
 }
 
 void SceneContext::Update() {
@@ -27,15 +27,6 @@ void SceneContext::Update() {
 
 void SceneContext::Draw(SDL_Renderer* renderer) {
     mScene->draw(renderer);
-}
-
-void SceneContext::exit() {
-    isRunning = false;
-    delete this->mScene;
-}
-
-bool SceneContext::isExited() {
-    return isRunning;
 }
 
 /*
@@ -49,13 +40,11 @@ PlayScene::~PlayScene() {
 
 }
 
-void PlayScene::handleEvents(SDL_Event* e) {
-
+void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
     // Handle Events
-
     while(SDL_PollEvent(e)) {
         if(e->type == SDL_QUIT) {
-            mContext->exit();
+            isRunning = false;
         }
     }
 }
@@ -65,6 +54,7 @@ void PlayScene::update() {
 }
 
 void PlayScene::draw(SDL_Renderer* renderer) {
+    // Draw
     SDL_SetRenderDrawColor(renderer, 0, 50, 50, 255);
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, fooTexture, NULL, NULL);

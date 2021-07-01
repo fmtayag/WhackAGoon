@@ -4,8 +4,8 @@
 #include "utils.h"
 
 SDL_Texture* loadTextureFromFile(SDL_Renderer* renderer, std::string path) {
-    SDL_Surface* tempSurface;
-    SDL_Texture* texture;
+    SDL_Surface* tempSurface = NULL;
+    SDL_Texture* texture = NULL;
 
     tempSurface = IMG_Load(path.c_str());
 
