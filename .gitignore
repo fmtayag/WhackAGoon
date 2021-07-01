@@ -1,5 +1,5 @@
 /source/*.cbp
 /source/*.depend
 /source/*.layout
-/source/bin
-/source/obj	
+/source/bin/
+/source/obj/	
