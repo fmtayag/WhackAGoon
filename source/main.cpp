@@ -91,6 +91,13 @@ bool initialize() {
 bool loadAssets() {
     bool isSuccessful = true;
 
+    // Set window icon
+    SDL_Surface* iconSurface = IMG_Load("assets/images/icon.png");
+    SDL_SetWindowIcon(gWindow, iconSurface);
+    SDL_FreeSurface(iconSurface);
+    iconSurface = NULL;
+
+    // Load textures
     fooTexture = loadTextureFromFile(gRenderer, "assets/images/foo.png");
     if(fooTexture == NULL) {
         printf("Failed to load fooTexture.\n");

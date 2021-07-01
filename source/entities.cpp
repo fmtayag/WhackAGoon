@@ -2,12 +2,15 @@
 #include <SDL2/SDL.h>
 #include "entities.h"
 
+/*
+ * GoonEntity
+ */
 GoonEntity::GoonEntity(SDL_Texture* texture, int x, int y) {
     mTexture = texture;
     mRect.x = x;
     mRect.y = y;
-    mRect.w = 64;
-    mRect.h = 64;
+    mRect.w = 128;
+    mRect.h = 128;
 }
 
 void GoonEntity::update() {

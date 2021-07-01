@@ -40,7 +40,7 @@ PlayScene::PlayScene(SceneContext* context) {
 
     // Create goon
     GoonEntity* goon1 = new GoonEntity(goonTexture, 100, 10);
-    GoonEntity* goon2 = new GoonEntity(goonTexture, 150, 50);
+    GoonEntity* goon2 = new GoonEntity(goonTexture, 150, 250);
     gEntities.push_back(goon1);
     gEntities.push_back(goon2);
 }
