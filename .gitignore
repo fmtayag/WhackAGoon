@@ -3,3 +3,7 @@
 /source/*.layout
 /source/bin/
 /source/obj/	
+source/obj/Debug/main.o
+source/obj/Debug/scenes.o
+source/obj/Debug/ZRect.o
+source/obj/Debug/utils.o
