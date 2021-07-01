@@ -1,19 +1,20 @@
 /*
-* Whack-A-Goon!
-* An SDL video game developed by Francis Tayag (zyenapz)
-* The source code for this game is available on my GitHub page
-* and is licensed under the GPLv3 license.
-* My GitHub Page: github.com/zyenapz
-* My E-mail: zyenapz@gmail.com
-*/
+ * Whack-A-Goon!
+ * An SDL video game developed by Francis Tayag (zyenapz)
+ * The source code for this game is available on my GitHub page
+ * and is licensed under the GPLv3 license.
+ * My GitHub Page: github.com/zyenapz
+ * My E-mail: zyenapz@gmail.com
+ */
 
+#include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <iostream>
 #include "ZRect.h"
-#include "Scenes.h"
+#include "scenes.h"
 #include "metadata.h"
 #include "game_textures.h"
+#include "utils.h"
 
 SDL_Texture* fooTexture;
 
@@ -26,10 +27,7 @@ int main(int argv, char** args){
     SceneContext gContext;
 
     // Load assets --------------
-    SDL_Surface* fooSurface = IMG_Load("foo.png");
-    fooTexture = SDL_CreateTextureFromSurface(gRenderer, fooSurface);
-    SDL_FreeSurface(fooSurface);
-    fooSurface = NULL;
+    fooTexture = loadTextureFromFile(gRenderer, "foo.png");
 
     // - Game loop --------------
     SDL_Event e;
@@ -39,7 +37,7 @@ int main(int argv, char** args){
         // Run context methods
         gContext.HandleEvents(&e);
         gContext.Update();
-        gContext.Draw(&gRenderer);
+        gContext.Draw(gRenderer);
 
     }
 

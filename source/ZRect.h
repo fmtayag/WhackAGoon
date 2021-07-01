@@ -1,10 +1,13 @@
-#include <SDL2/SDL.h>
+#ifndef ZRECT_H
+#define ZRECT_H
 #pragma once
 
+#include <SDL2/SDL.h>
+
 /*
-* The ZRect class is just an SDL_Rect with the capability
-* of being able to get the sides, center, and corners of an SDL_Rect.
-*/
+ * The ZRect class is just an SDL_Rect with the capability
+ * of being able to get the sides, center, and corners of an SDL_Rect.
+ */
 class ZRect {
 public:
     // Constructor
@@ -44,3 +47,6 @@ public:
 private:
     SDL_Rect mRect;
 };
+
+
+#endif // ZRECT_H

@@ -2,13 +2,13 @@
 #define SCENES_H
 #pragma once
 
-#include "SDL2/SDL.h"
+#include <SDL2/SDL.h>
 
 class Scene {
 public:
     virtual void handleEvents(SDL_Event* e) = 0;
     virtual void update() = 0;
-    virtual void draw(SDL_Renderer** renderer) = 0;
+    virtual void draw(SDL_Renderer* renderer) = 0;
 };
 
 class SceneContext {
@@ -20,7 +20,7 @@ public:
 
     void HandleEvents(SDL_Event* e);
     void Update();
-    void Draw(SDL_Renderer** renderer);
+    void Draw(SDL_Renderer* renderer);
     SDL_Renderer* mRenderer;
 
 private:
@@ -35,7 +35,7 @@ public:
 
     void handleEvents(SDL_Event* e);
     void update();
-    void draw(SDL_Renderer** renderer);
+    void draw(SDL_Renderer* renderer);
 
 private:
     SceneContext* mContext;

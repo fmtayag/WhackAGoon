@@ -1,12 +1,13 @@
 #include <iostream>
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
-#include "Scenes.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include "scenes.h"
 #include "metadata.h"
 #include "game_textures.h"
+
 /*
-* SceneContext
-*/
+ * SceneContext
+ */
 SceneContext::SceneContext() {
     mScene = new PlayScene(this);
 }
@@ -24,7 +25,7 @@ void SceneContext::Update() {
     mScene->update();
 }
 
-void SceneContext::Draw(SDL_Renderer** renderer) {
+void SceneContext::Draw(SDL_Renderer* renderer) {
     mScene->draw(renderer);
 }
 
@@ -38,8 +39,8 @@ bool SceneContext::isExited() {
 }
 
 /*
-* PlayScene
-*/
+ * PlayScene
+ */
 PlayScene::PlayScene(SceneContext* context) {
     mContext = context;
 }
@@ -63,11 +64,11 @@ void PlayScene::update() {
     // Update
 }
 
-void PlayScene::draw(SDL_Renderer** renderer) {
-    SDL_SetRenderDrawColor(*renderer, 0, 50, 50, 255);
-    SDL_RenderClear(*renderer);
-    SDL_RenderCopy(*renderer, fooTexture, NULL, NULL);
-    SDL_RenderPresent(*renderer);
+void PlayScene::draw(SDL_Renderer* renderer) {
+    SDL_SetRenderDrawColor(renderer, 0, 50, 50, 255);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, fooTexture, NULL, NULL);
+    SDL_RenderPresent(renderer);
 }
 
 
