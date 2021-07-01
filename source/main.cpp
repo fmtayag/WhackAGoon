@@ -1,6 +1,6 @@
 /*
  * Whack-A-Goon!
- * An SDL video game developed by Francis Tayag (zyenapz)
+ * An SDL video game developed by zyenapz
  * The source code for this game is available on my GitHub page
  * and is licensed under the GPLv3 license.
  * My GitHub Page: github.com/zyenapz
@@ -21,7 +21,7 @@ SDL_Texture* fooTexture;
 int main(int argv, char** args){
     // Initialize ---------------
     SDL_Init(SDL_INIT_EVERYTHING);
-    SDL_Window* gWindow = SDL_CreateWindow(GAME_TITLE.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+    SDL_Window* gWindow = SDL_CreateWindow(GAME_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
     SDL_Renderer* gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
     IMG_Init(IMG_INIT_PNG);
     SceneContext gContext;
