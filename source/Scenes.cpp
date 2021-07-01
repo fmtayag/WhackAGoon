@@ -1,9 +1,12 @@
 #include <iostream>
+#include <iterator>
+#include <vector>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "scenes.h"
 #include "metadata.h"
 #include "assets.h"
+#include "entities.h"
 
 /*
  * SceneContext
@@ -12,7 +15,7 @@ SceneContext::SceneContext() {
     mScene = new PlayScene(this);
 }
 
-void SceneContext::changeScene(Scene* scene) {
+void SceneContext::changeScene(AbstractScene* scene) {
     delete this->mScene;
     mScene = scene;
 }
@@ -34,6 +37,12 @@ void SceneContext::Draw(SDL_Renderer* renderer) {
  */
 PlayScene::PlayScene(SceneContext* context) {
     mContext = context;
+
+    // Create goon
+    GoonEntity* goon1 = new GoonEntity(goonTexture, 100, 10);
+    GoonEntity* goon2 = new GoonEntity(goonTexture, 150, 50);
+    gEntities.push_back(goon1);
+    gEntities.push_back(goon2);
 }
 
 PlayScene::~PlayScene() {
@@ -51,14 +60,25 @@ void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
 
 void PlayScene::update() {
     // Update
+
+    // Update entities in gEntities
+    std::vector<AbstractEntity*>::iterator iter;
+    for(iter = gEntities.begin(); iter != gEntities.end(); iter++) {
+        (*iter)->update();
+    }
 }
 
 void PlayScene::draw(SDL_Renderer* renderer) {
     // Draw
-    SDL_Rect goonRect = {100, 100, 64, 64};
     SDL_SetRenderDrawColor(renderer, 197, 145, 84, 255);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, goonTexture, NULL, &goonRect);
+
+    // Draw entities in gEntities
+    std::vector<AbstractEntity*>::iterator iter;
+    for(iter = gEntities.begin(); iter != gEntities.end(); iter++) {
+        (*iter)->draw(renderer);
+    }
+
     SDL_RenderPresent(renderer);
 }
 

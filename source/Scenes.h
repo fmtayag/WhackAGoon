@@ -2,9 +2,12 @@
 #define SCENES_H
 #pragma once
 
+#include <iostream>
+#include <vector>
 #include <SDL2/SDL.h>
+#include "entities.h"
 
-class Scene {
+class AbstractScene {
 public:
     virtual void handleEvents(SDL_Event* e, bool& isRunning) = 0;
     virtual void update() = 0;
@@ -14,18 +17,18 @@ public:
 class SceneContext {
 public:
     SceneContext();
-    void changeScene(Scene* scene);
+    void changeScene(AbstractScene* scene);
 
     void HandleEvents(SDL_Event* e, bool& isRunning);
     void Update();
     void Draw(SDL_Renderer* renderer);
 
 private:
-    Scene* mScene;
+    AbstractScene* mScene;
     bool isRunning;
 };
 
-class PlayScene : public Scene {
+class PlayScene : public AbstractScene {
 public:
     PlayScene(SceneContext* mContext);
     ~PlayScene();
@@ -36,6 +39,7 @@ public:
 
 private:
     SceneContext* mContext;
+    std::vector<AbstractEntity*> gEntities;
 };
 
 #endif // SCENES_H
