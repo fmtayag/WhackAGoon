@@ -27,3 +27,8 @@ SDL_Texture* loadTextureFromFile(SDL_Renderer* renderer, std::string path) {
 
     return texture;
 }
+
+void cleanUpTexture(SDL_Texture*& texture) {
+    SDL_DestroyTexture(texture);
+    texture = NULL;
+}

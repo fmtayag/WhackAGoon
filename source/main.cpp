@@ -10,15 +10,15 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "ZRect.h"
 #include "scenes.h"
 #include "metadata.h"
-#include "game_textures.h"
+#include "assets.h"
 #include "utils.h"
 
 SDL_Window* gWindow;
 SDL_Renderer* gRenderer;
 SDL_Texture* fooTexture;
+SDL_Texture* goonTexture;
 
 bool initialize();
 bool loadAssets();
@@ -91,9 +91,15 @@ bool initialize() {
 bool loadAssets() {
     bool isSuccessful = true;
 
-    fooTexture = loadTextureFromFile(gRenderer, "data/images/foo.png");
+    fooTexture = loadTextureFromFile(gRenderer, "assets/images/foo.png");
     if(fooTexture == NULL) {
         printf("Failed to load fooTexture.\n");
+        isSuccessful = false;
+    }
+
+    goonTexture = loadTextureFromFile(gRenderer, "assets/images/goon.png");
+    if(goonTexture == NULL) {
+        printf("Failed to load goonTexture.\n");
         isSuccessful = false;
     }
 
@@ -102,8 +108,8 @@ bool loadAssets() {
 
 void cleanUp() {
     // Destroy textures
-    SDL_DestroyTexture(fooTexture);
-    fooTexture = NULL;
+    cleanUpTexture(fooTexture);
+    cleanUpTexture(goonTexture);
 
     // Destroy window
     SDL_DestroyWindow(gWindow);

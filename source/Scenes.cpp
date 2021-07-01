@@ -3,7 +3,7 @@
 #include <SDL2/SDL_image.h>
 #include "scenes.h"
 #include "metadata.h"
-#include "game_textures.h"
+#include "assets.h"
 
 /*
  * SceneContext
@@ -55,9 +55,10 @@ void PlayScene::update() {
 
 void PlayScene::draw(SDL_Renderer* renderer) {
     // Draw
-    SDL_SetRenderDrawColor(renderer, 0, 50, 50, 255);
+    SDL_Rect goonRect = {100, 100, 64, 64};
+    SDL_SetRenderDrawColor(renderer, 197, 145, 84, 255);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, fooTexture, NULL, NULL);
+    SDL_RenderCopy(renderer, goonTexture, NULL, &goonRect);
     SDL_RenderPresent(renderer);
 }
 
