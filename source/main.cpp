@@ -91,7 +91,7 @@ bool initialize() {
 bool loadAssets() {
     bool isSuccessful = true;
 
-    fooTexture = loadTextureFromFile(gRenderer, "foo.png");
+    fooTexture = loadTextureFromFile(gRenderer, "data/images/foo.png");
     if(fooTexture == NULL) {
         printf("Failed to load fooTexture.\n");
         isSuccessful = false;
