@@ -1,8 +1,8 @@
 /source/*.cbp
 /source/*.depend
 /source/*.layout
-/source/bin/
-/source/obj/	
+/source/bin/Debug/*
+/source/obj/Debug/*	
 source/obj/Debug/main.o
 source/obj/Debug/scenes.o
 source/obj/Debug/ZRect.o
@@ -14,3 +14,5 @@ libwebp-7.dll
 SDL2.dll
 SDL2_image.dll
 zlib1.dll
+bin/Debug/WhackAGoon.exe
+*.o
