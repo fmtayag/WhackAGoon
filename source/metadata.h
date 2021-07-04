@@ -4,8 +4,8 @@
 
 // Game metadata
 #define GAME_TITLE "Whack-A-Goon!"
-#define WINDOW_WIDTH 1024
-#define WINDOW_HEIGHT 720
+#define WINDOW_WIDTH 640
+#define WINDOW_HEIGHT 960
 
 // Author metadata
 #define GAME_AUTHOR "zyenapz"
