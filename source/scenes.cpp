@@ -41,11 +41,9 @@ void SceneContext::Draw(SDL_Renderer* renderer) {
 PlayScene::PlayScene(SceneContext* context) {
     mContext = context;
 
-    // Create goon
-    GoonEntity* goon1 = new GoonEntity(goonTexture, 100, 10);
-    GoonEntity* goon2 = new GoonEntity(goonTexture, 150, 250);
-    gEntities.push_back(goon1);
-    gEntities.push_back(goon2);
+    // Create holes
+    HoleEntity* hole1 = new HoleEntity(&goonTexture, 64, 64);
+    mEntities.push_back(hole1);
 }
 
 PlayScene::~PlayScene() {
@@ -69,34 +67,35 @@ void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
 
 void PlayScene::update() {
     // Update
-    SDL_Rect fooRect = {0, 0, 50, 50};
+
+    // Check for collision
     int mx, my;
     SDL_GetMouseState(&mx, &my);
     int mpos[2] = {mx, my};
 
-    // Check for collision
-    std::vector<AbstractEntity*>::iterator iter;
-    for(iter = gEntities.begin(); iter != gEntities.end(); iter++) {
+    std::vector<HoleEntity*>::iterator iter;
+    for(iter = mEntities.begin(); iter != mEntities.end(); iter++) {
         bool isCollide = isPointCollide(mpos, (*iter)->getRect());
-        if(isCollide)
-            printf("Is colliding. %d\n", mMouseClicked);
+        if(isCollide && mMouseClicked) {
+            (*iter)->whack();
+            mMouseClicked = false;
+        }
     }
 
-
-    // Update entities in gEntities
-    for(iter = gEntities.begin(); iter != gEntities.end(); iter++) {
+    // Update entities
+    for(iter = mEntities.begin(); iter != mEntities.end(); iter++) {
         (*iter)->update();
     }
 }
 
 void PlayScene::draw(SDL_Renderer* renderer) {
     // Draw
-    SDL_SetRenderDrawColor(renderer, 197, 145, 84, 255);
+    SDL_SetRenderDrawColor(renderer, 155, 188, 15, 255);
     SDL_RenderClear(renderer);
 
-    // Draw entities in gEntities
-    std::vector<AbstractEntity*>::iterator iter;
-    for(iter = gEntities.begin(); iter != gEntities.end(); iter++) {
+    // Draw entities
+    std::vector<HoleEntity*>::iterator iter;
+    for(iter = mEntities.begin(); iter != mEntities.end(); iter++) {
         (*iter)->draw(renderer);
     }
 

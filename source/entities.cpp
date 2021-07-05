@@ -3,24 +3,32 @@
 #include "entities.h"
 
 /*
- * GoonEntity
+ * HoleEntity
  */
-GoonEntity::GoonEntity(SDL_Texture* texture, int x, int y) {
+HoleEntity::HoleEntity(SDL_Texture** texture, int x, int y) {
     mTexture = texture;
     mRect.x = x;
     mRect.y = y;
-    mRect.w = 128;
-    mRect.h = 128;
+    mRect.w = 64;
+    mRect.h = 64;
+    mState = ST_ACTIVE;
 }
 
-void GoonEntity::update() {
-    // Update
+void HoleEntity::update() {
+    if(mState == ST_WHACKED)
+        printf("I'm whacked.\n");
 }
 
-void GoonEntity::draw(SDL_Renderer*& renderer) {
-    SDL_RenderCopy(renderer, mTexture, NULL, &mRect);
+void HoleEntity::draw(SDL_Renderer*& renderer) {
+    SDL_RenderCopy(renderer, *mTexture, NULL, &mRect);
 }
 
-const SDL_Rect* GoonEntity::getRect() {
+const SDL_Rect* HoleEntity::getRect() {
     return &mRect;
+}
+
+void HoleEntity::whack() {
+    if(mState == ST_ACTIVE) {
+        mState = ST_WHACKED;
+    }
 }

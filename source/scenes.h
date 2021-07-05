@@ -39,7 +39,7 @@ public:
 
 private:
     SceneContext* mContext;
-    std::vector<AbstractEntity*> gEntities;
+    std::vector<HoleEntity*> mEntities;
     bool mMouseClicked;
 };
 

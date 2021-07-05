@@ -61,7 +61,7 @@ bool initialize() {
     }
     else {
         // Create window
-        gWindow = SDL_CreateWindow(GAME_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+        gWindow = SDL_CreateWindow(GAME_TITLE.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
         if(gWindow == NULL) {
             printf("SDL failed to create window. Error: %s.\n", SDL_GetError());
             isSuccessful = false;

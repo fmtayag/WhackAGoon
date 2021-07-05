@@ -3,17 +3,17 @@
 #pragma once
 
 // Game metadata
-#define GAME_TITLE "Whack-A-Goon!"
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 960
+const std::string GAME_TITLE = "Whack-A-Goon!";
+const int WINDOW_WIDTH = 320;
+const int WINDOW_HEIGHT = 480;
 
 // Author metadata
-#define GAME_AUTHOR "zyenapz"
-#define AUTHOR_EMAIL "zyenapz@gmail.com"
-#define AUTHOR_GITHUB "github.com/zyenapz"
+const std::string GAME_AUTHOR = "zyenapz";
+const std::string AUTHOR_EMAIL = "zyenapz@gmail.com";
+const std::string AUTHOR_GITHUB = "github.com/zyenapz";
 
 // Source code metadata
-#define CODE_LICENSE "GPLv3"
+const std::string CODE_LICENSE = "GPLv3";
 
 #endif // METADATA_H
 
