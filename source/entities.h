@@ -1,5 +1,6 @@
 #ifndef ENTITIES_H
 #define ENTITIES_H
+#pragma once
 
 #include <SDL2/SDL.h>
 
