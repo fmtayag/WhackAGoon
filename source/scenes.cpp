@@ -58,6 +58,12 @@ void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
         if(e->type == SDL_QUIT) {
             isRunning = false;
         }
+        if(e->type == SDL_MOUSEBUTTONDOWN) {
+            mMouseClicked = true;
+        }
+        if(e->type == SDL_MOUSEBUTTONUP) {
+            mMouseClicked = false;
+        }
     }
 }
 
@@ -68,11 +74,16 @@ void PlayScene::update() {
     SDL_GetMouseState(&mx, &my);
     int mpos[2] = {mx, my};
 
-    bool isCollide = isPointCollide(mpos, gEntities[0]->getRect());
-    printf("%d\n", isCollide);
+    // Check for collision
+    std::vector<AbstractEntity*>::iterator iter;
+    for(iter = gEntities.begin(); iter != gEntities.end(); iter++) {
+        bool isCollide = isPointCollide(mpos, (*iter)->getRect());
+        if(isCollide)
+            printf("Is colliding. %d\n", mMouseClicked);
+    }
+
 
     // Update entities in gEntities
-    std::vector<AbstractEntity*>::iterator iter;
     for(iter = gEntities.begin(); iter != gEntities.end(); iter++) {
         (*iter)->update();
     }

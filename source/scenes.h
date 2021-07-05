@@ -40,6 +40,7 @@ public:
 private:
     SceneContext* mContext;
     std::vector<AbstractEntity*> gEntities;
+    bool mMouseClicked;
 };
 
 #endif // SCENES_H
