@@ -1,12 +1,15 @@
 #include <iostream>
 #include <iterator>
 #include <vector>
+#include <stdlib.h>
+#include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "scenes.h"
 #include "metadata.h"
 #include "assets.h"
 #include "entities.h"
+#include "utils.h"
 
 /*
  * SceneContext
@@ -60,6 +63,13 @@ void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
 
 void PlayScene::update() {
     // Update
+    SDL_Rect fooRect = {0, 0, 50, 50};
+    int mx, my;
+    SDL_GetMouseState(&mx, &my);
+    int mpos[2] = {mx, my};
+
+    bool isCollide = isPointCollide(mpos, gEntities[0]->getRect());
+    printf("%d\n", isCollide);
 
     // Update entities in gEntities
     std::vector<AbstractEntity*>::iterator iter;

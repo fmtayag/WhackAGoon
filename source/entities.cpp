@@ -20,3 +20,7 @@ void GoonEntity::update() {
 void GoonEntity::draw(SDL_Renderer*& renderer) {
     SDL_RenderCopy(renderer, mTexture, NULL, &mRect);
 }
+
+const SDL_Rect* GoonEntity::getRect() {
+    return &mRect;
+}

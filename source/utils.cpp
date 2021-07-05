@@ -32,3 +32,19 @@ void cleanUpTexture(SDL_Texture*& texture) {
     SDL_DestroyTexture(texture);
     texture = NULL;
 }
+
+bool isPointCollide(int mpos[2], const SDL_Rect* rect) {
+    int mx = mpos[0];
+    int my = mpos[1];
+    int rx = rect->x;
+    int ry = rect->y;
+    int rw = rect->w;
+    int rh = rect->h;
+
+    if(mx <= rx || mx >= rx + rw)
+        return false;
+    else if(my <= ry || my >= ry + rh)
+        return false;
+
+    return true;
+}
