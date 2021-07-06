@@ -8,6 +8,8 @@
  */
 
 #include <iostream>
+#include <time.h>
+#include <stdlib.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "scenes.h"
@@ -19,15 +21,25 @@ SDL_Window* gWindow;
 SDL_Renderer* gRenderer;
 SDL_Texture* fooTexture;
 SDL_Texture* goonTexture;
+SDL_Texture* hammerTexture;
 
 bool initialize();
 bool loadAssets();
 void cleanUp();
-
+/* -------------------------------------------------
+ * main
+ * -------------------------------------------------
+ */
 int main(int argv, char** args){
     // Initialize and load assets
     bool isInitialized = initialize();
     bool hasLoadedAssets = loadAssets();
+
+    // Seed rng
+    srand(time(0));
+
+    // Disable cursor
+    SDL_ShowCursor(SDL_DISABLE);
 
     // Game loop
     if(isInitialized & hasLoadedAssets) {
@@ -51,6 +63,10 @@ int main(int argv, char** args){
     return 0;
 }
 
+/* -------------------------------------------------
+ * initialize
+ * -------------------------------------------------
+ */
 bool initialize() {
     bool isSuccessful = true;
 
@@ -88,6 +104,10 @@ bool initialize() {
     return isSuccessful;
 }
 
+/* -------------------------------------------------
+ * loadAssets
+ * -------------------------------------------------
+ */
 bool loadAssets() {
     bool isSuccessful = true;
 
@@ -110,13 +130,24 @@ bool loadAssets() {
         isSuccessful = false;
     }
 
+    hammerTexture = loadTextureFromFile(gRenderer, "assets/images/hammer.png");
+    if(hammerTexture == NULL) {
+        printf("Failed to load hammerTexture.\n");
+        isSuccessful = false;
+    }
+
     return isSuccessful;
 }
 
+/* -------------------------------------------------
+ * cleanUp
+ * -------------------------------------------------
+ */
 void cleanUp() {
     // Destroy textures
     cleanUpTexture(fooTexture);
     cleanUpTexture(goonTexture);
+    cleanUpTexture(hammerTexture);
 
     // Destroy window
     SDL_DestroyWindow(gWindow);

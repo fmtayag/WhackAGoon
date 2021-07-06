@@ -11,8 +11,9 @@
 #include "entities.h"
 #include "utils.h"
 
-/*
- * SceneContext
+/* -------------------------------------------------
+ * Scene Context def
+ * -------------------------------------------------
  */
 SceneContext::SceneContext() {
     mScene = new PlayScene(this);
@@ -35,15 +36,30 @@ void SceneContext::Draw(SDL_Renderer* renderer) {
     mScene->draw(renderer);
 }
 
-/*
- * PlayScene
+/* -------------------------------------------------
+ * Play Scene def
+ * -------------------------------------------------
  */
 PlayScene::PlayScene(SceneContext* context) {
     mContext = context;
+    score = 0;
 
     // Create holes
-    HoleEntity* hole1 = new HoleEntity(&goonTexture, 64, 64);
+    HoleEntity* hole1 = new HoleEntity(&goonTexture, (WINDOW_WIDTH / 2) - 92, 60);
+    HoleEntity* hole2 = new HoleEntity(&goonTexture, (WINDOW_WIDTH / 2) + 32, 60);
+    HoleEntity* hole3 = new HoleEntity(&goonTexture, (WINDOW_WIDTH / 2) - 92, 150);
+    HoleEntity* hole4 = new HoleEntity(&goonTexture, (WINDOW_WIDTH / 2) + 32, 150);
+    HoleEntity* hole5 = new HoleEntity(&goonTexture, (WINDOW_WIDTH / 2) - 92, 240);
+    HoleEntity* hole6 = new HoleEntity(&goonTexture, (WINDOW_WIDTH / 2) + 32, 240);
     mEntities.push_back(hole1);
+    mEntities.push_back(hole2);
+    mEntities.push_back(hole3);
+    mEntities.push_back(hole4);
+    mEntities.push_back(hole5);
+    mEntities.push_back(hole6);
+
+    // Initialize mouse entity
+    mHammer = new HammerEntity(&hammerTexture);
 }
 
 PlayScene::~PlayScene() {
@@ -77,10 +93,25 @@ void PlayScene::update() {
     for(iter = mEntities.begin(); iter != mEntities.end(); iter++) {
         bool isCollide = isPointCollide(mpos, (*iter)->getRect());
         if(isCollide && mMouseClicked) {
-            (*iter)->whack();
-            mMouseClicked = false;
+            bool isActive = (*iter)->whack();
+
+            // Add score
+            if(isActive)
+                score++;
+
+            continue;
         }
     }
+
+    // Update hammer entity
+    if(mMouseClicked) {
+        mHammer->smash();
+        mMouseClicked = false;
+    }
+
+    mHammer->update();
+
+    printf("Score: %d\n", score);
 
     // Update entities
     for(iter = mEntities.begin(); iter != mEntities.end(); iter++) {
@@ -93,11 +124,14 @@ void PlayScene::draw(SDL_Renderer* renderer) {
     SDL_SetRenderDrawColor(renderer, 155, 188, 15, 255);
     SDL_RenderClear(renderer);
 
-    // Draw entities
+    // Draw hole entities
     std::vector<HoleEntity*>::iterator iter;
     for(iter = mEntities.begin(); iter != mEntities.end(); iter++) {
         (*iter)->draw(renderer);
     }
+
+    // Draw hammer
+    mHammer->draw(renderer);
 
     SDL_RenderPresent(renderer);
 }

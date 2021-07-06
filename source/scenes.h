@@ -14,6 +14,11 @@ public:
     virtual void draw(SDL_Renderer* renderer) = 0;
 };
 
+/* -------------------------------------------------
+ * Scene Context
+ * -------------------------------------------------
+ */
+
 class SceneContext {
 public:
     SceneContext();
@@ -28,6 +33,11 @@ private:
     bool isRunning;
 };
 
+/* -------------------------------------------------
+ * Play Scene
+ * -------------------------------------------------
+ */
+
 class PlayScene : public AbstractScene {
 public:
     PlayScene(SceneContext* mContext);
@@ -39,8 +49,14 @@ public:
 
 private:
     SceneContext* mContext;
-    std::vector<HoleEntity*> mEntities;
     bool mMouseClicked;
+
+    // Entities
+    std::vector<HoleEntity*> mEntities;
+    HammerEntity* mHammer;
+
+    // Scores, and other crap
+    int score;
 };
 
 #endif // SCENES_H
