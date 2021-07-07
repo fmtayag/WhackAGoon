@@ -2,8 +2,31 @@
 #define UTILS_H
 #pragma once
 
+#include <random>
+#include <ctime>
+
+// Loading assets
 SDL_Texture* loadTextureFromFile(SDL_Renderer* renderer, std::string path);
+
+// Destroying assets utils
 void cleanUpTexture(SDL_Texture*& texture);
+
+// Collision stuff
 bool isPointCollide(int mpos[2], const SDL_Rect* rect);
+
+// RNG utils
+template <std::size_t N, std::size_t M>
+int pickWeighted(const int (&numbers)[N], const int (&weights)[M]) {
+    std::piecewise_constant_distribution<> dist(
+        std::begin(numbers),
+        std::end(numbers),
+        std::begin(weights)
+    );
+
+    std::mt19937 generator(time(0));
+    int randNum = static_cast<unsigned>(dist(generator));
+    return randNum;
+}
+
 
 #endif // UTILS_H

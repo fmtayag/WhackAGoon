@@ -44,19 +44,18 @@ PlayScene::PlayScene(SceneContext* context) {
     mContext = context;
     score = 0;
 
-    // Textures list
-    SDL_Texture** holeTextures[3];
-    holeTextures[0] = &goonTexture;
-    holeTextures[1] = &townieTexture;
-    holeTextures[2] = &mayorTexture;
+    // Textures list --------------------------------------
+    mHoleTextures[0] = &goonTexture;
+    mHoleTextures[1] = &townieTexture;
+    mHoleTextures[2] = &mayorTexture;
 
-    // Create holes
-    HoleEntity* hole1 = new HoleEntity(holeTextures, (WINDOW_WIDTH / 2) - 92, 60);
-    HoleEntity* hole2 = new HoleEntity(holeTextures, (WINDOW_WIDTH / 2) + 32, 60);
-    HoleEntity* hole3 = new HoleEntity(holeTextures, (WINDOW_WIDTH / 2) - 92, 150);
-    HoleEntity* hole4 = new HoleEntity(holeTextures, (WINDOW_WIDTH / 2) + 32, 150);
-    HoleEntity* hole5 = new HoleEntity(holeTextures, (WINDOW_WIDTH / 2) - 92, 240);
-    HoleEntity* hole6 = new HoleEntity(holeTextures, (WINDOW_WIDTH / 2) + 32, 240);
+    // Create holes entities ------------------------------
+    HoleEntity* hole1 = new HoleEntity(mHoleTextures, (WINDOW_WIDTH / 2) - 92, 60);
+    HoleEntity* hole2 = new HoleEntity(mHoleTextures, (WINDOW_WIDTH / 2) + 32, 60);
+    HoleEntity* hole3 = new HoleEntity(mHoleTextures, (WINDOW_WIDTH / 2) - 92, 150);
+    HoleEntity* hole4 = new HoleEntity(mHoleTextures, (WINDOW_WIDTH / 2) + 32, 150);
+    HoleEntity* hole5 = new HoleEntity(mHoleTextures, (WINDOW_WIDTH / 2) - 92, 240);
+    HoleEntity* hole6 = new HoleEntity(mHoleTextures, (WINDOW_WIDTH / 2) + 32, 240);
     mEntities.push_back(hole1);
     mEntities.push_back(hole2);
     mEntities.push_back(hole3);
@@ -64,16 +63,19 @@ PlayScene::PlayScene(SceneContext* context) {
     mEntities.push_back(hole5);
     mEntities.push_back(hole6);
 
-    // Initialize mouse entity
+    // Initialize mouse entity ----------------------------
     mHammer = new HammerEntity(&hammerTexture);
 }
 
 PlayScene::~PlayScene() {
-
+    // TODO: Set pointers to null
+    mHoleTextures[0] = NULL;
+    mHoleTextures[1] = NULL;
+    mHoleTextures[2] = NULL;
+    mHammer = NULL;
 }
 
 void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
-    // Handle Events
     while(SDL_PollEvent(e)) {
         if(e->type == SDL_QUIT) {
             isRunning = false;
@@ -88,9 +90,7 @@ void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
 }
 
 void PlayScene::update() {
-    // Update
-
-    // Check for collision
+    // Check for collision --------------------------------
     int mx, my;
     SDL_GetMouseState(&mx, &my);
     int mpos[2] = {mx, my};
@@ -109,7 +109,7 @@ void PlayScene::update() {
         }
     }
 
-    // Update hammer entity
+    // Update hammer entity -------------------------------
     if(mMouseClicked) {
         mHammer->smash();
         mMouseClicked = false;
@@ -117,29 +117,29 @@ void PlayScene::update() {
 
     mHammer->update();
 
-    printf("Score: %d\n", score);
-
-    // Update entities
+    // Update entities ------------------------------------
     for(iter = mEntities.begin(); iter != mEntities.end(); iter++) {
         (*iter)->update();
     }
 }
 
 void PlayScene::draw(SDL_Renderer* renderer) {
-    // Draw
+    // Set render draw color, and clear renderer ----------
     SDL_SetRenderDrawColor(renderer, 155, 188, 15, 255);
     SDL_RenderClear(renderer);
 
-    // Draw hole entities
+    // Draw hole entities ---------------------------------
     std::vector<HoleEntity*>::iterator iter;
     for(iter = mEntities.begin(); iter != mEntities.end(); iter++) {
         (*iter)->draw(renderer);
     }
 
-    // Draw hammer
+    // Draw hammer ----------------------------------------
     mHammer->draw(renderer);
 
+    // Render crap ----------------------------------------
     SDL_RenderPresent(renderer);
+    //printf("Score: %d\n", score);
 }
 
 

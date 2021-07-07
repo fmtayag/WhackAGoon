@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 #include "entities.h"
+#include "utils.h"
 
 /* -------------------------------------------------
  * Hole entity
@@ -84,7 +85,9 @@ bool HoleEntity::whack() {
 
 void HoleEntity::chooseType() {
     // Choose a random number between 0 and TYPE_MAXNO (value 4)
-    mType = rand() % TYPE_MAXNO;
+    int interval[3] = {TYPE_GOON, TYPE_TOWNIE, TYPE_MAXNO};
+    int weights[3] = {10, 3, 1};
+    mType = pickWeighted(interval, weights);
 }
 
 void HoleEntity::doResting() {
@@ -95,7 +98,7 @@ void HoleEntity::doResting() {
         // Reset resting and active timers
         mRestingTimer = now;
         srand(time(0));
-        mActiveDuration = rand() % 5000 + 1000;
+        mActiveDuration = rand() % 2000 + 1000;
         mActiveTimer = SDL_GetTicks();
 
         // Choose next type
@@ -112,7 +115,7 @@ void HoleEntity::doActive() {
     if(now - mActiveTimer > mActiveDuration) {
 
         // Reset resting timer
-        mRestingDuration = rand() % 5000 + 1000;
+        mRestingDuration = rand() % 3000 + 1000;
         mRestingTimer = now;
 
         // Change state to resting

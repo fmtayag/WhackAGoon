@@ -51,11 +51,14 @@ private:
     SceneContext* mContext;
     bool mMouseClicked;
 
+    // Textures list
+    SDL_Texture** mHoleTextures[3];
+
     // Entities
     std::vector<HoleEntity*> mEntities;
     HammerEntity* mHammer;
 
-    // Scores, and other crap
+    // Scores, and crap
     int score;
 };
 
