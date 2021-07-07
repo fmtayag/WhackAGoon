@@ -44,13 +44,19 @@ PlayScene::PlayScene(SceneContext* context) {
     mContext = context;
     score = 0;
 
+    // Textures list
+    SDL_Texture** holeTextures[3];
+    holeTextures[0] = &goonTexture;
+    holeTextures[1] = &townieTexture;
+    holeTextures[2] = &mayorTexture;
+
     // Create holes
-    HoleEntity* hole1 = new HoleEntity(&goonTexture, (WINDOW_WIDTH / 2) - 92, 60);
-    HoleEntity* hole2 = new HoleEntity(&goonTexture, (WINDOW_WIDTH / 2) + 32, 60);
-    HoleEntity* hole3 = new HoleEntity(&goonTexture, (WINDOW_WIDTH / 2) - 92, 150);
-    HoleEntity* hole4 = new HoleEntity(&goonTexture, (WINDOW_WIDTH / 2) + 32, 150);
-    HoleEntity* hole5 = new HoleEntity(&goonTexture, (WINDOW_WIDTH / 2) - 92, 240);
-    HoleEntity* hole6 = new HoleEntity(&goonTexture, (WINDOW_WIDTH / 2) + 32, 240);
+    HoleEntity* hole1 = new HoleEntity(holeTextures, (WINDOW_WIDTH / 2) - 92, 60);
+    HoleEntity* hole2 = new HoleEntity(holeTextures, (WINDOW_WIDTH / 2) + 32, 60);
+    HoleEntity* hole3 = new HoleEntity(holeTextures, (WINDOW_WIDTH / 2) - 92, 150);
+    HoleEntity* hole4 = new HoleEntity(holeTextures, (WINDOW_WIDTH / 2) + 32, 150);
+    HoleEntity* hole5 = new HoleEntity(holeTextures, (WINDOW_WIDTH / 2) - 92, 240);
+    HoleEntity* hole6 = new HoleEntity(holeTextures, (WINDOW_WIDTH / 2) + 32, 240);
     mEntities.push_back(hole1);
     mEntities.push_back(hole2);
     mEntities.push_back(hole3);

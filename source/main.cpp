@@ -21,6 +21,8 @@ SDL_Window* gWindow;
 SDL_Renderer* gRenderer;
 SDL_Texture* fooTexture;
 SDL_Texture* goonTexture;
+SDL_Texture* townieTexture;
+SDL_Texture* mayorTexture;
 SDL_Texture* hammerTexture;
 
 bool initialize();
@@ -42,7 +44,7 @@ int main(int argv, char** args){
     SDL_ShowCursor(SDL_DISABLE);
 
     // Game loop
-    if(isInitialized & hasLoadedAssets) {
+    if(isInitialized && hasLoadedAssets) {
         SceneContext gContext;
         SDL_Event e;
         bool isRunning = true;
@@ -130,6 +132,18 @@ bool loadAssets() {
         isSuccessful = false;
     }
 
+    townieTexture = loadTextureFromFile(gRenderer, "assets/images/townie.png");
+    if(townieTexture == NULL) {
+        printf("Failed to load townieTexture.\n");
+        isSuccessful = false;
+    }
+
+    mayorTexture = loadTextureFromFile(gRenderer, "assets/images/mayor.png");
+    if(mayorTexture == NULL) {
+        printf("Failed to load mayorTexture.\n");
+        isSuccessful = false;
+    }
+
     hammerTexture = loadTextureFromFile(gRenderer, "assets/images/hammer.png");
     if(hammerTexture == NULL) {
         printf("Failed to load hammerTexture.\n");
@@ -147,6 +161,8 @@ void cleanUp() {
     // Destroy textures
     cleanUpTexture(fooTexture);
     cleanUpTexture(goonTexture);
+    cleanUpTexture(townieTexture);
+    cleanUpTexture(mayorTexture);
     cleanUpTexture(hammerTexture);
 
     // Destroy window

@@ -8,9 +8,12 @@
  * Hole entity
  * -------------------------------------------------
  */
-HoleEntity::HoleEntity(SDL_Texture** texture, int x, int y) {
-    // Initialize texture and rect
-    mTexture = texture;
+HoleEntity::HoleEntity(SDL_Texture** textures[], int x, int y) {
+    // Point mTextures to array ref
+    mTextures = *textures;
+
+    // Initialize textures and rect
+    mTexture = mTextures[TYPE_GOON];
     mRect.x = x;
     mRect.y = y;
     mRect.w = 64;
@@ -37,6 +40,9 @@ HoleEntity::HoleEntity(SDL_Texture** texture, int x, int y) {
     mRestingDuration = rand() % 8000 + 1000;
     mRestingTimer = SDL_GetTicks();
     mWhackedDuration = 1000;
+
+    // choose type
+    chooseType();
 }
 
 void HoleEntity::update() {
@@ -51,21 +57,10 @@ void HoleEntity::update() {
         doWhacked();
         break;
     }
-
-    /* Algorithm
-     * 1. Count down until next active state
-     * 2. Set state to ST_ACTIVE
-     * 3. Wait to get whacked
-     * 4. Set state to ST_WHACKED
-     * 5. Set state to ST_RESTING after some time
-     * 6. Set random timer until next active state
-     * 7. Go to step 1.
-     */
 }
 
 void HoleEntity::draw(SDL_Renderer*& renderer) {
-    // draw texture
-    SDL_RenderCopy(renderer, *mTexture, &mClips[mState], &mRect);
+    SDL_RenderCopy(renderer, mTextures[mType], &mClips[mState], &mRect);
 }
 
 const SDL_Rect* HoleEntity::getRect() {
@@ -87,9 +82,12 @@ bool HoleEntity::whack() {
     }
 }
 
-void HoleEntity::doResting() {
-    //printf("Resting.\n");
+void HoleEntity::chooseType() {
+    // Choose a random number between 0 and TYPE_MAXNO (value 4)
+    mType = rand() % TYPE_MAXNO;
+}
 
+void HoleEntity::doResting() {
     // Count down until 'resting state' duration
     int now = SDL_GetTicks();
     if(now - mRestingTimer > mRestingDuration) {
@@ -100,14 +98,15 @@ void HoleEntity::doResting() {
         mActiveDuration = rand() % 5000 + 1000;
         mActiveTimer = SDL_GetTicks();
 
+        // Choose next type
+        chooseType();
+
         // Change state to active
         mState = ST_ACTIVE;
     }
 }
 
 void HoleEntity::doActive() {
-    //printf("Active.\n");
-
     // Count down until 'active state' duration
     int now = SDL_GetTicks();
     if(now - mActiveTimer > mActiveDuration) {
@@ -122,8 +121,6 @@ void HoleEntity::doActive() {
 }
 
 void HoleEntity::doWhacked() {
-    //printf("Whacked.%d | %d\n", SDL_GetTicks(), mWhackedTimer);
-
     // Count down until 'whacked state' duration
     int now = SDL_GetTicks();
     if(now - mWhackedTimer > mWhackedDuration) {
