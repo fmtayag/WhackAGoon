@@ -21,19 +21,36 @@ public:
  * Hole Entity
  * -------------------------------------------------
  */
+
+enum ENTITY_STATES {
+    ST_RESTING,
+    ST_ACTIVE,
+    ST_WHACKED
+};
+
+enum HOLE_TYPES {
+    TYPE_GOON,
+    TYPE_TOWNIE,
+    TYPE_MAYOR,
+    TYPE_MAXNO
+};
+
 class HoleEntity: public AbstractEntity {
 public:
     HoleEntity(SDL_Texture** textures[], int x, int y);
+    ~HoleEntity();
     void update();
     void draw(SDL_Renderer*& renderer);
-    const SDL_Rect* getRect();
     bool whack();
-    void chooseType();
 
     // State methods
     void doResting();
     void doActive();
     void doWhacked();
+
+    // Getters
+    int getType() {return mType;}
+    const SDL_Rect* getRect() {return &mRect;}
 
 private:
     // Texture and rect
@@ -42,22 +59,11 @@ private:
     SDL_Rect mRect;
     SDL_Rect mClips[3];
 
-    // States
+    // State
     int mState;
-    enum ENTITY_STATES {
-        ST_RESTING,
-        ST_ACTIVE,
-        ST_WHACKED
-    };
 
-    // Types
+    // Type
     int mType;
-    enum TYPES {
-        TYPE_GOON,
-        TYPE_TOWNIE,
-        TYPE_MAYOR,
-        TYPE_MAXNO
-    };
 
     // Timers
     int mRestingTimer;
@@ -66,6 +72,8 @@ private:
     int mActiveDuration;
     int mWhackedTimer;
     int mWhackedDuration;
+
+    void chooseType();
 };
 
 /* -------------------------------------------------

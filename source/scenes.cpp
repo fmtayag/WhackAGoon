@@ -99,11 +99,18 @@ void PlayScene::update() {
     for(iter = mEntities.begin(); iter != mEntities.end(); iter++) {
         bool isCollide = isPointCollide(mpos, (*iter)->getRect());
         if(isCollide && mMouseClicked) {
-            bool isActive = (*iter)->whack();
+            bool isActiveState = (*iter)->whack();
 
-            // Add score
-            if(isActive)
-                score++;
+            if(isActiveState) {
+                int holeType = (*iter)->getType();
+
+                // Add score
+                switch(holeType) {
+                    case TYPE_GOON: score++; break;
+                    case TYPE_TOWNIE: score--; break;
+                    case TYPE_MAYOR: score-=10; break; // TODO - change to game over
+                }
+            }
 
             continue;
         }
@@ -137,9 +144,23 @@ void PlayScene::draw(SDL_Renderer* renderer) {
     // Draw hammer ----------------------------------------
     mHammer->draw(renderer);
 
+    // Draw texts
+    SDL_Rect textRect;
+    SDL_Color textColor = {15, 56, 15};
+    std::string message = "Score: " + std::to_string(score);
+    SDL_Surface* textSurface = TTF_RenderText_Solid(gFont, message.c_str(), textColor);
+    textRect.x = 0;
+    textRect.y = 0;
+    textRect.w = textSurface->w;
+    textRect.h = textSurface->h;
+    SDL_Texture* helloTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    SDL_FreeSurface(textSurface);
+
+    SDL_RenderCopy(renderer, helloTexture, NULL, &textRect);
+
     // Render crap ----------------------------------------
     SDL_RenderPresent(renderer);
-    //printf("Score: %d\n", score);
+
 }
 
 

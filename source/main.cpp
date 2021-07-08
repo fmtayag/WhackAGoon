@@ -12,13 +12,20 @@
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include "scenes.h"
 #include "metadata.h"
 #include "assets.h"
 #include "utils.h"
 
+// Window and renderer
 SDL_Window* gWindow;
 SDL_Renderer* gRenderer;
+
+// Font
+TTF_Font* gFont;
+
+// Textures
 SDL_Texture* fooTexture;
 SDL_Texture* goonTexture;
 SDL_Texture* townieTexture;
@@ -97,7 +104,13 @@ bool initialize() {
                 if( (IMG_Init(flags) & flags) != flags ) {
                     printf("SDL_image failed to initialize. Error: %s.\n", IMG_GetError());
                     isSuccessful = false;
-;               }
+                }
+
+                // Initialize SDL_ttf
+                if(TTF_Init() < 0) {
+                    printf("SDL_ttf failed to initialize. Error: %s.\n", TTF_GetError());
+                    isSuccessful = false;
+                }
             }
         }
     }
@@ -118,6 +131,13 @@ bool loadAssets() {
     SDL_SetWindowIcon(gWindow, iconSurface);
     SDL_FreeSurface(iconSurface);
     iconSurface = NULL;
+
+    // Load font
+    gFont = TTF_OpenFont("assets/fonts/04B_03__.TTF", 28);
+    if(gFont == NULL) {
+        printf("Failed to load font.\n");
+        isSuccessful = false;
+    }
 
     // Load textures
     fooTexture = loadTextureFromFile(gRenderer, "assets/images/foo.png");
@@ -173,7 +193,8 @@ void cleanUp() {
     SDL_DestroyRenderer(gRenderer);
     gRenderer = NULL;
 
-    // Quit SDL_image, and SDL
+    // Quit SDL subsystems
+    TTF_Quit();
     IMG_Quit();
     SDL_Quit();
 }

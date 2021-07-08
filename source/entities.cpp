@@ -46,6 +46,11 @@ HoleEntity::HoleEntity(SDL_Texture** textures[], int x, int y) {
     chooseType();
 }
 
+HoleEntity::~HoleEntity() {
+    mTextures = NULL;
+    mTexture = NULL;
+}
+
 void HoleEntity::update() {
     switch(mState) {
     case ST_RESTING:
@@ -62,10 +67,6 @@ void HoleEntity::update() {
 
 void HoleEntity::draw(SDL_Renderer*& renderer) {
     SDL_RenderCopy(renderer, mTextures[mType], &mClips[mState], &mRect);
-}
-
-const SDL_Rect* HoleEntity::getRect() {
-    return &mRect;
 }
 
 bool HoleEntity::whack() {
