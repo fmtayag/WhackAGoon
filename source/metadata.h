@@ -4,8 +4,8 @@
 
 // Game metadata
 const std::string GAME_TITLE = "Whack-A-Goon!";
-const int WINDOW_WIDTH = 320;
-const int WINDOW_HEIGHT = 480;
+const int WINDOW_WIDTH = 640;
+const int WINDOW_HEIGHT = 640;
 
 // Author metadata
 const std::string GAME_AUTHOR = "zyenapz";

@@ -42,7 +42,14 @@ void SceneContext::Draw(SDL_Renderer* renderer) {
  */
 PlayScene::PlayScene(SceneContext* context) {
     mContext = context;
+
+    gameTimer = SDL_GetTicks();
+    gameDuration = 30000; // 30 secs
+
     score = 0;
+    towniesHit = 0;
+    isGameOver = false;
+    gameOverMessage = "GAME OVER MESSAGE";
 
     // Textures list --------------------------------------
     mHoleTextures[0] = &goonTexture;
@@ -50,18 +57,16 @@ PlayScene::PlayScene(SceneContext* context) {
     mHoleTextures[2] = &mayorTexture;
 
     // Create holes entities ------------------------------
-    HoleEntity* hole1 = new HoleEntity(mHoleTextures, (WINDOW_WIDTH / 2) - 92, 60);
-    HoleEntity* hole2 = new HoleEntity(mHoleTextures, (WINDOW_WIDTH / 2) + 32, 60);
-    HoleEntity* hole3 = new HoleEntity(mHoleTextures, (WINDOW_WIDTH / 2) - 92, 150);
-    HoleEntity* hole4 = new HoleEntity(mHoleTextures, (WINDOW_WIDTH / 2) + 32, 150);
-    HoleEntity* hole5 = new HoleEntity(mHoleTextures, (WINDOW_WIDTH / 2) - 92, 240);
-    HoleEntity* hole6 = new HoleEntity(mHoleTextures, (WINDOW_WIDTH / 2) + 32, 240);
+    HoleEntity* hole1 = new HoleEntity(mHoleTextures, (WINDOW_WIDTH / 2) - 128-32, 128);
+    HoleEntity* hole2 = new HoleEntity(mHoleTextures, (WINDOW_WIDTH / 2) + 128-96, 128);
+    HoleEntity* hole3 = new HoleEntity(mHoleTextures, (WINDOW_WIDTH / 2) - 128-32, 256);
+    HoleEntity* hole4 = new HoleEntity(mHoleTextures, (WINDOW_WIDTH / 2) + 128-96, 256);
+    HoleEntity* hole5 = new HoleEntity(mHoleTextures, (WINDOW_WIDTH / 2) - 64, 384);
     mEntities.push_back(hole1);
     mEntities.push_back(hole2);
     mEntities.push_back(hole3);
     mEntities.push_back(hole4);
     mEntities.push_back(hole5);
-    mEntities.push_back(hole6);
 
     // Initialize mouse entity ----------------------------
     mHammer = new HammerEntity(&hammerTexture);
@@ -87,14 +92,21 @@ void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
             mMouseClicked = false;
         }
     }
+
+    // Update mouse position
+    SDL_GetMouseState(&mx, &my);
+    mpos[0] = mx;
+    mpos[1] = my;
+
+    // Exit game
+    if(isGameOver) {
+        isRunning = false;
+        printf("Game over: %s!\n", gameOverMessage.c_str());
+    }
 }
 
 void PlayScene::update() {
     // Check for collision --------------------------------
-    int mx, my;
-    SDL_GetMouseState(&mx, &my);
-    int mpos[2] = {mx, my};
-
     std::vector<HoleEntity*>::iterator iter;
     for(iter = mEntities.begin(); iter != mEntities.end(); iter++) {
         bool isCollide = isPointCollide(mpos, (*iter)->getRect());
@@ -104,11 +116,30 @@ void PlayScene::update() {
             if(isActiveState) {
                 int holeType = (*iter)->getType();
 
-                // Add score
                 switch(holeType) {
-                    case TYPE_GOON: score++; break;
-                    case TYPE_TOWNIE: score--; break;
-                    case TYPE_MAYOR: score-=10; break; // TODO - change to game over
+                    case TYPE_GOON:
+                        score++;
+                        break;
+                    case TYPE_TOWNIE:
+                        score-=5;
+                        towniesHit++;
+
+                        if(towniesHit >= MAX_TOWNIE_HITS) {
+                            isGameOver = true;
+                            gameOverMessage = "You hit too many Townies";
+                        }
+
+                        break;
+                    case TYPE_MAYOR:
+                        score-=10;
+                        isGameOver = true;
+                        gameOverMessage = "You hit the Mayor";
+                        break;
+                }
+
+                // Prevent negative score
+                if(score < 0) {
+                    score = 0;
                 }
             }
 
@@ -135,6 +166,18 @@ void PlayScene::draw(SDL_Renderer* renderer) {
     SDL_SetRenderDrawColor(renderer, 155, 188, 15, 255);
     SDL_RenderClear(renderer);
 
+    // Draw background ------------------------------------
+    SDL_RenderCopy(renderer, bgTexture, NULL, NULL);
+
+    // Draw play field box --------------------------------
+    SDL_Rect boxRect = {
+        (WINDOW_WIDTH / 2) - (448/2),
+        (WINDOW_HEIGHT / 2) - (528/2),
+        448,
+        528
+    };
+    SDL_RenderCopy(renderer, boxTexture, NULL, &boxRect);
+
     // Draw hole entities ---------------------------------
     std::vector<HoleEntity*>::iterator iter;
     for(iter = mEntities.begin(); iter != mEntities.end(); iter++) {
@@ -144,19 +187,9 @@ void PlayScene::draw(SDL_Renderer* renderer) {
     // Draw hammer ----------------------------------------
     mHammer->draw(renderer);
 
-    // Draw texts
-    SDL_Rect textRect;
-    SDL_Color textColor = {15, 56, 15};
-    std::string message = "Score: " + std::to_string(score);
-    SDL_Surface* textSurface = TTF_RenderText_Solid(gFont, message.c_str(), textColor);
-    textRect.x = 0;
-    textRect.y = 0;
-    textRect.w = textSurface->w;
-    textRect.h = textSurface->h;
-    SDL_Texture* helloTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-    SDL_FreeSurface(textSurface);
-
-    SDL_RenderCopy(renderer, helloTexture, NULL, &textRect);
+    // Draw texts -----------------------------------------
+    std::string scoreMessage = "Score: " + std::to_string(score);
+    drawText(renderer, scoreMessage, gFont, 10, 10, {255,255,255});
 
     // Render crap ----------------------------------------
     SDL_RenderPresent(renderer);

@@ -17,8 +17,8 @@ HoleEntity::HoleEntity(SDL_Texture** textures[], int x, int y) {
     mTexture = mTextures[TYPE_GOON];
     mRect.x = x;
     mRect.y = y;
-    mRect.w = 64;
-    mRect.h = 64;
+    mRect.w = 128;
+    mRect.h = 128;
 
     // Initialize clips
     mClips[ST_RESTING].x = 0;
@@ -148,8 +148,8 @@ HammerEntity::HammerEntity(SDL_Texture** texture) {
     mTexture = texture;
     mRect.x = 0;
     mRect.y = 0;
-    mRect.w = 64;
-    mRect.h = 64;
+    mRect.w = 128;
+    mRect.h = 128;
 
     // Initialize clips
     mClips[ST_UNSMASHED].x = 0;

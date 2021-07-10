@@ -27,6 +27,8 @@ TTF_Font* gFont;
 
 // Textures
 SDL_Texture* fooTexture;
+SDL_Texture* bgTexture;
+SDL_Texture* boxTexture;
 SDL_Texture* goonTexture;
 SDL_Texture* townieTexture;
 SDL_Texture* mayorTexture;
@@ -93,7 +95,8 @@ bool initialize() {
         }
         else {
             // Create renderer
-            gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+            int rendererFlags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE;
+            gRenderer = SDL_CreateRenderer(gWindow, -1, rendererFlags);
             if(gRenderer == NULL) {
                 printf("SDL failed to create renderer. Error: %s.\n", SDL_GetError());
                 isSuccessful = false;
@@ -146,6 +149,18 @@ bool loadAssets() {
         isSuccessful = false;
     }
 
+    bgTexture = loadTextureFromFile(gRenderer, "assets/images/background.png");
+    if(bgTexture == NULL) {
+        printf("Failed to load bgTexture.\n");
+        isSuccessful = false;
+    }
+
+    boxTexture = loadTextureFromFile(gRenderer, "assets/images/box.png");
+    if(boxTexture == NULL) {
+        printf("Failed to load boxTexture.\n");
+        isSuccessful = false;
+    }
+
     goonTexture = loadTextureFromFile(gRenderer, "assets/images/goon.png");
     if(goonTexture == NULL) {
         printf("Failed to load goonTexture.\n");
@@ -180,6 +195,8 @@ bool loadAssets() {
 void cleanUp() {
     // Destroy textures
     cleanUpTexture(fooTexture);
+    cleanUpTexture(bgTexture);
+    cleanUpTexture(boxTexture);
     cleanUpTexture(goonTexture);
     cleanUpTexture(townieTexture);
     cleanUpTexture(mayorTexture);

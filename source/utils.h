@@ -4,9 +4,13 @@
 
 #include <random>
 #include <ctime>
+#include <SDL2/SDL_ttf.h>
 
 // Loading assets
 SDL_Texture* loadTextureFromFile(SDL_Renderer* renderer, std::string path);
+
+// Rendering texts
+void drawText(SDL_Renderer* renderer, std::string message, TTF_Font* font, int x, int y, SDL_Color color);
 
 // Destroying assets utils
 void cleanUpTexture(SDL_Texture*& texture);

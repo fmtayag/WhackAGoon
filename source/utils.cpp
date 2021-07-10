@@ -32,6 +32,32 @@ SDL_Texture* loadTextureFromFile(SDL_Renderer* renderer, std::string path) {
     return texture;
 }
 
+
+/* -------------------------------------------------
+ * drawText
+ * -------------------------------------------------
+ */
+void drawText(SDL_Renderer* renderer, std::string message, TTF_Font* font, int x, int y, SDL_Color color) {
+    // Create temp surface
+    SDL_Surface* textSurface = TTF_RenderText_Solid(font, message.c_str(), color);
+
+    // Create rect
+    SDL_Rect textRect = {x, y, textSurface->w, textSurface->h};
+
+    // Create texture
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, textSurface);
+
+    // Free temp surface
+    SDL_FreeSurface(textSurface);
+
+    // Draw texture
+    SDL_RenderCopy(renderer, texture, NULL, &textRect);
+
+    // Destroy texture
+    SDL_DestroyTexture(texture);
+}
+
+
 /* -------------------------------------------------
  * cleanUpTexture
  * -------------------------------------------------

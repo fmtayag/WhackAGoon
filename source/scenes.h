@@ -51,6 +51,19 @@ private:
     SceneContext* mContext;
     bool mMouseClicked;
 
+    const short int MAX_TOWNIE_HITS = 3;
+    short int towniesHit;
+    bool isGameOver;
+    std::string gameOverMessage;
+
+    // Mouse position
+    int mx, my;
+    int mpos[2];
+
+    // Game timer
+    int gameTimer;
+    int gameDuration;
+
     // Textures list
     SDL_Texture** mHoleTextures[3];
 

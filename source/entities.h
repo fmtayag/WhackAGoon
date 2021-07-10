@@ -50,7 +50,7 @@ public:
 
     // Getters
     int getType() {return mType;}
-    const SDL_Rect* getRect() {return &mRect;}
+    SDL_Rect* getRect() {return &mRect;}
 
 private:
     // Texture and rect
