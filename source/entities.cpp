@@ -20,7 +20,7 @@ HoleEntity::HoleEntity(SDL_Texture** textures[], int x, int y) {
     mRect.w = 128;
     mRect.h = 128;
 
-    // Initialize clips
+    // Initialize image clips
     mClips[ST_RESTING].x = 0;
     mClips[ST_RESTING].y = 0;
     mClips[ST_RESTING].w = 16;

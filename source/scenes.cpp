@@ -81,6 +81,7 @@ PlayScene::~PlayScene() {
 }
 
 void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
+    // Handle events --------------------------------------
     while(SDL_PollEvent(e)) {
         if(e->type == SDL_QUIT) {
             isRunning = false;
@@ -93,16 +94,17 @@ void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
         }
     }
 
+    // End game check
+    if(isGameOver) {
+        isRunning = false;
+        printf("Game over: %s!\n", gameOverMessage.c_str());
+    }
+
     // Update mouse position
     SDL_GetMouseState(&mx, &my);
     mpos[0] = mx;
     mpos[1] = my;
 
-    // Exit game
-    if(isGameOver) {
-        isRunning = false;
-        printf("Game over: %s!\n", gameOverMessage.c_str());
-    }
 }
 
 void PlayScene::update() {
@@ -110,6 +112,7 @@ void PlayScene::update() {
     std::vector<HoleEntity*>::iterator iter;
     for(iter = mEntities.begin(); iter != mEntities.end(); iter++) {
         bool isCollide = isPointCollide(mpos, (*iter)->getRect());
+
         if(isCollide && mMouseClicked) {
             bool isActiveState = (*iter)->whack();
 
