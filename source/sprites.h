@@ -2,6 +2,8 @@
 #define SPRITES_H
 #pragma once
 
+#include <vector>
+
 /////////////////////// Abstract Sprite
 class AbstractSprite {
     virtual void update() = 0;
@@ -14,7 +16,25 @@ class AbstractSprite {
 
 
 
+
+
+
+
 /////////////////////// Hole Sprite
+enum H_STATE {
+    HST_RESTING,
+    HST_TOACTIVE,
+    HST_ACTIVE,
+    HST_WHACKED,
+    HST_TORESTING
+};
+
+enum H_TYPE {
+    HTY_GOON,
+    HTY_TOWNIE,
+    HTY_MAYOR
+};
+
 class HoleSprite {
 public:
     HoleSprite(SDL_Texture* spritesheet, int x, int y);
@@ -28,14 +48,19 @@ public:
     int getCurrentFrame();
 
 private:
-    int mState;
-    int mType;
-    int m_CurrentFrame;
+    int m_State;
+    int m_Type;
+    int m_CurFrame;
 
     SDL_Texture* mSpritesheet;
     SDL_Rect mRect;
-    SDL_Rect mClip;
+    SDL_Rect* m_CurClip;
 };
+
+
+
+
+
 
 
 

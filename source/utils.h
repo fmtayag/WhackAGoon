@@ -4,6 +4,7 @@
 
 #include <random>
 #include <ctime>
+#include <cstddef>
 #include <SDL2/SDL_ttf.h>
 
 // Loading assets
@@ -32,5 +33,10 @@ int pickWeighted(const int (&numbers)[N], const int (&weights)[M]) {
     return randNum;
 }
 
+// For getting size of array pointer
+template<typename T, size_t SIZE>
+size_t getSize(T (&)[SIZE]) {
+    return SIZE;
+}
 
 #endif // UTILS_H
