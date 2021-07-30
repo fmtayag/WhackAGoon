@@ -6,6 +6,7 @@
 #include <vector>
 #include <SDL2/SDL.h>
 #include "entities.h"
+#include "sprites.h"
 
 class AbstractScene {
 public:
@@ -49,30 +50,20 @@ public:
 
 private:
     SceneContext* mContext;
-    bool mMouseClicked;
 
-    const short int MAX_TOWNIE_HITS = 3;
-    short int towniesHit;
-    bool isGameOver;
     std::string gameOverMessage;
-
-    // Mouse position
+    bool isGameOver;
+    bool mMouseClicked;
     int mx, my;
     int mpos[2];
-
-    // Game timer
     int gameTimer;
     int gameDuration;
-
-    // Textures list
-    SDL_Texture** mHoleTextures[3];
-
-    // Entities
-    std::vector<HoleEntity*> mEntities;
-    HammerEntity* mHammer;
-
-    // Scores, and crap
     int score;
+    int towniesHit;
+
+    // test
+    HoleSprite* hSprite;
+
 };
 
 #endif // SCENES_H

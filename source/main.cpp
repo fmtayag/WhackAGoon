@@ -26,13 +26,9 @@ SDL_Renderer* gRenderer;
 TTF_Font* gFont;
 
 // Textures
-SDL_Texture* fooTexture;
 SDL_Texture* bgTexture;
 SDL_Texture* boxTexture;
-SDL_Texture* goonTexture;
-SDL_Texture* townieTexture;
-SDL_Texture* mayorTexture;
-SDL_Texture* hammerTexture;
+SDL_Texture* spritesTexture;
 
 bool initialize();
 bool loadAssets();
@@ -143,12 +139,6 @@ bool loadAssets() {
     }
 
     // Load textures
-    fooTexture = loadTextureFromFile(gRenderer, "assets/images/foo.png");
-    if(fooTexture == NULL) {
-        printf("Failed to load fooTexture.\n");
-        isSuccessful = false;
-    }
-
     bgTexture = loadTextureFromFile(gRenderer, "assets/images/background.png");
     if(bgTexture == NULL) {
         printf("Failed to load bgTexture.\n");
@@ -161,27 +151,9 @@ bool loadAssets() {
         isSuccessful = false;
     }
 
-    goonTexture = loadTextureFromFile(gRenderer, "assets/images/goon.png");
-    if(goonTexture == NULL) {
-        printf("Failed to load goonTexture.\n");
-        isSuccessful = false;
-    }
-
-    townieTexture = loadTextureFromFile(gRenderer, "assets/images/townie.png");
-    if(townieTexture == NULL) {
-        printf("Failed to load townieTexture.\n");
-        isSuccessful = false;
-    }
-
-    mayorTexture = loadTextureFromFile(gRenderer, "assets/images/mayor.png");
-    if(mayorTexture == NULL) {
-        printf("Failed to load mayorTexture.\n");
-        isSuccessful = false;
-    }
-
-    hammerTexture = loadTextureFromFile(gRenderer, "assets/images/hammer.png");
-    if(hammerTexture == NULL) {
-        printf("Failed to load hammerTexture.\n");
+    spritesTexture = loadTextureFromFile(gRenderer, "assets/images/sprites.png");
+    if(spritesTexture == NULL) {
+        printf("Failed to load spritesTexture.\n");
         isSuccessful = false;
     }
 
@@ -194,13 +166,9 @@ bool loadAssets() {
  */
 void cleanUp() {
     // Destroy textures
-    cleanUpTexture(fooTexture);
     cleanUpTexture(bgTexture);
     cleanUpTexture(boxTexture);
-    cleanUpTexture(goonTexture);
-    cleanUpTexture(townieTexture);
-    cleanUpTexture(mayorTexture);
-    cleanUpTexture(hammerTexture);
+    cleanUpTexture(spritesTexture);
 
     // Destroy window
     SDL_DestroyWindow(gWindow);
