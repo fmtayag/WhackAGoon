@@ -85,7 +85,7 @@ void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
                 break;
             }
 
-            printf("Current frame: %d\n", hSprite->getCurrentFrame());
+            printf("Current frame: %d\n", hSprite->getCurFrame());
         }
     }
 

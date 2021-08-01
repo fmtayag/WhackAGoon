@@ -5,7 +5,9 @@
 #include <random>
 #include <ctime>
 #include <cstddef>
+#include <string>
 #include <SDL2/SDL_ttf.h>
+#include "sprites.h"
 
 // Loading assets
 SDL_Texture* loadTextureFromFile(SDL_Renderer* renderer, std::string path);
@@ -38,5 +40,8 @@ template<typename T, size_t SIZE>
 size_t getSize(T (&)[SIZE]) {
     return SIZE;
 }
+
+// turn seq of nums into a key string
+std::string Z_ClipID(AnimState state, HoleType type);
 
 #endif // UTILS_H

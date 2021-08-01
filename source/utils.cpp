@@ -2,11 +2,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "utils.h"
+#include "sprites.h"
 
-/* -------------------------------------------------
- * loadTextureFromFile
- * -------------------------------------------------
- */
 SDL_Texture* loadTextureFromFile(SDL_Renderer* renderer, std::string path) {
     SDL_Surface* tempSurface = NULL;
     SDL_Texture* texture = NULL;
@@ -33,10 +30,10 @@ SDL_Texture* loadTextureFromFile(SDL_Renderer* renderer, std::string path) {
 }
 
 
-/* -------------------------------------------------
- * drawText
- * -------------------------------------------------
- */
+
+
+
+
 void drawText(SDL_Renderer* renderer, std::string message, TTF_Font* font, int x, int y, SDL_Color color) {
     // Create temp surface
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, message.c_str(), color);
@@ -58,19 +55,18 @@ void drawText(SDL_Renderer* renderer, std::string message, TTF_Font* font, int x
 }
 
 
-/* -------------------------------------------------
- * cleanUpTexture
- * -------------------------------------------------
- */
+
+
+
 void cleanUpTexture(SDL_Texture*& texture) {
     SDL_DestroyTexture(texture);
     texture = NULL;
 }
 
-/* -------------------------------------------------
- * isPointCollide
- * -------------------------------------------------
- */
+
+
+
+
 bool isPointCollide(int mpos[2], const SDL_Rect* rect) {
     int mx = mpos[0];
     int my = mpos[1];
@@ -85,4 +81,12 @@ bool isPointCollide(int mpos[2], const SDL_Rect* rect) {
         return false;
 
     return true;
+}
+
+
+
+
+
+std::string Z_ClipID(AnimState state, HoleType type) {
+    return std::to_string(state) + std::to_string(type);
 }

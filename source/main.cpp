@@ -33,10 +33,11 @@ SDL_Texture* spritesTexture;
 bool initialize();
 bool loadAssets();
 void cleanUp();
-/* -------------------------------------------------
- * main
- * -------------------------------------------------
- */
+
+
+
+
+
 int main(int argv, char** args){
     // Initialize and load assets
     bool isInitialized = initialize();
@@ -70,10 +71,9 @@ int main(int argv, char** args){
     return 0;
 }
 
-/* -------------------------------------------------
- * initialize
- * -------------------------------------------------
- */
+
+
+
 bool initialize() {
     bool isSuccessful = true;
 
@@ -118,10 +118,10 @@ bool initialize() {
     return isSuccessful;
 }
 
-/* -------------------------------------------------
- * loadAssets
- * -------------------------------------------------
- */
+
+
+
+
 bool loadAssets() {
     bool isSuccessful = true;
 
@@ -160,10 +160,10 @@ bool loadAssets() {
     return isSuccessful;
 }
 
-/* -------------------------------------------------
- * cleanUp
- * -------------------------------------------------
- */
+
+
+
+
 void cleanUp() {
     // Destroy textures
     cleanUpTexture(bgTexture);

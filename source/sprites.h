@@ -2,6 +2,7 @@
 #define SPRITES_H
 #pragma once
 
+#include <map>
 #include <vector>
 
 /////////////////////// Abstract Sprite
@@ -21,18 +22,19 @@ class AbstractSprite {
 
 
 /////////////////////// Hole Sprite
-enum H_STATE {
-    HST_RESTING,
-    HST_TOACTIVE,
-    HST_ACTIVE,
-    HST_WHACKED,
-    HST_TORESTING
+enum AnimState {
+    AS_Resting,
+    AS_ToAwake,
+    AS_Awake,
+    AS_Whacked,
+    AS_ToResting
 };
 
-enum H_TYPE {
-    HTY_GOON,
-    HTY_TOWNIE,
-    HTY_MAYOR
+enum HoleType {
+    HT_None,
+    HT_Goon,
+    HT_Townie,
+    HT_Mayor
 };
 
 class HoleSprite {
@@ -45,16 +47,19 @@ public:
     // Debug
     void nextFrame();
     void prevFrame();
-    int getCurrentFrame();
+    int getCurFrame() { return m_CurFrame; }
+    int getType() { return m_Type; }
+    int getState() { return m_State; }
 
 private:
-    int m_State;
-    int m_Type;
+    AnimState m_State;
+    HoleType m_Type;
     int m_CurFrame;
 
     SDL_Texture* mSpritesheet;
     SDL_Rect mRect;
     SDL_Rect* m_CurClip;
+    std::map<std::string, std::vector<SDL_Rect>> mpClips;
 };
 
 
@@ -71,6 +76,11 @@ private:
 
 
 /////////////////////// Hammer Sprite
+enum HAM_STATE {
+    HAM_ST_UNSMASHED,
+    HAM_ST_SMASHED
+};
+
 class HammerSprite {
     HammerSprite();
     ~HammerSprite();
