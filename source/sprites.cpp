@@ -13,10 +13,12 @@ HoleSprite::HoleSprite(SDL_Texture* spritesheet, int x, int y) {
     mRect.h = 128;
 
     m_CurFrame = 0;
-    m_State = AS_Awake;
-    m_Type = HT_Goon;
+    m_AnimState = AS_Resting;
+    m_Type = HT_None;
 
-    // set spritesheet clips
+    anim_timer = SDL_GetTicks();
+
+    // --- spritesheet clips and animation delays ---
 
     // Resting animation
     mpClips[Z_ClipID(AS_Resting, HT_None)] = {
@@ -24,7 +26,8 @@ HoleSprite::HoleSprite(SDL_Texture* spritesheet, int x, int y) {
     };
 
 
-    // For Goon
+    // For Goon ---
+    mpAnimDelays[ Z_ClipID(AS_ToAwake, HT_Goon) ] = 100;
     mpClips[Z_ClipID(AS_ToAwake, HT_Goon)] = {
         {0, 32, 16, 16},
         {16, 32, 16, 16},
@@ -35,18 +38,24 @@ HoleSprite::HoleSprite(SDL_Texture* spritesheet, int x, int y) {
         {96, 32, 16, 16},
         {112, 32, 16, 16}
     };
+
+    mpAnimDelays[ Z_ClipID(AS_Awake, HT_Goon) ] = 500;
     mpClips[Z_ClipID(AS_Awake, HT_Goon)] = {
         {0, 48, 16, 16},
         {16, 48, 16, 16},
         {32, 48, 16, 16},
         {48, 48, 16, 16}
     };
+
+    mpAnimDelays[ Z_ClipID(AS_Whacked, HT_Goon) ] = 100;
     mpClips[Z_ClipID(AS_Whacked, HT_Goon)] = {
         {0, 64, 16, 16},
         {16, 64, 16, 16},
         {32, 64, 16, 16},
         {48, 64, 16, 16}
     };
+
+    mpAnimDelays[ Z_ClipID(AS_ToResting, HT_Goon) ] = 100;
     mpClips[Z_ClipID(AS_ToResting, HT_Goon)] = {
         {112, 32, 16, 16},
         {96, 32, 16, 16},
@@ -59,11 +68,11 @@ HoleSprite::HoleSprite(SDL_Texture* spritesheet, int x, int y) {
     };
 
 
-    // For Townie
+    // For Townie ---
     /** TODO **/
 
 
-    // For Mayor
+    // For Mayor ---
     /** TODO **/
 
 
@@ -74,23 +83,57 @@ HoleSprite::~HoleSprite() {
 }
 
 void HoleSprite::update() {
+    animate();
 
 }
-
-
-
 
 void HoleSprite::draw(SDL_Renderer* renderer) {
 
     SDL_RenderCopy(renderer,
                    mSpritesheet,
-                   &mpClips[ Z_ClipID(m_State, m_Type) ][m_CurFrame],
+                   &mpClips[ Z_ClipID(m_AnimState, m_Type) ][m_CurFrame],
                    &mRect);
 }
 
+void HoleSprite::awake(HoleType hType) {
+    m_AnimState = AS_ToAwake;
+    m_Type = hType;
+    m_CurFrame = 0;
 
+//    if(m_AnimState == AS_Resting) {
+//        m_AnimState = AS_ToAwake;
+//        m_Type = HT_Goon; /** TODO: for debug only. **/
+//    }
+//    else {
+//        printf("Debug: HoleSprite was awakened but is not in Resting state.\n");
+//    }
+}
 
+void HoleSprite::whack() {
+    if(m_AnimState == AS_Awake) {
+        m_AnimState = AS_Whacked;
+        m_CurFrame = 0;
+    }
+}
 
+void HoleSprite::animate() {
+
+    int now = SDL_GetTicks();
+    if(now - anim_timer > mpAnimDelays[ Z_ClipID(m_AnimState, m_Type) ]) {
+        anim_timer = now;
+
+        if(m_CurFrame < mpClips[ Z_ClipID(m_AnimState, m_Type) ].size() - 1 ) {
+            m_CurFrame += 1;
+        }
+        else {
+            m_CurFrame = 0;
+
+            if(m_AnimState == AS_ToAwake) {
+                m_AnimState = AS_Awake;
+            }
+        }
+    }
+}
 
 // Debug
 void HoleSprite::nextFrame() {

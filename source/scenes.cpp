@@ -81,6 +81,12 @@ void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
             case SDLK_RIGHT:
                 hSprite->nextFrame();
                 break;
+            case SDLK_F1:
+                hSprite->awake();
+                break;
+            case SDLK_F2:
+                hSprite->whack();
+                break;
             default:
                 break;
             }
@@ -103,7 +109,7 @@ void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
 }
 
 void PlayScene::update() {
-
+    hSprite->update();
 }
 
 void PlayScene::draw(SDL_Renderer* renderer) {

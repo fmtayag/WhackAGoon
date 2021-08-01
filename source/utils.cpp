@@ -88,5 +88,6 @@ bool isPointCollide(int mpos[2], const SDL_Rect* rect) {
 
 
 std::string Z_ClipID(AnimState state, HoleType type) {
+    // turn state, and type into a key string
     return std::to_string(state) + std::to_string(type);
 }
