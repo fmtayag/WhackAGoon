@@ -67,17 +67,17 @@ void cleanUpTexture(SDL_Texture*& texture) {
 
 
 
-bool isPointCollide(int mpos[2], const SDL_Rect* rect) {
-    int mx = mpos[0];
-    int my = mpos[1];
-    int rx = rect->x;
-    int ry = rect->y;
-    int rw = rect->w;
-    int rh = rect->h;
+bool isPointCollide(int point[2], SDL_Rect rect) {
+    int px = point[0];
+    int py = point[1];
+    int rx = rect.x;
+    int ry = rect.y;
+    int rw = rect.w;
+    int rh = rect.h;
 
-    if(mx <= rx || mx >= rx + rw)
+    if(px <= rx || px >= rx + rw)
         return false;
-    else if(my <= ry || my >= ry + rh)
+    else if(py <= ry || py >= ry + rh)
         return false;
 
     return true;

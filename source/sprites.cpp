@@ -7,10 +7,10 @@
 
 HoleSprite::HoleSprite(SDL_Texture* spritesheet, int x, int y) {
     mSpritesheet = spritesheet;
-    mRect.x = x;
-    mRect.y = y;
-    mRect.w = 128;
-    mRect.h = 128;
+    m_Rect.x = x;
+    m_Rect.y = y;
+    m_Rect.w = 128;
+    m_Rect.h = 128;
 
     m_CurFrame = 0;
     m_AnimState = AS_Resting;
@@ -27,7 +27,7 @@ HoleSprite::HoleSprite(SDL_Texture* spritesheet, int x, int y) {
 
 
     // For Goon ---
-    mpAnimDelays[ Z_ClipID(AS_ToAwake, HT_Goon) ] = 100;
+    mpAnimDelays[ Z_ClipID(AS_ToAwake, HT_Goon) ] = 70;
     mpClips[Z_ClipID(AS_ToAwake, HT_Goon)] = {
         {0, 32, 16, 16},
         {16, 32, 16, 16},
@@ -92,7 +92,7 @@ void HoleSprite::draw(SDL_Renderer* renderer) {
     SDL_RenderCopy(renderer,
                    mSpritesheet,
                    &mpClips[ Z_ClipID(m_AnimState, m_Type) ][m_CurFrame],
-                   &mRect);
+                   &m_Rect);
 }
 
 void HoleSprite::awake(HoleType hType) {

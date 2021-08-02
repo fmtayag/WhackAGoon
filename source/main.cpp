@@ -47,7 +47,7 @@ int main(int argv, char** args){
     srand(time(0));
 
     // Disable cursor
-    SDL_ShowCursor(SDL_DISABLE);
+    SDL_ShowCursor(SDL_ENABLE);
 
     // Game loop
     if(isInitialized && hasLoadedAssets) {

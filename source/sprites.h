@@ -52,6 +52,7 @@ public:
     int getCurFrame() { return m_CurFrame; }
     int getType() { return m_Type; }
     int getAnimState() { return m_AnimState; }
+    SDL_Rect getRect() { return m_Rect; }
 
 private:
     AnimState m_AnimState;
@@ -59,7 +60,7 @@ private:
     int m_CurFrame;
 
     SDL_Texture* mSpritesheet;
-    SDL_Rect mRect;
+    SDL_Rect m_Rect;
     SDL_Rect* m_CurClip;
     std::map<std::string, std::vector<SDL_Rect>> mpClips;
 

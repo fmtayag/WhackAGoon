@@ -19,7 +19,7 @@ void drawText(SDL_Renderer* renderer, std::string message, TTF_Font* font, int x
 void cleanUpTexture(SDL_Texture*& texture);
 
 // Collision stuff
-bool isPointCollide(int mpos[2], const SDL_Rect* rect);
+bool isPointCollide(int point[2], SDL_Rect rect);
 
 // RNG utils
 template <std::size_t N, std::size_t M>

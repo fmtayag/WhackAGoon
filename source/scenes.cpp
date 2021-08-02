@@ -50,8 +50,9 @@ PlayScene::PlayScene(SceneContext* context) {
     towniesHit = 0;
     isGameOver = false;
     gameOverMessage = "GAME OVER MESSAGE";
+    mMouseClicked = false;
 
-    hSprite = new HoleSprite(spritesTexture, 0, 0);
+    hSprite = new HoleSprite(spritesTexture, 32, 32);
 
 }
 
@@ -101,6 +102,16 @@ void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
 }
 
 void PlayScene::update() {
+
+    // Collision check
+    bool collided = isPointCollide(mpos, hSprite->getRect());
+    if(collided && mMouseClicked && hSprite->getAnimState() == AS_Awake) {
+       hSprite->whack();
+       mMouseClicked = false;
+
+       score++;
+    }
+
     hSprite->update();
 }
 
