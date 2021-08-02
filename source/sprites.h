@@ -6,8 +6,8 @@
 #include <vector>
 #include <iterator>
 
-/////////////////////// Abstract Sprite
-class AbstractSprite {
+/////////////////////// sprite interf
+class ISprite {
     virtual void update() = 0;
     virtual void draw(SDL_Renderer* renderer) = 0;
 };
@@ -38,7 +38,7 @@ enum HoleType {
     HT_Mayor
 };
 
-class HoleSprite {
+class HoleSprite: public ISprite {
 public:
     HoleSprite(SDL_Texture* spritesheet, int x, int y);
     ~HoleSprite();
@@ -49,9 +49,6 @@ public:
     void whack();
     void awake(HoleType hType = HT_Goon);
 
-    // Debug
-    void nextFrame();
-    void prevFrame();
     int getCurFrame() { return m_CurFrame; }
     int getType() { return m_Type; }
     int getAnimState() { return m_AnimState; }
@@ -68,6 +65,10 @@ private:
 
     int anim_timer;
     std::map<std::string, int> mpAnimDelays;
+    const int WHACKED_DUR = 1300;
+    int whacked_timer;
+    int awake_timer;
+    int awake_dur;
 };
 
 
@@ -89,7 +90,7 @@ enum HAM_STATE {
     HAM_ST_SMASHED
 };
 
-class HammerSprite {
+class HammerSprite: public ISprite {
     HammerSprite();
     ~HammerSprite();
     void update();

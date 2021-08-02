@@ -75,12 +75,6 @@ void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
         // Debug
         if(e->type == SDL_KEYDOWN) {
             switch(e->key.keysym.sym) {
-            case SDLK_LEFT:
-                hSprite->prevFrame();
-                break;
-            case SDLK_RIGHT:
-                hSprite->nextFrame();
-                break;
             case SDLK_F1:
                 hSprite->awake();
                 break;
@@ -90,8 +84,6 @@ void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
             default:
                 break;
             }
-
-            printf("Current frame: %d\n", hSprite->getCurFrame());
         }
     }
 

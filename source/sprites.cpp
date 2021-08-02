@@ -39,7 +39,7 @@ HoleSprite::HoleSprite(SDL_Texture* spritesheet, int x, int y) {
         {112, 32, 16, 16}
     };
 
-    mpAnimDelays[ Z_ClipID(AS_Awake, HT_Goon) ] = 500;
+    mpAnimDelays[ Z_ClipID(AS_Awake, HT_Goon) ] = 700;
     mpClips[Z_ClipID(AS_Awake, HT_Goon)] = {
         {0, 48, 16, 16},
         {16, 48, 16, 16},
@@ -96,52 +96,65 @@ void HoleSprite::draw(SDL_Renderer* renderer) {
 }
 
 void HoleSprite::awake(HoleType hType) {
-    m_AnimState = AS_ToAwake;
-    m_Type = hType;
-    m_CurFrame = 0;
-
-//    if(m_AnimState == AS_Resting) {
-//        m_AnimState = AS_ToAwake;
-//        m_Type = HT_Goon; /** TODO: for debug only. **/
-//    }
-//    else {
-//        printf("Debug: HoleSprite was awakened but is not in Resting state.\n");
-//    }
+    if(m_AnimState == AS_Resting) {
+        m_AnimState = AS_ToAwake;
+        m_Type = hType; /** TODO: for debug only. **/
+         m_CurFrame = 0;
+    }
+    else {
+        printf("Debug: HoleSprite was awakened but was not in Resting state.\n");
+    }
 }
 
 void HoleSprite::whack() {
     if(m_AnimState == AS_Awake) {
         m_AnimState = AS_Whacked;
         m_CurFrame = 0;
+        whacked_timer = SDL_GetTicks();
+    }
+    else {
+        printf("Debug: HoleSprite was whacked but was not in Awake state.\n");
     }
 }
 
 void HoleSprite::animate() {
 
-    int now = SDL_GetTicks();
-    if(now - anim_timer > mpAnimDelays[ Z_ClipID(m_AnimState, m_Type) ]) {
-        anim_timer = now;
+    if(m_AnimState != AS_Resting) {
+        int now = SDL_GetTicks();
+        if(now - anim_timer > mpAnimDelays[ Z_ClipID(m_AnimState, m_Type) ]) {
+            anim_timer = now;
 
-        if(m_CurFrame < mpClips[ Z_ClipID(m_AnimState, m_Type) ].size() - 1 ) {
-            m_CurFrame += 1;
-        }
-        else {
-            m_CurFrame = 0;
+            if(m_CurFrame < mpClips[ Z_ClipID(m_AnimState, m_Type) ].size() - 1 ) {
+                m_CurFrame += 1;
+            }
+            else {
+                m_CurFrame = 0;
 
-            if(m_AnimState == AS_ToAwake) {
-                m_AnimState = AS_Awake;
+                // Switch state check
+                if(m_AnimState == AS_ToAwake) {
+                    m_AnimState = AS_Awake;
+                    awake_timer = SDL_GetTicks();
+                    awake_dur = 5000;
+                }
+                else if(m_AnimState == AS_Awake) {
+                    now = SDL_GetTicks();
+                    if(now - awake_timer > awake_dur) {
+                        m_AnimState = AS_ToResting;
+                    }
+                }
+                else if(m_AnimState == AS_Whacked) {
+                    now = SDL_GetTicks();
+                    if(now - whacked_timer > WHACKED_DUR) {
+                        m_AnimState = AS_ToResting;
+                    }
+                }
+                else if(m_AnimState == AS_ToResting) {
+                    m_AnimState = AS_Resting;
+                    m_Type = HT_None;
+                }
             }
         }
     }
-}
-
-// Debug
-void HoleSprite::nextFrame() {
-    /** TODO: Rework this with a vector iterator **/
 
 }
 
-void HoleSprite::prevFrame() {
-    /** TODO: Rework this with a vector iterator **/
-
-}
