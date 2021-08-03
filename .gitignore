@@ -18,3 +18,4 @@ zlib1.dll
 bin/Debug/WhackAGoon.exe
 *.o
 *.dll
+/unused
