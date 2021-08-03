@@ -106,14 +106,16 @@ void HoleSprite::awake(HoleType hType) {
     }
 }
 
-void HoleSprite::whack() {
-    if(m_AnimState == AS_Awake) {
+bool HoleSprite::whack() {
+    if(m_AnimState == AS_Awake || m_AnimState == AS_ToAwake) {
         m_AnimState = AS_Whacked;
         m_CurFrame = 0;
         whacked_timer = SDL_GetTicks();
+        return true;
     }
     else {
-        printf("Debug: HoleSprite was whacked but was not in Awake state.\n");
+        printf("Debug: HoleSprite was whacked but was not in Awake nor ToAwake state.\n");
+        return false;
     }
 }
 

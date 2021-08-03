@@ -116,11 +116,12 @@ void PlayScene::update() {
     // Collision check
     for(std::vector<HoleSprite*>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++) {
         bool collided = isPointCollide(mpos, (*iter)->getRect());
-        if(collided && mMouseClicked && (*iter)->getAnimState() == AS_Awake) {
-           (*iter)->whack();
-           mMouseClicked = false;
+        if(collided && mMouseClicked) {
+            bool isWhacked = (*iter)->whack();
+            mMouseClicked = false;
 
-           score++;
+            if(isWhacked)
+                score++;
         }
     }
 

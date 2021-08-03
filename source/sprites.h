@@ -46,7 +46,7 @@ public:
     void draw(SDL_Renderer* renderer);
 
     void animate();
-    void whack();
+    bool whack();
     void awake(HoleType hType = HT_Goon);
 
     int getCurFrame() { return m_CurFrame; }
