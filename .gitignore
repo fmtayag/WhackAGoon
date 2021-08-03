@@ -8,6 +8,8 @@ source/obj/Debug/main.o
 source/obj/Debug/scenes.o
 source/obj/Debug/ZRect.o
 source/obj/Debug/utils.o
+/source/NewPanel.cpp
+/source/NewPanel.h
 libjpeg-9.dll
 libpng16-16.dll
 libtiff-5.dll
