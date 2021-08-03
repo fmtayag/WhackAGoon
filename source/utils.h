@@ -44,4 +44,6 @@ size_t getSize(T (&)[SIZE]) {
 // turn state, and type into a key string
 std::string Z_ClipID(AnimState state, HoleType type);
 
+// Debug print
+
 #endif // UTILS_H

@@ -99,7 +99,10 @@ void HoleSprite::awake(HoleType hType) {
     if(m_AnimState == AS_Resting) {
         m_AnimState = AS_ToAwake;
         m_Type = hType; /** TODO: for debug only. **/
-         m_CurFrame = 0;
+        m_CurFrame = 0;
+        awake_dur = rand() % 2500 + 800;
+        awake_timer = SDL_GetTicks();
+        printf("Debug: Awake duration is %d ticks.\n", awake_dur);
     }
     else {
         printf("Debug: HoleSprite was awakened but was not in Resting state.\n");
@@ -135,17 +138,13 @@ void HoleSprite::animate() {
                 // Switch state check
                 if(m_AnimState == AS_ToAwake) {
                     m_AnimState = AS_Awake;
-                    awake_timer = SDL_GetTicks();
-                    awake_dur = 5000;
                 }
                 else if(m_AnimState == AS_Awake) {
-                    now = SDL_GetTicks();
                     if(now - awake_timer > awake_dur) {
                         m_AnimState = AS_ToResting;
                     }
                 }
                 else if(m_AnimState == AS_Whacked) {
-                    now = SDL_GetTicks();
                     if(now - whacked_timer > WHACKED_DUR) {
                         m_AnimState = AS_ToResting;
                     }
@@ -175,7 +174,7 @@ void HoleSprite::animate() {
 
 HoleManager::HoleManager(std::vector<HoleSprite*>& holes) {
     m_Holes = &holes;
-    wakeUpDelay = 1200;
+    wakeUpDelay = 1000;
     wakeUpTimer = SDL_GetTicks();
 }
 
@@ -184,16 +183,20 @@ HoleManager::~HoleManager() {
 }
 
 void HoleManager::update() {
-    for(std::vector<HoleSprite*>::const_iterator iter = (*m_Holes).begin(); iter != (*m_Holes).end(); iter++) {
-        if((*iter)->getType() == HT_None) {
 
-            int now = SDL_GetTicks();
-            if(now - wakeUpTimer > wakeUpDelay) {
-                wakeUpTimer = now;
+    int now = SDL_GetTicks();
+    if(now - wakeUpTimer > wakeUpDelay) {
+        wakeUpTimer = now;
+
+        for(std::vector<HoleSprite*>::const_iterator iter = (*m_Holes).begin(); iter != (*m_Holes).end(); iter++) {
+            int selectThis = rand() & 1; // choose either 0 or 1
+            if((*iter)->getType() == HT_None && selectThis) {
                 (*iter)->awake();
+                wakeUpDelay = rand() % 4000 + 1000;
+                break;
             }
-
         }
     }
+
 }
 
