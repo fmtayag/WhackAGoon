@@ -173,8 +173,7 @@ void HoleSprite::animate() {
 
 HoleManager::HoleManager(std::vector<HoleSprite*>& holes) {
     m_Holes = &holes;
-    wakeUpDelay = 1200;
-    wakeUpTimer = SDL_GetTicks();
+    printf("%d", (*m_Holes)[0]->getRect().w);
 }
 
 HoleManager::~HoleManager() {
@@ -182,16 +181,6 @@ HoleManager::~HoleManager() {
 }
 
 void HoleManager::update() {
-    for(std::vector<HoleSprite*>::const_iterator iter = (*m_Holes).begin(); iter != (*m_Holes).end(); iter++) {
-        if((*iter)->getType() == HT_None) {
 
-            int now = SDL_GetTicks();
-            if(now - wakeUpTimer > wakeUpDelay) {
-                wakeUpTimer = now;
-                (*iter)->awake();
-            }
-
-        }
-    }
 }
 

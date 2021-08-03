@@ -117,10 +117,15 @@ private:
 /////////////////////// Hole Manager
 class HoleManager {
 public:
-    HoleManager();
+    HoleManager(std::vector<HoleSprite*>& holes);
     ~HoleManager();
 
     void update();
+
+private:
+    std::vector<HoleSprite*>* m_Holes;
+    int wakeUpDelay;
+    int wakeUpTimer;
 };
 
 #endif // SPRITES_H

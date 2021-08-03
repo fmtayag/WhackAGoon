@@ -64,6 +64,9 @@ private:
     // test
     HoleSprite* hSprite;
 
+    HoleManager* hManager;
+    std::vector<HoleSprite*> holeSprites;
+
 };
 
 #endif // SCENES_H

@@ -52,12 +52,22 @@ PlayScene::PlayScene(SceneContext* context) {
     gameOverMessage = "GAME OVER MESSAGE";
     mMouseClicked = false;
 
-    hSprite = new HoleSprite(spritesTexture, 32, 32);
+    hSprite = new HoleSprite(spritesTexture, 32, 32); // debug sprite
 
+    const int centerW = (WINDOW_WIDTH/2) - (HOLE_WIDTH/2);
+    const int centerH = (WINDOW_HEIGHT/2) - (HOLE_HEIGHT/2);
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - 96, 64));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - 96, 192));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - 96, 320));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + 96, 64));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + 96, 192));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + 96, 320));
+
+    hManager = new HoleManager(holeSprites);
 }
 
 PlayScene::~PlayScene() {
-
+    hManager = NULL;
 }
 
 void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
@@ -104,15 +114,24 @@ void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
 void PlayScene::update() {
 
     // Collision check
-    bool collided = isPointCollide(mpos, hSprite->getRect());
-    if(collided && mMouseClicked && hSprite->getAnimState() == AS_Awake) {
-       hSprite->whack();
-       mMouseClicked = false;
+    for(std::vector<HoleSprite*>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++) {
+        bool collided = isPointCollide(mpos, (*iter)->getRect());
+        if(collided && mMouseClicked && (*iter)->getAnimState() == AS_Awake) {
+           (*iter)->whack();
+           mMouseClicked = false;
 
-       score++;
+           score++;
+        }
     }
 
+    // run update methods
     hSprite->update();
+
+    for(std::vector<HoleSprite*>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++) {
+        (*iter)->update();
+    }
+
+    hManager->update();
 }
 
 void PlayScene::draw(SDL_Renderer* renderer) {
@@ -121,6 +140,10 @@ void PlayScene::draw(SDL_Renderer* renderer) {
     SDL_RenderClear(renderer);
 
     hSprite->draw(renderer);
+
+    for(std::vector<HoleSprite*>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++) {
+        (*iter)->draw(renderer);
+    }
 
 //    // Draw background ------------------------------------
 //    SDL_RenderCopy(renderer, bgTexture, NULL, NULL);
