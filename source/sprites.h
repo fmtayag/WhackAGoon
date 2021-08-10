@@ -35,7 +35,8 @@ enum HoleType {
     HT_None,
     HT_Goon,
     HT_Townie,
-    HT_Mayor
+    HT_Mayor,
+    HT_MaxNum
 };
 
 class HoleSprite: public ISprite {
@@ -62,14 +63,15 @@ private:
     SDL_Texture* mSpritesheet;
     SDL_Rect m_Rect;
     SDL_Rect* m_CurClip;
-    std::map<std::string, std::vector<SDL_Rect>> mpClips;
 
     int anim_timer;
-    std::map<std::string, int> mpAnimDelays;
     const int WHACKED_DUR = 1300;
     int whacked_timer;
     int awake_timer;
     int awake_dur;
+
+    std::map<std::string, std::vector<SDL_Rect>> frames_Clips;
+    std::map<std::string, int> frames_AnimDelays;
 };
 
 

@@ -5,7 +5,6 @@
 #include <iostream>
 #include <vector>
 #include <SDL2/SDL.h>
-#include "entities.h"
 #include "sprites.h"
 
 class AbstractScene {

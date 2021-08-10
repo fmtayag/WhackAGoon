@@ -21,14 +21,13 @@ HoleSprite::HoleSprite(SDL_Texture* spritesheet, int x, int y) {
     // --- spritesheet clips and animation delays ---
 
     // Resting animation
-    mpClips[Z_ClipID(AS_Resting, HT_None)] = {
+    frames_Clips[Z_ClipID(AS_Resting, HT_None)] = {
         {0, 16, 16, 16}
     };
 
-
-    // For Goon ---
-    mpAnimDelays[ Z_ClipID(AS_ToAwake, HT_Goon) ] = 70;
-    mpClips[Z_ClipID(AS_ToAwake, HT_Goon)] = {
+    // For Goon ------------
+    frames_AnimDelays[ Z_ClipID(AS_ToAwake, HT_Goon) ] = 70;
+    frames_Clips[Z_ClipID(AS_ToAwake, HT_Goon)] = {
         {0, 32, 16, 16},
         {16, 32, 16, 16},
         {32, 32, 16, 16},
@@ -39,24 +38,24 @@ HoleSprite::HoleSprite(SDL_Texture* spritesheet, int x, int y) {
         {112, 32, 16, 16}
     };
 
-    mpAnimDelays[ Z_ClipID(AS_Awake, HT_Goon) ] = 700;
-    mpClips[Z_ClipID(AS_Awake, HT_Goon)] = {
+    frames_AnimDelays[ Z_ClipID(AS_Awake, HT_Goon) ] = 700;
+    frames_Clips[Z_ClipID(AS_Awake, HT_Goon)] = {
         {0, 48, 16, 16},
         {16, 48, 16, 16},
         {32, 48, 16, 16},
         {48, 48, 16, 16}
     };
 
-    mpAnimDelays[ Z_ClipID(AS_Whacked, HT_Goon) ] = 100;
-    mpClips[Z_ClipID(AS_Whacked, HT_Goon)] = {
+    frames_AnimDelays[ Z_ClipID(AS_Whacked, HT_Goon) ] = 100;
+    frames_Clips[Z_ClipID(AS_Whacked, HT_Goon)] = {
         {0, 64, 16, 16},
         {16, 64, 16, 16},
         {32, 64, 16, 16},
         {48, 64, 16, 16}
     };
 
-    mpAnimDelays[ Z_ClipID(AS_ToResting, HT_Goon) ] = 100;
-    mpClips[Z_ClipID(AS_ToResting, HT_Goon)] = {
+    frames_AnimDelays[ Z_ClipID(AS_ToResting, HT_Goon) ] = 100;
+    frames_Clips[Z_ClipID(AS_ToResting, HT_Goon)] = {
         {112, 32, 16, 16},
         {96, 32, 16, 16},
         {80, 32, 16, 16},
@@ -70,11 +69,67 @@ HoleSprite::HoleSprite(SDL_Texture* spritesheet, int x, int y) {
 
     // For Townie ---
     /** TODO **/
+    frames_AnimDelays[ Z_ClipID(AS_ToAwake, HT_Townie) ] = 100;
+    frames_Clips [ Z_ClipID(AS_ToAwake, HT_Townie) ] = {
+        {0, 128, 16, 16}
+    };
+
+    frames_AnimDelays[ Z_ClipID(AS_Awake, HT_Townie) ] = 300;
+    frames_Clips[ Z_ClipID(AS_Awake, HT_Townie) ] = {
+        {0, 144, 16, 16}
+    };
+
+    frames_AnimDelays[ Z_ClipID(AS_Whacked, HT_Townie) ] = 100;
+    frames_Clips[ Z_ClipID(AS_Whacked, HT_Townie) ] = {
+        {0, 160, 16, 16}
+    };
+
+    frames_AnimDelays[ Z_ClipID(AS_ToResting, HT_Townie) ] = 100;
+    frames_Clips [ Z_ClipID(AS_ToResting, HT_Townie) ] = {
+        {0, 128, 16, 16}
+    };
 
 
     // For Mayor ---
-    /** TODO **/
+    frames_AnimDelays[ Z_ClipID(AS_ToAwake, HT_Mayor) ] = 100;
+    frames_Clips [ Z_ClipID(AS_ToAwake, HT_Mayor) ] = {
+        {0, 80, 16, 16},
+        {16, 80, 16, 16},
+        {32, 80, 16, 16},
+        {48, 80, 16, 16},
+        {64, 80, 16, 16},
+        {80, 80, 16, 16},
+        {96, 80, 16, 16},
+        {112, 80, 16, 16}
+    };
 
+    frames_AnimDelays[ Z_ClipID(AS_Awake, HT_Mayor) ] = 300;
+    frames_Clips[ Z_ClipID(AS_Awake, HT_Mayor) ] = {
+        {0, 96, 16, 16},
+        {16, 96, 16, 16},
+        {32, 96, 16, 16},
+        {48, 96, 16, 16}
+    };
+
+    frames_AnimDelays[ Z_ClipID(AS_Whacked, HT_Mayor) ] = 100;
+    frames_Clips[ Z_ClipID(AS_Whacked, HT_Mayor) ] = {
+        {0, 112, 16, 16},
+        {16, 112, 16, 16},
+        {32, 112, 16, 16},
+        {48, 112, 16, 16}
+    };
+
+    frames_AnimDelays[ Z_ClipID(AS_ToResting, HT_Mayor) ] = 100;
+    frames_Clips [ Z_ClipID(AS_ToResting, HT_Mayor) ] = {
+        {112, 80, 16, 16},
+        {96, 80, 16, 16},
+        {80, 80, 16, 16},
+        {64, 80, 16, 16},
+        {48, 80, 16, 16},
+        {32, 80, 16, 16},
+        {16, 80, 16, 16},
+        {0, 80, 16, 16}
+    };
 
 }
 
@@ -91,7 +146,7 @@ void HoleSprite::draw(SDL_Renderer* renderer) {
 
     SDL_RenderCopy(renderer,
                    mSpritesheet,
-                   &mpClips[ Z_ClipID(m_AnimState, m_Type) ][m_CurFrame],
+                   &frames_Clips[ Z_ClipID(m_AnimState, m_Type) ][m_CurFrame],
                    &m_Rect);
 }
 
@@ -126,28 +181,18 @@ void HoleSprite::animate() {
 
     if(m_AnimState != AS_Resting) {
         int now = SDL_GetTicks();
-        if(now - anim_timer > mpAnimDelays[ Z_ClipID(m_AnimState, m_Type) ]) {
+        if(now - anim_timer > frames_AnimDelays[ Z_ClipID(m_AnimState, m_Type) ]) {
             anim_timer = now;
 
-            if(m_CurFrame < mpClips[ Z_ClipID(m_AnimState, m_Type) ].size() - 1 ) {
+            if(m_CurFrame < frames_Clips[ Z_ClipID(m_AnimState, m_Type) ].size() - 1 ) {
                 m_CurFrame += 1;
             }
             else {
                 m_CurFrame = 0;
 
-                // Switch state check
+                // these state transition checks are dependent on the animation...
                 if(m_AnimState == AS_ToAwake) {
                     m_AnimState = AS_Awake;
-                }
-                else if(m_AnimState == AS_Awake) {
-                    if(now - awake_timer > awake_dur) {
-                        m_AnimState = AS_ToResting;
-                    }
-                }
-                else if(m_AnimState == AS_Whacked) {
-                    if(now - whacked_timer > WHACKED_DUR) {
-                        m_AnimState = AS_ToResting;
-                    }
                 }
                 else if(m_AnimState == AS_ToResting) {
                     m_AnimState = AS_Resting;
@@ -155,6 +200,20 @@ void HoleSprite::animate() {
                 }
             }
         }
+
+        // ... and these are not
+        if(m_AnimState == AS_Awake) {
+            if(now - awake_timer > awake_dur) {
+                m_AnimState = AS_ToResting;
+            }
+        }
+        else if(m_AnimState == AS_Whacked) {
+            if(now - whacked_timer > WHACKED_DUR) {
+                m_AnimState = AS_ToResting;
+            }
+        }
+
+
     }
 
 }
@@ -183,16 +242,34 @@ HoleManager::~HoleManager() {
 }
 
 void HoleManager::update() {
+    using vConstIter = std::vector<HoleSprite*>::const_iterator;
 
     int now = SDL_GetTicks();
     if(now - wakeUpTimer > wakeUpDelay) {
         wakeUpTimer = now;
 
-        for(std::vector<HoleSprite*>::const_iterator iter = (*m_Holes).begin(); iter != (*m_Holes).end(); iter++) {
+        // Check if there is a mayor
+        bool mayActv = false;
+        for(vConstIter iter = (*m_Holes).begin(); iter != (*m_Holes).end(); iter++ ) {
+            if((*iter)->getType() == HT_Mayor) {
+                mayActv = true;
+                printf("Debug: A mayor is active.\n");
+                break;
+            }
+        }
+
+        // Awake a random hole
+        for(vConstIter iter = (*m_Holes).begin(); iter != (*m_Holes).end(); iter++) {
             int selectThis = rand() & 1; // choose either 0 or 1
             if((*iter)->getType() == HT_None && selectThis) {
-                (*iter)->awake();
-                wakeUpDelay = rand() % 4000 + 1000;
+
+                int spawnChoice = rand() % (HT_MaxNum-1) + HT_Goon;
+                if(mayActv && spawnChoice == (int) HT_Mayor) {
+                    spawnChoice = HT_Goon;
+                }
+
+                (*iter)->awake((HoleType) spawnChoice);
+                wakeUpDelay = rand() % 1500 + 500;
                 break;
             }
         }

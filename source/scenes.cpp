@@ -8,7 +8,6 @@
 #include "scenes.h"
 #include "metadata.h"
 #include "assets.h"
-#include "entities.h" // replace with sprites.h soon
 #include "sprites.h"
 #include "utils.h"
 
@@ -120,8 +119,25 @@ void PlayScene::update() {
             bool isWhacked = (*iter)->whack();
             mMouseClicked = false;
 
-            if(isWhacked)
-                score++;
+            if(isWhacked) {
+                if((*iter)->getType() == HT_Goon) {
+                    score++;
+                }
+                else if((*iter)->getType() == HT_Townie) {
+                    score -= 5;
+                }
+                else if((*iter)->getType() == HT_Mayor) {
+                    printf("Debug: You hit the Mayor. Game over!\n");
+                    gameOverMessage = "You hit the Mayor!\n";
+                    isGameOver = true;
+                }
+
+            }
+
+            // neg score check
+            if(score < 0)
+                score = 0;
+
         }
     }
 
