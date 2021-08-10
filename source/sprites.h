@@ -70,8 +70,6 @@ private:
     int awake_timer;
     int awake_dur;
 
-    std::map<std::string, std::vector<SDL_Rect>> frames_Clips;
-    std::map<std::string, int> frames_AnimDelays;
 };
 
 

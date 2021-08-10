@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include "sprites.h"
 #include "utils.h"
+#include "frames.h"
 
 HoleSprite::HoleSprite(SDL_Texture* spritesheet, int x, int y) {
     mSpritesheet = spritesheet;
@@ -18,119 +19,8 @@ HoleSprite::HoleSprite(SDL_Texture* spritesheet, int x, int y) {
 
     anim_timer = SDL_GetTicks();
 
-    // --- spritesheet clips and animation delays ---
-
-    // Resting animation
-    frames_Clips[Z_ClipID(AS_Resting, HT_None)] = {
-        {0, 16, 16, 16}
-    };
-
-    // For Goon ------------
-    frames_AnimDelays[ Z_ClipID(AS_ToAwake, HT_Goon) ] = 70;
-    frames_Clips[Z_ClipID(AS_ToAwake, HT_Goon)] = {
-        {0, 32, 16, 16},
-        {16, 32, 16, 16},
-        {32, 32, 16, 16},
-        {48, 32, 16, 16},
-        {64, 32, 16, 16},
-        {80, 32, 16, 16},
-        {96, 32, 16, 16},
-        {112, 32, 16, 16}
-    };
-
-    frames_AnimDelays[ Z_ClipID(AS_Awake, HT_Goon) ] = 700;
-    frames_Clips[Z_ClipID(AS_Awake, HT_Goon)] = {
-        {0, 48, 16, 16},
-        {16, 48, 16, 16},
-        {32, 48, 16, 16},
-        {48, 48, 16, 16}
-    };
-
-    frames_AnimDelays[ Z_ClipID(AS_Whacked, HT_Goon) ] = 100;
-    frames_Clips[Z_ClipID(AS_Whacked, HT_Goon)] = {
-        {0, 64, 16, 16},
-        {16, 64, 16, 16},
-        {32, 64, 16, 16},
-        {48, 64, 16, 16}
-    };
-
-    frames_AnimDelays[ Z_ClipID(AS_ToResting, HT_Goon) ] = 100;
-    frames_Clips[Z_ClipID(AS_ToResting, HT_Goon)] = {
-        {112, 32, 16, 16},
-        {96, 32, 16, 16},
-        {80, 32, 16, 16},
-        {64, 32, 16, 16},
-        {48, 32, 16, 16},
-        {32, 32, 16, 16},
-        {16, 32, 16, 16},
-        {0, 32, 16, 16}
-    };
-
-
-    // For Townie ---
-    /** TODO **/
-    frames_AnimDelays[ Z_ClipID(AS_ToAwake, HT_Townie) ] = 100;
-    frames_Clips [ Z_ClipID(AS_ToAwake, HT_Townie) ] = {
-        {0, 128, 16, 16}
-    };
-
-    frames_AnimDelays[ Z_ClipID(AS_Awake, HT_Townie) ] = 300;
-    frames_Clips[ Z_ClipID(AS_Awake, HT_Townie) ] = {
-        {0, 144, 16, 16}
-    };
-
-    frames_AnimDelays[ Z_ClipID(AS_Whacked, HT_Townie) ] = 100;
-    frames_Clips[ Z_ClipID(AS_Whacked, HT_Townie) ] = {
-        {0, 160, 16, 16}
-    };
-
-    frames_AnimDelays[ Z_ClipID(AS_ToResting, HT_Townie) ] = 100;
-    frames_Clips [ Z_ClipID(AS_ToResting, HT_Townie) ] = {
-        {0, 128, 16, 16}
-    };
-
-
-    // For Mayor ---
-    frames_AnimDelays[ Z_ClipID(AS_ToAwake, HT_Mayor) ] = 100;
-    frames_Clips [ Z_ClipID(AS_ToAwake, HT_Mayor) ] = {
-        {0, 80, 16, 16},
-        {16, 80, 16, 16},
-        {32, 80, 16, 16},
-        {48, 80, 16, 16},
-        {64, 80, 16, 16},
-        {80, 80, 16, 16},
-        {96, 80, 16, 16},
-        {112, 80, 16, 16}
-    };
-
-    frames_AnimDelays[ Z_ClipID(AS_Awake, HT_Mayor) ] = 300;
-    frames_Clips[ Z_ClipID(AS_Awake, HT_Mayor) ] = {
-        {0, 96, 16, 16},
-        {16, 96, 16, 16},
-        {32, 96, 16, 16},
-        {48, 96, 16, 16}
-    };
-
-    frames_AnimDelays[ Z_ClipID(AS_Whacked, HT_Mayor) ] = 100;
-    frames_Clips[ Z_ClipID(AS_Whacked, HT_Mayor) ] = {
-        {0, 112, 16, 16},
-        {16, 112, 16, 16},
-        {32, 112, 16, 16},
-        {48, 112, 16, 16}
-    };
-
-    frames_AnimDelays[ Z_ClipID(AS_ToResting, HT_Mayor) ] = 100;
-    frames_Clips [ Z_ClipID(AS_ToResting, HT_Mayor) ] = {
-        {112, 80, 16, 16},
-        {96, 80, 16, 16},
-        {80, 80, 16, 16},
-        {64, 80, 16, 16},
-        {48, 80, 16, 16},
-        {32, 80, 16, 16},
-        {16, 80, 16, 16},
-        {0, 80, 16, 16}
-    };
-
+    // Load frame data
+    loadFrameData();
 }
 
 HoleSprite::~HoleSprite() {
@@ -146,7 +36,7 @@ void HoleSprite::draw(SDL_Renderer* renderer) {
 
     SDL_RenderCopy(renderer,
                    mSpritesheet,
-                   &frames_Clips[ Z_ClipID(m_AnimState, m_Type) ][m_CurFrame],
+                   &frm_ClipDat[ Z_ClipID(m_AnimState, m_Type) ][m_CurFrame],
                    &m_Rect);
 }
 
@@ -181,10 +71,10 @@ void HoleSprite::animate() {
 
     if(m_AnimState != AS_Resting) {
         int now = SDL_GetTicks();
-        if(now - anim_timer > frames_AnimDelays[ Z_ClipID(m_AnimState, m_Type) ]) {
+        if(now - anim_timer > frm_AnimDelayDat[ Z_ClipID(m_AnimState, m_Type) ]) {
             anim_timer = now;
 
-            if(m_CurFrame < frames_Clips[ Z_ClipID(m_AnimState, m_Type) ].size() - 1 ) {
+            if(m_CurFrame < frm_ClipDat[ Z_ClipID(m_AnimState, m_Type) ].size() - 1 ) {
                 m_CurFrame += 1;
             }
             else {
