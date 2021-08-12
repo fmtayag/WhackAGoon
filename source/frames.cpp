@@ -14,7 +14,7 @@ void loadFrameData() {
         {0, 16, 16, 16}
     };
 
-    // For Goon ------------
+    // For Goon ------------------------------------------------
     frm_AnimDelayDat[ Z_ClipID(AS_ToAwake, HT_Goon) ] = 70;
     frm_ClipDat[Z_ClipID(AS_ToAwake, HT_Goon)] = {
         {0, 32, 16, 16},
@@ -56,31 +56,52 @@ void loadFrameData() {
     };
 
 
-    // For Townie ---
-    /** TODO **/
-    frm_AnimDelayDat[ Z_ClipID(AS_ToAwake, HT_Townie) ] = 100;
+    // For Townie ---------------------------------------------
+    frm_AnimDelayDat[ Z_ClipID(AS_ToAwake, HT_Townie) ] = 70;
     frm_ClipDat [ Z_ClipID(AS_ToAwake, HT_Townie) ] = {
-        {0, 128, 16, 16}
+        {0, 128, 16, 16},
+        {16, 128, 16, 16},
+        {32, 128, 16, 16},
+        {48, 128, 16, 16},
+        {64, 128, 16, 16},
+        {80, 128, 16, 16},
+        {96, 128, 16, 16},
+        {112, 128, 16, 16}
     };
 
     frm_AnimDelayDat[ Z_ClipID(AS_Awake, HT_Townie) ] = 300;
     frm_ClipDat[ Z_ClipID(AS_Awake, HT_Townie) ] = {
-        {0, 144, 16, 16}
+        {0, 144, 16, 16},
+        {16, 144, 16, 16},
+        {32, 144, 16, 16},
+        {48, 144, 16, 16},
+        {64, 144, 16, 16},
+        {80, 144, 16, 16}
     };
 
     frm_AnimDelayDat[ Z_ClipID(AS_Whacked, HT_Townie) ] = 100;
     frm_ClipDat[ Z_ClipID(AS_Whacked, HT_Townie) ] = {
-        {0, 160, 16, 16}
+        {0, 160, 16, 16},
+        {16, 160, 16, 16},
+        {32, 160, 16, 16},
+        {48, 160, 16, 16}
     };
 
     frm_AnimDelayDat[ Z_ClipID(AS_ToResting, HT_Townie) ] = 100;
     frm_ClipDat [ Z_ClipID(AS_ToResting, HT_Townie) ] = {
+        {112, 128, 16, 16},
+        {96, 128, 16, 16},
+        {80, 128, 16, 16},
+        {64, 128, 16, 16},
+        {48, 128, 16, 16},
+        {32, 128, 16, 16},
+        {16, 128, 16, 16},
         {0, 128, 16, 16}
     };
 
 
-    // For Mayor ---
-    frm_AnimDelayDat[ Z_ClipID(AS_ToAwake, HT_Mayor) ] = 100;
+    // For Mayor ---------------------------------------------------
+    frm_AnimDelayDat[ Z_ClipID(AS_ToAwake, HT_Mayor) ] = 70;
     frm_ClipDat [ Z_ClipID(AS_ToAwake, HT_Mayor) ] = {
         {0, 80, 16, 16},
         {16, 80, 16, 16},

@@ -17,6 +17,7 @@
 #include "metadata.h"
 #include "assets.h"
 #include "utils.h"
+#include "frames.h"
 
 // Window and renderer
 SDL_Window* gWindow;
@@ -124,6 +125,9 @@ bool initialize() {
 
 bool loadAssets() {
     bool isSuccessful = true;
+
+    // Load frame data
+    loadFrameData();
 
     // Set window icon
     SDL_Surface* iconSurface = IMG_Load("assets/images/icon.png");

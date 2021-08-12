@@ -5,22 +5,20 @@
 #include "sprites.h"
 #include "utils.h"
 #include "frames.h"
+#include "metadata.h"
 
 HoleSprite::HoleSprite(SDL_Texture* spritesheet, int x, int y) {
     mSpritesheet = spritesheet;
     m_Rect.x = x;
     m_Rect.y = y;
-    m_Rect.w = 128;
-    m_Rect.h = 128;
+    m_Rect.w = HOLE_WIDTH;
+    m_Rect.h = HOLE_HEIGHT;
 
     m_CurFrame = 0;
     m_AnimState = AS_Resting;
     m_Type = HT_None;
 
     anim_timer = SDL_GetTicks();
-
-    // Load frame data
-    loadFrameData();
 }
 
 HoleSprite::~HoleSprite() {
@@ -95,11 +93,13 @@ void HoleSprite::animate() {
         if(m_AnimState == AS_Awake) {
             if(now - awake_timer > awake_dur) {
                 m_AnimState = AS_ToResting;
+                m_CurFrame = 0;
             }
         }
         else if(m_AnimState == AS_Whacked) {
             if(now - whacked_timer > WHACKED_DUR) {
                 m_AnimState = AS_ToResting;
+                m_CurFrame = 0;
             }
         }
 

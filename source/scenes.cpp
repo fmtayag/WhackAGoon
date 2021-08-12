@@ -36,6 +36,24 @@ void SceneContext::Draw(SDL_Renderer* renderer) {
     mScene->draw(renderer);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* -------------------------------------------------
  * Play Scene def
  * -------------------------------------------------
@@ -50,8 +68,6 @@ PlayScene::PlayScene(SceneContext* context) {
     isGameOver = false;
     gameOverMessage = "GAME OVER MESSAGE";
     mMouseClicked = false;
-
-    hSprite = new HoleSprite(spritesTexture, 32, 32); // debug sprite
 
     const int centerW = (WINDOW_WIDTH/2) - (HOLE_WIDTH/2);
     const int centerH = (WINDOW_HEIGHT/2) - (HOLE_HEIGHT/2);
@@ -82,19 +98,6 @@ void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
             mMouseClicked = false;
         }
 
-        // Debug
-        if(e->type == SDL_KEYDOWN) {
-            switch(e->key.keysym.sym) {
-            case SDLK_F1:
-                hSprite->awake();
-                break;
-            case SDLK_F2:
-                hSprite->whack();
-                break;
-            default:
-                break;
-            }
-        }
     }
 
     // End game check
@@ -142,7 +145,6 @@ void PlayScene::update() {
     }
 
     // run update methods
-    hSprite->update();
 
     for(std::vector<HoleSprite*>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++) {
         (*iter)->update();
@@ -155,8 +157,6 @@ void PlayScene::draw(SDL_Renderer* renderer) {
     // Set render draw color, and clear renderer ----------
     SDL_SetRenderDrawColor(renderer, 100, 50, 200, 255);
     SDL_RenderClear(renderer);
-
-    hSprite->draw(renderer);
 
     for(std::vector<HoleSprite*>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++) {
         (*iter)->draw(renderer);
