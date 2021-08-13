@@ -26,7 +26,9 @@ HoleSprite::~HoleSprite() {
 }
 
 void HoleSprite::update() {
-    animate();
+    if(m_AnimState != AS_Resting) {
+        animate();
+    }
 
 }
 
@@ -67,43 +69,44 @@ bool HoleSprite::whack() {
 
 void HoleSprite::animate() {
 
-    if(m_AnimState != AS_Resting) {
-        int now = SDL_GetTicks();
-        if(now - anim_timer > frm_AnimDelayDat[ Z_ClipID(m_AnimState, m_Type) ]) {
-            anim_timer = now;
+    std::string frmID = Z_ClipID(m_AnimState, m_Type);
+    const int FRM_DELAY = frm_AnimDelayDat[frmID];
+    const int FRM_MAXNO = frm_ClipDat[frmID].size() - 1;
 
-            if(m_CurFrame < frm_ClipDat[ Z_ClipID(m_AnimState, m_Type) ].size() - 1 ) {
-                m_CurFrame += 1;
+    int now = SDL_GetTicks();
+
+    if(now - anim_timer > FRM_DELAY) {
+        anim_timer = now;
+
+        if(m_CurFrame < FRM_MAXNO) {
+            m_CurFrame += 1;
+        }
+        else {
+            m_CurFrame = 0;
+
+            // these state transitions are dependent on the animation finishing...
+            if(m_AnimState == AS_ToAwake) {
+                m_AnimState = AS_Awake;
             }
-            else {
-                m_CurFrame = 0;
-
-                // these state transition checks are dependent on the animation...
-                if(m_AnimState == AS_ToAwake) {
-                    m_AnimState = AS_Awake;
-                }
-                else if(m_AnimState == AS_ToResting) {
-                    m_AnimState = AS_Resting;
-                    m_Type = HT_None;
-                }
+            else if(m_AnimState == AS_ToResting) {
+                m_AnimState = AS_Resting;
+                m_Type = HT_None;
             }
         }
+    }
 
-        // ... and these are not
-        if(m_AnimState == AS_Awake) {
-            if(now - awake_timer > awake_dur) {
-                m_AnimState = AS_ToResting;
-                m_CurFrame = 0;
-            }
+    // ... and these are not
+    if(m_AnimState == AS_Awake) {
+        if(now - awake_timer > awake_dur) {
+            m_AnimState = AS_ToResting;
+            m_CurFrame = 0;
         }
-        else if(m_AnimState == AS_Whacked) {
-            if(now - whacked_timer > WHACKED_DUR) {
-                m_AnimState = AS_ToResting;
-                m_CurFrame = 0;
-            }
+    }
+    else if(m_AnimState == AS_Whacked) {
+        if(now - whacked_timer > WHACKED_DUR) {
+            m_AnimState = AS_ToResting;
+            m_CurFrame = 0;
         }
-
-
     }
 
 }

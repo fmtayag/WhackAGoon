@@ -58,6 +58,8 @@ int main(int argv, char** args){
 
         while(isRunning) {
 
+            SDL_Delay(10); // this is here because CPU usage shoots up to 50% on my machine without it.
+
             // Run context methods
             gContext.HandleEvents(&e, isRunning);
             gContext.Update();
@@ -143,7 +145,7 @@ bool loadAssets() {
     }
 
     // Load textures
-    bgTexture = loadTextureFromFile(gRenderer, "assets/images/background.png");
+    bgTexture = loadTextureFromFile(gRenderer, "assets/images/background_design2.png");
     if(bgTexture == NULL) {
         printf("Failed to load bgTexture.\n");
         isSuccessful = false;

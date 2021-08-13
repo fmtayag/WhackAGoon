@@ -71,12 +71,12 @@ PlayScene::PlayScene(SceneContext* context) {
 
     const int centerW = (WINDOW_WIDTH/2) - (HOLE_WIDTH/2);
     const int centerH = (WINDOW_HEIGHT/2) - (HOLE_HEIGHT/2);
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - 96, 64));
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - 96, 192));
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - 96, 320));
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + 96, 64));
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + 96, 192));
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + 96, 320));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - 96, centerH - 128));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - 96, centerH - 32));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - 96, centerH + 64));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + 96, centerH - 128));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + 96, centerH - 32));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + 96, centerH + 64));
 
     hManager = new HoleManager(holeSprites);
 }
@@ -127,12 +127,12 @@ void PlayScene::update() {
                     score++;
                 }
                 else if((*iter)->getType() == HT_Townie) {
-                    score -= 5;
+                    score -= 3;
                 }
                 else if((*iter)->getType() == HT_Mayor) {
                     printf("Debug: You hit the Mayor. Game over!\n");
                     gameOverMessage = "You hit the Mayor!\n";
-                    isGameOver = true;
+//                    isGameOver = true;
                 }
 
             }
@@ -158,13 +158,13 @@ void PlayScene::draw(SDL_Renderer* renderer) {
     SDL_SetRenderDrawColor(renderer, 100, 50, 200, 255);
     SDL_RenderClear(renderer);
 
+    // Draw background ------------------------------------
+    SDL_RenderCopy(renderer, bgTexture, NULL, NULL);
+
+    // Draw holes ------------------------
     for(std::vector<HoleSprite*>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++) {
         (*iter)->draw(renderer);
     }
-
-//    // Draw background ------------------------------------
-//    SDL_RenderCopy(renderer, bgTexture, NULL, NULL);
-//
 //    // Draw play field box --------------------------------
 //    SDL_Rect boxRect = {
 //        (WINDOW_WIDTH / 2) - (448/2),
@@ -175,8 +175,8 @@ void PlayScene::draw(SDL_Renderer* renderer) {
 //    SDL_RenderCopy(renderer, boxTexture, NULL, &boxRect);
 
     // Draw texts -----------------------------------------
-    std::string scoreMessage = "Score: " + std::to_string(score);
-    drawText(renderer, scoreMessage, gFont, 10, 10, {255,255,255});
+    std::string scoreMessage = "SCORE: " + std::to_string(score);
+    drawText(renderer, scoreMessage, gFont, 138, 6, {255,255,255});
 
     // Render crap ----------------------------------------
     SDL_RenderPresent(renderer);
