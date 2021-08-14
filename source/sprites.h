@@ -69,7 +69,6 @@ private:
     int whacked_timer;
     int awake_timer;
     int awake_dur;
-
 };
 
 

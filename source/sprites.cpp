@@ -43,14 +43,14 @@ void HoleSprite::draw(SDL_Renderer* renderer) {
 void HoleSprite::awake(HoleType hType) {
     if(m_AnimState == AS_Resting) {
         m_AnimState = AS_ToAwake;
-        m_Type = hType; /** TODO: for debug only. **/
+        m_Type = hType;
         m_CurFrame = 0;
         awake_dur = rand() % 2500 + 800;
         awake_timer = SDL_GetTicks();
-        printf("Debug: Awake duration is %d ticks.\n", awake_dur);
+//        printf("Debug: Awake duration is %d ticks.\n", awake_dur);
     }
     else {
-        printf("Debug: HoleSprite was awakened but was not in Resting state.\n");
+//        printf("Debug: HoleSprite was awakened but was not in Resting state.\n");
     }
 }
 
@@ -62,7 +62,7 @@ bool HoleSprite::whack() {
         return true;
     }
     else {
-        printf("Debug: HoleSprite was whacked but was not in Awake nor ToAwake state.\n");
+//        printf("Debug: HoleSprite was whacked but was not in Awake nor ToAwake state.\n");
         return false;
     }
 }
@@ -146,7 +146,7 @@ void HoleManager::update() {
         for(vConstIter iter = (*m_Holes).begin(); iter != (*m_Holes).end(); iter++ ) {
             if((*iter)->getType() == HT_Mayor) {
                 mayActv = true;
-                printf("Debug: A mayor is active.\n");
+//                printf("Debug: A mayor is active.\n");
                 break;
             }
         }
@@ -162,7 +162,7 @@ void HoleManager::update() {
                 }
 
                 (*iter)->awake((HoleType) spawnChoice);
-                wakeUpDelay = rand() % 1500 + 500;
+                wakeUpDelay = rand() % 1000 + 100;
                 break;
             }
         }

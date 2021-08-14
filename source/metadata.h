@@ -4,9 +4,9 @@
 
 // Game metadata
 const std::string GAME_TITLE = "Whack-A-Goon!";
-const int PXSCALE = 6;
-const int WINDOW_WIDTH = 96 * PXSCALE;
-const int WINDOW_HEIGHT = 96 * PXSCALE;
+const int PXSCALE = 4;
+const int WINDOW_WIDTH = 128 * PXSCALE;
+const int WINDOW_HEIGHT = 128 * PXSCALE;
 const int HOLE_WIDTH = 16 * PXSCALE;
 const int HOLE_HEIGHT = 16 * PXSCALE;
 

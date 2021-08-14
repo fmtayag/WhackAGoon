@@ -39,7 +39,9 @@ void drawText(SDL_Renderer* renderer, std::string message, TTF_Font* font, int x
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, message.c_str(), color);
 
     // Create rect
-    SDL_Rect textRect = {x, y, textSurface->w, textSurface->h};
+    const int w = textSurface->w;
+    const int h = textSurface->h;
+    SDL_Rect textRect = {x - (w/2), y, w, h};
 
     // Create texture
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, textSurface);

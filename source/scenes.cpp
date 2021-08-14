@@ -71,12 +71,17 @@ PlayScene::PlayScene(SceneContext* context) {
 
     const int centerW = (WINDOW_WIDTH/2) - (HOLE_WIDTH/2);
     const int centerH = (WINDOW_HEIGHT/2) - (HOLE_HEIGHT/2);
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - 96, centerH - 128));
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - 96, centerH - 32));
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - 96, centerH + 64));
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + 96, centerH - 128));
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + 96, centerH - 32));
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + 96, centerH + 64));
+    const int offsetW = 48;
+    const int offsetH = 32;
+    // Column 1
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - offsetW, centerH - 72 + offsetH));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - offsetW - 32, centerH + offsetH));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - offsetW, centerH + 72 + offsetH));
+
+    // Column 2
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW, centerH - 72 + offsetH));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW + 32, centerH + offsetH));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW, centerH + 72 + offsetH));
 
     hManager = new HoleManager(holeSprites);
 }
@@ -155,7 +160,7 @@ void PlayScene::update() {
 
 void PlayScene::draw(SDL_Renderer* renderer) {
     // Set render draw color, and clear renderer ----------
-    SDL_SetRenderDrawColor(renderer, 100, 50, 200, 255);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
     // Draw background ------------------------------------
@@ -175,8 +180,10 @@ void PlayScene::draw(SDL_Renderer* renderer) {
 //    SDL_RenderCopy(renderer, boxTexture, NULL, &boxRect);
 
     // Draw texts -----------------------------------------
-    std::string scoreMessage = "SCORE: " + std::to_string(score);
-    drawText(renderer, scoreMessage, gFont, 138, 6, {255,255,255});
+    std::string scoreMessage = std::to_string(score);
+    const int txtCenterW = WINDOW_WIDTH/2;
+    const int offsetX = 2;
+    drawText(renderer, scoreMessage, gFont, txtCenterW+offsetX, 32, {255,255,255});
 
     // Render crap ----------------------------------------
     SDL_RenderPresent(renderer);

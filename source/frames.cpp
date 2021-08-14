@@ -15,7 +15,7 @@ void loadFrameData() {
     };
 
     // For Goon ------------------------------------------------
-    frm_AnimDelayDat[ Z_ClipID(AS_ToAwake, HT_Goon) ] = 70;
+    frm_AnimDelayDat[ Z_ClipID(AS_ToAwake, HT_Goon) ] = 50;
     frm_ClipDat[Z_ClipID(AS_ToAwake, HT_Goon)] = {
         {0, 32, 16, 16},
         {16, 32, 16, 16},
@@ -57,7 +57,7 @@ void loadFrameData() {
 
 
     // For Townie ---------------------------------------------
-    frm_AnimDelayDat[ Z_ClipID(AS_ToAwake, HT_Townie) ] = 70;
+    frm_AnimDelayDat[ Z_ClipID(AS_ToAwake, HT_Townie) ] = 50;
     frm_ClipDat [ Z_ClipID(AS_ToAwake, HT_Townie) ] = {
         {0, 128, 16, 16},
         {16, 128, 16, 16},
@@ -101,7 +101,7 @@ void loadFrameData() {
 
 
     // For Mayor ---------------------------------------------------
-    frm_AnimDelayDat[ Z_ClipID(AS_ToAwake, HT_Mayor) ] = 70;
+    frm_AnimDelayDat[ Z_ClipID(AS_ToAwake, HT_Mayor) ] = 50;
     frm_ClipDat [ Z_ClipID(AS_ToAwake, HT_Mayor) ] = {
         {0, 80, 16, 16},
         {16, 80, 16, 16},
