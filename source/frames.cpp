@@ -43,7 +43,7 @@ void loadFrameData() {
         {48, 64, 16, 16}
     };
 
-    frm_AnimDelayDat[ Z_ClipID(AS_ToResting, HT_Goon) ] = 100;
+    frm_AnimDelayDat[ Z_ClipID(AS_ToResting, HT_Goon) ] = 50;
     frm_ClipDat[Z_ClipID(AS_ToResting, HT_Goon)] = {
         {112, 32, 16, 16},
         {96, 32, 16, 16},
@@ -87,7 +87,7 @@ void loadFrameData() {
         {48, 160, 16, 16}
     };
 
-    frm_AnimDelayDat[ Z_ClipID(AS_ToResting, HT_Townie) ] = 100;
+    frm_AnimDelayDat[ Z_ClipID(AS_ToResting, HT_Townie) ] = 50;
     frm_ClipDat [ Z_ClipID(AS_ToResting, HT_Townie) ] = {
         {112, 128, 16, 16},
         {96, 128, 16, 16},
@@ -129,7 +129,7 @@ void loadFrameData() {
         {48, 112, 16, 16}
     };
 
-    frm_AnimDelayDat[ Z_ClipID(AS_ToResting, HT_Mayor) ] = 100;
+    frm_AnimDelayDat[ Z_ClipID(AS_ToResting, HT_Mayor) ] = 50;
     frm_ClipDat [ Z_ClipID(AS_ToResting, HT_Mayor) ] = {
         {112, 80, 16, 16},
         {96, 80, 16, 16},

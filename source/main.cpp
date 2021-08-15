@@ -138,7 +138,7 @@ bool loadAssets() {
     iconSurface = NULL;
 
     // Load font
-    gFont = TTF_OpenFont("assets/fonts/04B_03__.TTF", 28);
+    gFont = TTF_OpenFont("assets/fonts/zyn8_reg.ttf", 28);
     if(gFont == NULL) {
         printf("Failed to load font.\n");
         isSuccessful = false;

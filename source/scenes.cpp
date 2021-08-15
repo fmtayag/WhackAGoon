@@ -183,7 +183,11 @@ void PlayScene::draw(SDL_Renderer* renderer) {
     std::string scoreMessage = std::to_string(score);
     const int txtCenterW = WINDOW_WIDTH/2;
     const int offsetX = 2;
-    drawText(renderer, scoreMessage, gFont, txtCenterW+offsetX, 32, {255,255,255});
+    drawText(renderer, "LIVES", gFont, txtCenterW+offsetX-128, 32, {255,255,255});
+    drawText(renderer, "SCORE", gFont, txtCenterW+offsetX, 32, {255,255,255});
+    drawText(renderer, "TIME", gFont, txtCenterW+offsetX+128, 32, {255,255,255});
+
+
 
     // Render crap ----------------------------------------
     SDL_RenderPresent(renderer);
