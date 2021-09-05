@@ -13,7 +13,7 @@
 SDL_Texture* loadTextureFromFile(SDL_Renderer* renderer, std::string path);
 
 // Rendering texts
-void drawText(SDL_Renderer* renderer, std::string message, TTF_Font* font, int x, int y, SDL_Color color);
+void drawText(SDL_Renderer* renderer, std::string message, TTF_Font* font, int x, int y, SDL_Color color, bool cenX=false);
 
 // Destroying assets utils
 void cleanUpTexture(SDL_Texture*& texture);

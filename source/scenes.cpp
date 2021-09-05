@@ -15,50 +15,38 @@
  * Scene Context def
  * -------------------------------------------------
  */
-SceneContext::SceneContext() {
+SceneContext::SceneContext()
+{
     mScene = new PlayScene(this);
 }
 
-void SceneContext::changeScene(AbstractScene* scene) {
+void SceneContext::changeScene(AbstractScene *scene)
+{
     delete this->mScene;
     mScene = scene;
 }
 
-void SceneContext::HandleEvents(SDL_Event* e, bool& isRunning) {
+void SceneContext::HandleEvents(SDL_Event *e, bool &isRunning)
+{
     mScene->handleEvents(e, isRunning);
 }
 
-void SceneContext::Update() {
+void SceneContext::Update()
+{
     mScene->update();
 }
 
-void SceneContext::Draw(SDL_Renderer* renderer) {
+void SceneContext::Draw(SDL_Renderer *renderer)
+{
     mScene->draw(renderer);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* -------------------------------------------------
  * Play Scene def
  * -------------------------------------------------
  */
-PlayScene::PlayScene(SceneContext* context) {
+PlayScene::PlayScene(SceneContext *context)
+{
     mContext = context;
 
     gameTimer = SDL_GetTicks();
@@ -69,8 +57,8 @@ PlayScene::PlayScene(SceneContext* context) {
     gameOverMessage = "GAME OVER MESSAGE";
     mMouseClicked = false;
 
-    const int centerW = (WINDOW_WIDTH/2) - (HOLE_WIDTH/2);
-    const int centerH = (WINDOW_HEIGHT/2) - (HOLE_HEIGHT/2);
+    const int centerW = (WINDOW_WIDTH / 2) - (HOLE_WIDTH / 2);
+    const int centerH = (WINDOW_HEIGHT / 2) - (HOLE_HEIGHT / 2);
     const int offsetW = 48;
     const int offsetH = 32;
     // Column 1
@@ -86,27 +74,33 @@ PlayScene::PlayScene(SceneContext* context) {
     hManager = new HoleManager(holeSprites);
 }
 
-PlayScene::~PlayScene() {
+PlayScene::~PlayScene()
+{
     hManager = NULL;
 }
 
-void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
+void PlayScene::handleEvents(SDL_Event *e, bool &isRunning)
+{
     // Handle events --------------------------------------
-    while(SDL_PollEvent(e)) {
-        if(e->type == SDL_QUIT) {
+    while (SDL_PollEvent(e))
+    {
+        if (e->type == SDL_QUIT)
+        {
             isRunning = false;
         }
-        if(e->type == SDL_MOUSEBUTTONDOWN) {
+        if (e->type == SDL_MOUSEBUTTONDOWN)
+        {
             mMouseClicked = true;
         }
-        if(e->type == SDL_MOUSEBUTTONUP) {
+        if (e->type == SDL_MOUSEBUTTONUP)
+        {
             mMouseClicked = false;
         }
-
     }
 
     // End game check
-    if(isGameOver) {
+    if (isGameOver)
+    {
         isRunning = false;
         printf("Game over: %s!\n", gameOverMessage.c_str());
     }
@@ -115,83 +109,87 @@ void PlayScene::handleEvents(SDL_Event* e, bool& isRunning) {
     SDL_GetMouseState(&mx, &my);
     mpos[0] = mx;
     mpos[1] = my;
-
 }
 
-void PlayScene::update() {
+void PlayScene::update()
+{
 
     // Collision check
-    for(std::vector<HoleSprite*>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++) {
+    for (std::vector<HoleSprite *>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++)
+    {
         bool collided = isPointCollide(mpos, (*iter)->getRect());
-        if(collided && mMouseClicked) {
+        if (collided && mMouseClicked)
+        {
             bool isWhacked = (*iter)->whack();
             mMouseClicked = false;
 
-            if(isWhacked) {
-                if((*iter)->getType() == HT_Goon) {
+            if (isWhacked)
+            {
+                if ((*iter)->getType() == HT_Goon)
+                {
                     score++;
                 }
-                else if((*iter)->getType() == HT_Townie) {
+                else if ((*iter)->getType() == HT_Townie)
+                {
                     score -= 3;
                 }
-                else if((*iter)->getType() == HT_Mayor) {
+                else if ((*iter)->getType() == HT_Mayor)
+                {
                     printf("Debug: You hit the Mayor. Game over!\n");
                     gameOverMessage = "You hit the Mayor!\n";
-//                    isGameOver = true;
+                    //                    isGameOver = true;
                 }
-
             }
 
             // neg score check
-            if(score < 0)
+            if (score < 0)
                 score = 0;
-
         }
     }
 
     // run update methods
 
-    for(std::vector<HoleSprite*>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++) {
+    for (std::vector<HoleSprite *>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++)
+    {
         (*iter)->update();
     }
 
     hManager->update();
 }
 
-void PlayScene::draw(SDL_Renderer* renderer) {
+void PlayScene::draw(SDL_Renderer *renderer)
+{
     // Set render draw color, and clear renderer ----------
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 5, 10, 10, 255);
     SDL_RenderClear(renderer);
 
     // Draw background ------------------------------------
     SDL_RenderCopy(renderer, bgTexture, NULL, NULL);
 
     // Draw holes ------------------------
-    for(std::vector<HoleSprite*>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++) {
+    for (std::vector<HoleSprite *>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++)
+    {
         (*iter)->draw(renderer);
     }
-//    // Draw play field box --------------------------------
-//    SDL_Rect boxRect = {
-//        (WINDOW_WIDTH / 2) - (448/2),
-//        (WINDOW_HEIGHT / 2) - (528/2),
-//        448,
-//        528
-//    };
-//    SDL_RenderCopy(renderer, boxTexture, NULL, &boxRect);
+    //    // Draw play field box --------------------------------
+    //    SDL_Rect boxRect = {
+    //        (WINDOW_WIDTH / 2) - (448/2),
+    //        (WINDOW_HEIGHT / 2) - (528/2),
+    //        448,
+    //        528
+    //    };
+    //    SDL_RenderCopy(renderer, boxTexture, NULL, &boxRect);
 
     // Draw texts -----------------------------------------
     std::string scoreMessage = std::to_string(score);
-    const int txtCenterW = WINDOW_WIDTH/2;
-    const int offsetX = 2;
-    drawText(renderer, "LIVES", gFont, txtCenterW+offsetX-128, 32, {255,255,255});
-    drawText(renderer, "SCORE", gFont, txtCenterW+offsetX, 32, {255,255,255});
-    drawText(renderer, "TIME", gFont, txtCenterW+offsetX+128, 32, {255,255,255});
+    const int txtCenterW = WINDOW_WIDTH / 2;
+    const int offsetX = 16;
+    drawText(renderer, "SCORE", gFont, txtCenterW - 64, 42, {255, 255, 255}, true);
+    drawText(renderer, scoreMessage.c_str(), gFont, txtCenterW - 64, 64, {255, 255, 255}, true);
 
-
+    drawText(renderer, "TIME", gFont, txtCenterW + 64, 42, {255, 255, 255}, true);
+    drawText(renderer, "888", gFont, txtCenterW + 64, 64, {255, 0, 0}, true);
 
     // Render crap ----------------------------------------
     SDL_RenderPresent(renderer);
-
 }
-
-

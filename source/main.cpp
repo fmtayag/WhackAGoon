@@ -20,26 +20,22 @@
 #include "frames.h"
 
 // Window and renderer
-SDL_Window* gWindow;
-SDL_Renderer* gRenderer;
+SDL_Window *gWindow;
+SDL_Renderer *gRenderer;
 
 // Font
-TTF_Font* gFont;
+TTF_Font *gFont;
 
 // Textures
-SDL_Texture* bgTexture;
-SDL_Texture* boxTexture;
-SDL_Texture* spritesTexture;
+SDL_Texture *bgTexture;
+SDL_Texture *spritesTexture;
 
 bool initialize();
 bool loadAssets();
 void cleanUp();
 
-
-
-
-
-int main(int argv, char** args){
+int main(int argv, char **args)
+{
     // Initialize and load assets
     bool isInitialized = initialize();
     bool hasLoadedAssets = loadAssets();
@@ -51,20 +47,21 @@ int main(int argv, char** args){
     SDL_ShowCursor(SDL_ENABLE);
 
     // Game loop
-    if(isInitialized && hasLoadedAssets) {
+    if (isInitialized && hasLoadedAssets)
+    {
         SceneContext gContext;
         SDL_Event e;
         bool isRunning = true;
 
-        while(isRunning) {
+        while (isRunning)
+        {
 
-            SDL_Delay(10); // this is here because CPU usage shoots up to 50% on my machine without it.
+            SDL_Delay(30); // FPS cap
 
             // Run context methods
             gContext.HandleEvents(&e, isRunning);
             gContext.Update();
             gContext.Draw(gRenderer);
-
         }
     }
 
@@ -74,42 +71,48 @@ int main(int argv, char** args){
     return 0;
 }
 
-
-
-
-bool initialize() {
+bool initialize()
+{
     bool isSuccessful = true;
 
     // Initialize SDL subsystems
-    if(SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+    {
         printf("SDL failed to initialize. Error: %s.\n", SDL_GetError());
         isSuccessful = false;
     }
-    else {
+    else
+    {
         // Create window
         gWindow = SDL_CreateWindow(GAME_TITLE.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
-        if(gWindow == NULL) {
+        if (gWindow == NULL)
+        {
             printf("SDL failed to create window. Error: %s.\n", SDL_GetError());
             isSuccessful = false;
         }
-        else {
+        else
+        {
             // Create renderer
             int rendererFlags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE;
             gRenderer = SDL_CreateRenderer(gWindow, -1, rendererFlags);
-            if(gRenderer == NULL) {
+            if (gRenderer == NULL)
+            {
                 printf("SDL failed to create renderer. Error: %s.\n", SDL_GetError());
                 isSuccessful = false;
             }
-            else {
+            else
+            {
                 // Initialize SDL_image
                 int flags = IMG_INIT_JPG | IMG_INIT_PNG;
-                if( (IMG_Init(flags) & flags) != flags ) {
+                if ((IMG_Init(flags) & flags) != flags)
+                {
                     printf("SDL_image failed to initialize. Error: %s.\n", IMG_GetError());
                     isSuccessful = false;
                 }
 
                 // Initialize SDL_ttf
-                if(TTF_Init() < 0) {
+                if (TTF_Init() < 0)
+                {
                     printf("SDL_ttf failed to initialize. Error: %s.\n", TTF_GetError());
                     isSuccessful = false;
                 }
@@ -121,44 +124,38 @@ bool initialize() {
     return isSuccessful;
 }
 
-
-
-
-
-bool loadAssets() {
+bool loadAssets()
+{
     bool isSuccessful = true;
 
     // Load frame data
     loadFrameData();
 
     // Set window icon
-    SDL_Surface* iconSurface = IMG_Load("assets/images/icon.png");
+    SDL_Surface *iconSurface = IMG_Load("assets/images/icon.png");
     SDL_SetWindowIcon(gWindow, iconSurface);
     SDL_FreeSurface(iconSurface);
     iconSurface = NULL;
 
     // Load font
-    gFont = TTF_OpenFont("assets/fonts/zyn8_reg.ttf", 28);
-    if(gFont == NULL) {
+    gFont = TTF_OpenFont("assets/fonts/zyn8.ttf", 25);
+    if (gFont == NULL)
+    {
         printf("Failed to load font.\n");
         isSuccessful = false;
     }
 
     // Load textures
-    bgTexture = loadTextureFromFile(gRenderer, "assets/images/background_design2.png");
-    if(bgTexture == NULL) {
+    bgTexture = loadTextureFromFile(gRenderer, "assets/images/bg.png");
+    if (bgTexture == NULL)
+    {
         printf("Failed to load bgTexture.\n");
         isSuccessful = false;
     }
 
-    boxTexture = loadTextureFromFile(gRenderer, "assets/images/box.png");
-    if(boxTexture == NULL) {
-        printf("Failed to load boxTexture.\n");
-        isSuccessful = false;
-    }
-
     spritesTexture = loadTextureFromFile(gRenderer, "assets/images/sprites.png");
-    if(spritesTexture == NULL) {
+    if (spritesTexture == NULL)
+    {
         printf("Failed to load spritesTexture.\n");
         isSuccessful = false;
     }
@@ -166,14 +163,10 @@ bool loadAssets() {
     return isSuccessful;
 }
 
-
-
-
-
-void cleanUp() {
+void cleanUp()
+{
     // Destroy textures
     cleanUpTexture(bgTexture);
-    cleanUpTexture(boxTexture);
     cleanUpTexture(spritesTexture);
 
     // Destroy window

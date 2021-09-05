@@ -34,14 +34,20 @@ SDL_Texture* loadTextureFromFile(SDL_Renderer* renderer, std::string path) {
 
 
 
-void drawText(SDL_Renderer* renderer, std::string message, TTF_Font* font, int x, int y, SDL_Color color) {
+void drawText(SDL_Renderer* renderer, std::string message, TTF_Font* font, int x, int y, SDL_Color color, bool cenX) {
     // Create temp surface
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, message.c_str(), color);
 
     // Create rect
     const int w = textSurface->w;
     const int h = textSurface->h;
-    SDL_Rect textRect = {x - (w/2), y, w, h};
+
+    // centered on x-axis check
+    if(cenX) {
+        x = x - (w/2);
+    }
+
+    SDL_Rect textRect = {x, y, w, h};
 
     // Create texture
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, textSurface);
