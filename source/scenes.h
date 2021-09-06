@@ -56,7 +56,7 @@ private:
     int mx, my;
     int mpos[2];
     int gameTimer;
-    int gameDuration;
+    const int GAME_DUR = SDL_GetTicks() + 30000; // 30000 ticks is 30 seconds
     int score;
     int towniesHit;
 

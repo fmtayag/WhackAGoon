@@ -50,7 +50,6 @@ PlayScene::PlayScene(SceneContext *context)
     mContext = context;
 
     gameTimer = SDL_GetTicks();
-    gameDuration = 30000; // 30 secs
     score = 0;
     towniesHit = 0;
     isGameOver = false;
@@ -113,6 +112,14 @@ void PlayScene::handleEvents(SDL_Event *e, bool &isRunning)
 
 void PlayScene::update()
 {
+	// Update timer
+	gameTimer = SDL_GetTicks();
+	
+	// time up check
+	if( (GAME_DUR - gameTimer) / 1000 <= 0) {
+		isGameOver = true;
+		gameOverMessage = "Time's up!";
+	}
 
     // Collision check
     for (std::vector<HoleSprite *>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++)
@@ -136,8 +143,8 @@ void PlayScene::update()
                 else if ((*iter)->getType() == HT_Mayor)
                 {
                     printf("Debug: You hit the Mayor. Game over!\n");
+					isGameOver = true;
                     gameOverMessage = "You hit the Mayor!\n";
-                    //                    isGameOver = true;
                 }
             }
 
@@ -147,8 +154,7 @@ void PlayScene::update()
         }
     }
 
-    // run update methods
-
+    // run update methods for the holes
     for (std::vector<HoleSprite *>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++)
     {
         (*iter)->update();
@@ -167,28 +173,29 @@ void PlayScene::draw(SDL_Renderer *renderer)
     SDL_RenderCopy(renderer, bgTexture, NULL, NULL);
 
     // Draw holes ------------------------
-    for (std::vector<HoleSprite *>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++)
+    for (std::vector<HoleSprite*>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++)
     {
         (*iter)->draw(renderer);
     }
-    //    // Draw play field box --------------------------------
-    //    SDL_Rect boxRect = {
-    //        (WINDOW_WIDTH / 2) - (448/2),
-    //        (WINDOW_HEIGHT / 2) - (528/2),
-    //        448,
-    //        528
-    //    };
-    //    SDL_RenderCopy(renderer, boxTexture, NULL, &boxRect);
 
     // Draw texts -----------------------------------------
     std::string scoreMessage = std::to_string(score);
+	int timeLeft = (GAME_DUR - gameTimer) / 1000;
+	std::string timeMessage = std::to_string(timeLeft) + "s";
     const int txtCenterW = WINDOW_WIDTH / 2;
     const int offsetX = 16;
+	
+	// time msg color
+	SDL_Color timeColor = {255, 255, 255};
+	if( (GAME_DUR - gameTimer) / 1000 <= 10) {
+		timeColor = {255, 0, 0};
+	}
+	
     drawText(renderer, "SCORE", gFont, txtCenterW - 64, 42, {255, 255, 255}, true);
     drawText(renderer, scoreMessage.c_str(), gFont, txtCenterW - 64, 64, {255, 255, 255}, true);
-
-    drawText(renderer, "TIME", gFont, txtCenterW + 64, 42, {255, 255, 255}, true);
-    drawText(renderer, "888", gFont, txtCenterW + 64, 64, {255, 0, 0}, true);
+	
+    drawText(renderer, "TIME", gFont, txtCenterW + 64, 42, timeColor, true);
+    drawText(renderer, timeMessage.c_str(), gFont, txtCenterW + 64, 64, timeColor, true);
 
     // Render crap ----------------------------------------
     SDL_RenderPresent(renderer);
