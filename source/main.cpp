@@ -63,10 +63,13 @@ int main(int argv, char **args)
             gContext.Update();
             gContext.Draw(gRenderer);
         }
+
     }
 
     // Clean up
     cleanUp();
+	
+	getchar();
 
     return 0;
 }

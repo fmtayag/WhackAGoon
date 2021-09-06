@@ -27,11 +27,20 @@ public:
     void HandleEvents(SDL_Event* e, bool& isRunning);
     void Update();
     void Draw(SDL_Renderer* renderer);
+	
+	// for debugging
+	void delCurScene();
 
 private:
-    AbstractScene* mScene;
+    AbstractScene* pScene;
     bool isRunning;
 };
+
+
+
+
+
+
 
 /* -------------------------------------------------
  * Play Scene
@@ -56,7 +65,7 @@ private:
     int mx, my;
     int mpos[2];
     int gameTimer;
-    const int GAME_DUR = SDL_GetTicks() + 30000; // 30000 ticks is 30 seconds
+    const int GAME_DUR = SDL_GetTicks() + 3000; // 30000 ticks is 30 seconds
     int score;
     int towniesHit;
 
@@ -67,6 +76,53 @@ private:
     std::vector<HoleSprite*> holeSprites;
 
 };
+
+
+/* -------------------------------------------------
+ * Game over scene
+ * -------------------------------------------------
+ */
+
+class GameOverScene: public AbstractScene {
+public:
+	GameOverScene(SceneContext* context);
+	~GameOverScene();
+	
+	void handleEvents(SDL_Event* e, bool& isRunning);
+    void update();
+    void draw(SDL_Renderer* renderer);
+
+private:
+    SceneContext* mContext;
+	bool mMouseClicked;
+};
+
+
+
+
+
+
+
+
+/* -------------------------------------------------
+ * Menu scene
+ * -------------------------------------------------
+ */
+ 
+class MenuScene: public AbstractScene {
+public:
+	MenuScene(SceneContext* context);
+	~MenuScene();
+	
+	void handleEvents(SDL_Event* e, bool& isRunning);
+    void update();
+    void draw(SDL_Renderer* renderer);
+
+private:
+	SceneContext* mContext;
+	bool mMouseClicked;
+ };
+
 
 #endif // SCENES_H
 

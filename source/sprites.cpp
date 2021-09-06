@@ -22,7 +22,7 @@ HoleSprite::HoleSprite(SDL_Texture* spritesheet, int x, int y) {
 }
 
 HoleSprite::~HoleSprite() {
-
+	
 }
 
 void HoleSprite::update() {
@@ -132,6 +132,7 @@ HoleManager::HoleManager(std::vector<HoleSprite*>& holes) {
 
 HoleManager::~HoleManager() {
     m_Holes = NULL;
+	printf("Debug: HoleManager deleted.\n");
 }
 
 void HoleManager::update() {
