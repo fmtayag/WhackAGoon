@@ -15,35 +15,76 @@
  * Scene Context def
  * -------------------------------------------------
  */
-SceneContext::SceneContext()
-{
-    this->pScene = new PlayScene(this);
+SceneContext::SceneContext(SceneID scene)
+{	
+	switch(scene) {
+		case MENU_SCENE:
+			this->pScene = new MenuScene(this);
+			break;
+		case PLAY_SCENE:
+			this->pScene = new PlayScene(this);
+			break;
+		case GAMEOVER_SCENE:
+			this->pScene = new GameOverScene(this);
+			break;
+		default:
+			this->pScene = NULL;
+			break;
+	}
 }
 
-void SceneContext::changeScene(AbstractScene *scene)
+SceneContext::~SceneContext() {
+	delete this->pScene;
+	this->pScene = NULL;
+}
+
+void SceneContext::changeScene(SceneID scene)
 {
     delete this->pScene;
-    pScene = scene;
+	this->pScene = NULL;
+	
+	switch(scene) {
+		case MENU_SCENE:
+			this->pScene = new MenuScene(this);
+			break;
+		case PLAY_SCENE:
+			this->pScene = new PlayScene(this);
+			break;
+		case GAMEOVER_SCENE:
+			this->pScene = new GameOverScene(this);
+			break;
+		default:
+			this->pScene = NULL;
+			break;
+	}
+
 }
 
-void SceneContext::delCurScene() {
-	// warning: for debugging purposes only
+void SceneContext::quit() {
 	delete this->pScene;
+	this->pScene = NULL;
 }
 
-void SceneContext::HandleEvents(SDL_Event *e, bool &isRunning)
+void SceneContext::HandleEvents(SDL_Event *e)
 {
-    pScene->handleEvents(e, isRunning);
+	if(this->pScene != NULL) {
+		pScene->handleEvents(e);
+	}
+    
 }
 
 void SceneContext::Update()
 {
-    pScene->update();
+	if(this->pScene != NULL) {
+		pScene->update();
+	}
 }
 
 void SceneContext::Draw(SDL_Renderer *renderer)
 {
-    pScene->draw(renderer);
+	if(this->pScene != NULL) {
+		pScene->draw(renderer);
+	}
 }
 
 
@@ -72,7 +113,8 @@ PlayScene::PlayScene(SceneContext *context)
     isGameOver = false;
     gameOverMessage = "GAME OVER MESSAGE";
     mMouseClicked = false;
-
+	
+	// HoleSprite initialization.
     const int centerW = (WINDOW_WIDTH / 2) - (HOLE_WIDTH / 2);
     const int centerH = (WINDOW_HEIGHT / 2) - (HOLE_HEIGHT / 2);
     const int offsetW = 48;
@@ -92,34 +134,53 @@ PlayScene::PlayScene(SceneContext *context)
 
 PlayScene::~PlayScene()
 {
-    delete hManager;
-	printf("Debug: PlayScene deleted.\n");
+	// TODO: Still needs fixing with how the objs are deleted.
+/*     delete hManager;
+	hManager = NULL;
+	
+	// delete holesprite pointers
+	using vecIter = std::vector<HoleSprite *>::const_iterator;
+	for (vecIter iter = holeSprites.begin(); iter != holeSprites.end(); iter++)
+    {
+        delete (*iter);
+    }
+	holeSprites.clear(); */
+	printf("Deleted play scene.\n");
 }
 
-void PlayScene::handleEvents(SDL_Event *e, bool &isRunning)
+void PlayScene::handleEvents(SDL_Event *e)
 {
     // Handle events --------------------------------------
     while (SDL_PollEvent(e))
     {
         if (e->type == SDL_QUIT)
         {
-            isRunning = false;
+            mContext->quit();
         }
-        if (e->type == SDL_MOUSEBUTTONDOWN)
+        else if (e->type == SDL_MOUSEBUTTONDOWN)
         {
             mMouseClicked = true;
         }
-        if (e->type == SDL_MOUSEBUTTONUP)
+        else if (e->type == SDL_MOUSEBUTTONUP)
         {
             mMouseClicked = false;
         }
+		else if (e->type == SDL_KEYDOWN) {
+			switch(e->key.keysym.sym) {
+			case SDLK_ESCAPE:
+				mContext->changeScene(MENU_SCENE);
+				break;
+			default:
+				break;
+			}
+		}
     }
 
     // End game check
     if (isGameOver)
     {
         printf("Game over: %s!\n", gameOverMessage.c_str());
-		mContext->changeScene(new GameOverScene(mContext));
+		mContext->changeScene(GAMEOVER_SCENE);
     }
 
     // Update mouse position
@@ -237,33 +298,33 @@ void PlayScene::draw(SDL_Renderer *renderer)
  }
  
  GameOverScene::~GameOverScene() {
-	 
+	printf("Deleted game over scene.\n");
  }
  
- void GameOverScene::handleEvents(SDL_Event* e, bool& isRunning) {
+ void GameOverScene::handleEvents(SDL_Event* e) {
 	// Handle events --------------------------------------
     while (SDL_PollEvent(e))
     {
         if (e->type == SDL_QUIT)
         {
-            isRunning = false;
+            mContext->quit();
         }
-        if (e->type == SDL_MOUSEBUTTONDOWN)
+        else if (e->type == SDL_MOUSEBUTTONDOWN)
         {
             mMouseClicked = true;
         }
-        if (e->type == SDL_MOUSEBUTTONUP)
+        else if (e->type == SDL_MOUSEBUTTONUP)
         {
             mMouseClicked = false;
         }
 		
-		if(e->type == SDL_KEYDOWN) {
+		else if(e->type == SDL_KEYDOWN) {
 			switch(e->key.keysym.sym) {
-				case SDLK_RETURN:
-					mContext->changeScene(new MenuScene(mContext));
-					break;
-				default:
-					break;
+			case SDLK_RETURN:
+				mContext->changeScene(MENU_SCENE);
+				break;
+			default:
+				break;
 			}
 		}
     }
@@ -305,33 +366,33 @@ void PlayScene::draw(SDL_Renderer *renderer)
  }
  
  MenuScene::~MenuScene() {
-	 
+	printf("Deleted menu scene.\n");
  }
  
- void MenuScene::handleEvents(SDL_Event* e, bool& isRunning) {
+ void MenuScene::handleEvents(SDL_Event* e) {
 	// Handle events --------------------------------------
     while (SDL_PollEvent(e))
     {
         if (e->type == SDL_QUIT)
         {
-            isRunning = false;
+            mContext->quit();
         }
-        if (e->type == SDL_MOUSEBUTTONDOWN)
+        else if (e->type == SDL_MOUSEBUTTONDOWN)
         {
             mMouseClicked = true;
         }
-        if (e->type == SDL_MOUSEBUTTONUP)
+        else if (e->type == SDL_MOUSEBUTTONUP)
         {
             mMouseClicked = false;
         }
 		
-		if(e->type == SDL_KEYDOWN) {
+		else if(e->type == SDL_KEYDOWN) {
 			switch(e->key.keysym.sym) {
-				case SDLK_RETURN:
-					mContext->changeScene(new PlayScene(mContext));
-					break;
-				default:
-					break;
+			case SDLK_RETURN:
+				mContext->changeScene(PLAY_SCENE);
+				break;
+			default:
+				break;
 			}
 		}
     }

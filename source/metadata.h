@@ -9,6 +9,7 @@ const int WINDOW_WIDTH = 128 * PXSCALE;
 const int WINDOW_HEIGHT = 128 * PXSCALE;
 const int HOLE_WIDTH = 16 * PXSCALE;
 const int HOLE_HEIGHT = 16 * PXSCALE;
+const int MAX_FPS = 30;
 
 // Author metadata
 const std::string GAME_AUTHOR = "zyenapz";

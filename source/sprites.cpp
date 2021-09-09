@@ -131,8 +131,8 @@ HoleManager::HoleManager(std::vector<HoleSprite*>& holes) {
 }
 
 HoleManager::~HoleManager() {
+	delete m_Holes;
     m_Holes = NULL;
-	printf("Debug: HoleManager deleted.\n");
 }
 
 void HoleManager::update() {

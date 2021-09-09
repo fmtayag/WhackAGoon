@@ -30,6 +30,9 @@ TTF_Font *gFont;
 SDL_Texture *bgTexture;
 SDL_Texture *spritesTexture;
 
+// Game Context
+SceneContext* gContext;
+
 bool initialize();
 bool loadAssets();
 void cleanUp();
@@ -49,19 +52,14 @@ int main(int argv, char **args)
     // Game loop
     if (isInitialized && hasLoadedAssets)
     {
-        SceneContext gContext;
         SDL_Event e;
-        bool isRunning = true;
 
-        while (isRunning)
+        while (gContext->get_scene() != NULL)
         {
-
-            SDL_Delay(30); // FPS cap
-
-            // Run context methods
-            gContext.HandleEvents(&e, isRunning);
-            gContext.Update();
-            gContext.Draw(gRenderer);
+            SDL_Delay(MAX_FPS);
+            gContext->HandleEvents(&e);
+            gContext->Update();
+            gContext->Draw(gRenderer);
         }
 
     }
@@ -70,13 +68,19 @@ int main(int argv, char **args)
     cleanUp();
 	
 	getchar();
-
     return 0;
 }
 
 bool initialize()
 {
     bool isSuccessful = true;
+	
+	// Initialize game context
+	gContext = new SceneContext();
+	if (gContext == NULL) {
+		printf("Failed to initialize the game context.\n");
+		isSuccessful = false;
+	}
 
     // Initialize SDL subsystems
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
@@ -123,7 +127,6 @@ bool initialize()
         }
     }
 
-    // Return isSuccessful
     return isSuccessful;
 }
 
@@ -168,7 +171,7 @@ bool loadAssets()
 
 void cleanUp()
 {
-    // Destroy textures
+    // Clean up textures
     cleanUpTexture(bgTexture);
     cleanUpTexture(spritesTexture);
 
@@ -179,6 +182,10 @@ void cleanUp()
     // Destroy renderer
     SDL_DestroyRenderer(gRenderer);
     gRenderer = NULL;
+	
+	// Clean up game context
+	delete gContext;
+	gContext = NULL;
 
     // Quit SDL subsystems
     TTF_Quit();
