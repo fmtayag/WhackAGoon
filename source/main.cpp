@@ -170,7 +170,11 @@ bool loadAssets()
 }
 
 void cleanUp()
-{
+{	
+	// Destroy font
+	TTF_CloseFont(gFont);
+	gFont = NULL;
+
     // Clean up textures
     cleanUpTexture(bgTexture);
     cleanUpTexture(spritesTexture);

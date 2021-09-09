@@ -60,7 +60,7 @@ private:
 class PlayScene : public AbstractScene {
 public:
     PlayScene(SceneContext* mContext);
-    virtual ~PlayScene();
+    ~PlayScene();
 
     void handleEvents(SDL_Event* e);
     void update();
@@ -96,7 +96,7 @@ private:
 class GameOverScene: public AbstractScene {
 public:
 	GameOverScene(SceneContext* context);
-	virtual ~GameOverScene();
+	~GameOverScene();
 	
 	void handleEvents(SDL_Event* e);
     void update();
@@ -116,7 +116,7 @@ private:
 class MenuScene: public AbstractScene {
 public:
 	MenuScene(SceneContext* context);
-	virtual ~MenuScene();
+	~MenuScene();
 	
 	void handleEvents(SDL_Event* e);
     void update();
