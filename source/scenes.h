@@ -9,7 +9,9 @@
 
 class AbstractScene {
 public:
-	virtual ~AbstractScene(){};
+	virtual ~AbstractScene(){ 
+		// printf("Base class destroyed.\n"); 
+	};
     virtual void handleEvents(SDL_Event* e) = 0;
     virtual void update() = 0;
     virtual void draw(SDL_Renderer* renderer) = 0;
@@ -17,7 +19,7 @@ public:
 
 /* -------------------------------------------------
  * Scene Context
- * -------------------------------------------------
+ * -------------------------------------------------	
  */
  
 
@@ -73,7 +75,7 @@ private:
     int mx, my;
     int mpos[2];
     int gameTimer;
-    const int GAME_DUR = SDL_GetTicks() + 2000; // 30000 ticks is 30 seconds
+    const int GAME_DUR = SDL_GetTicks() + 5000; // 30000 ticks is 30 seconds
     int score;
     int towniesHit;
 

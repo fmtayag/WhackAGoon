@@ -12,16 +12,6 @@ class ISprite {
     virtual void draw(SDL_Renderer* renderer) = 0;
 };
 
-
-
-
-
-
-
-
-
-
-
 /////////////////////// Hole Sprite
 enum AnimState {
     AS_Resting,
@@ -42,7 +32,7 @@ enum HoleType {
 class HoleSprite: public ISprite {
 public:
     HoleSprite(SDL_Texture* spritesheet, int x, int y);
-    ~HoleSprite();
+    ~HoleSprite(){};
     void update();
     void draw(SDL_Renderer* renderer);
 
@@ -58,66 +48,23 @@ public:
 private:
     AnimState m_AnimState;
     HoleType m_Type;
-    int m_CurFrame;
 
     SDL_Texture* mSpritesheet;
     SDL_Rect m_Rect;
-    SDL_Rect* m_CurClip;
 
     int anim_timer;
     const int WHACKED_DUR = 1300;
     int whacked_timer;
     int awake_timer;
     int awake_dur;
+	int m_CurFrame;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/////////////////////// Hammer Sprite
-enum HAM_STATE {
-    HAM_ST_UNSMASHED,
-    HAM_ST_SMASHED
-};
-
-class HammerSprite: public ISprite {
-    HammerSprite();
-    ~HammerSprite();
-    void update();
-    void draw(SDL_Renderer* renderer);
-
-private:
-    int mState;
-
-    SDL_Texture* mTexture;
-    SDL_Rect mRect;
-    SDL_Rect mClip;
-};
-
-
-
-
-
-
-
-
-
 
 /////////////////////// Hole Manager
 class HoleManager {
 public:
     HoleManager(std::vector<HoleSprite*>& holes);
-    ~HoleManager();
+    ~HoleManager() { m_Holes = NULL; } ;
 
     void update();
 

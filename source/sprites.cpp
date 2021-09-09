@@ -21,10 +21,6 @@ HoleSprite::HoleSprite(SDL_Texture* spritesheet, int x, int y) {
     anim_timer = SDL_GetTicks();
 }
 
-HoleSprite::~HoleSprite() {
-	
-}
-
 void HoleSprite::update() {
     if(m_AnimState != AS_Resting) {
         animate();
@@ -114,14 +110,7 @@ void HoleSprite::animate() {
 
 
 
-
-
-
-
-
-
-
-
+//////////////////// Hole Manager
 
 
 HoleManager::HoleManager(std::vector<HoleSprite*>& holes) {
@@ -130,13 +119,7 @@ HoleManager::HoleManager(std::vector<HoleSprite*>& holes) {
     wakeUpTimer = SDL_GetTicks();
 }
 
-HoleManager::~HoleManager() {
-	delete m_Holes;
-    m_Holes = NULL;
-}
-
 void HoleManager::update() {
-    using vConstIter = std::vector<HoleSprite*>::const_iterator;
 
     int now = SDL_GetTicks();
     if(now - wakeUpTimer > wakeUpDelay) {
@@ -144,25 +127,24 @@ void HoleManager::update() {
 
         // Check if there is a mayor
         bool mayActv = false;
-        for(vConstIter iter = (*m_Holes).begin(); iter != (*m_Holes).end(); iter++ ) {
-            if((*iter)->getType() == HT_Mayor) {
+        for(HoleSprite* hole : *m_Holes) {
+            if(hole->getType() == HT_Mayor) {
                 mayActv = true;
-//                printf("Debug: A mayor is active.\n");
                 break;
             }
         }
 
         // Awake a random hole
-        for(vConstIter iter = (*m_Holes).begin(); iter != (*m_Holes).end(); iter++) {
+        for(HoleSprite* hole : *m_Holes) {
             int selectThis = rand() & 1; // choose either 0 or 1
-            if((*iter)->getType() == HT_None && selectThis) {
+            if(hole->getType() == HT_None && selectThis) {
 
                 int spawnChoice = rand() % (HT_MaxNum-1) + HT_Goon;
                 if(mayActv && spawnChoice == (int) HT_Mayor) {
                     spawnChoice = HT_Goon;
                 }
 
-                (*iter)->awake((HoleType) spawnChoice);
+                hole->awake((HoleType) spawnChoice);
                 wakeUpDelay = rand() % 1000 + 100;
                 break;
             }

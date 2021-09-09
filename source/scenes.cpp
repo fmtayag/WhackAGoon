@@ -135,16 +135,15 @@ PlayScene::PlayScene(SceneContext *context)
 PlayScene::~PlayScene()
 {
 	// TODO: Still needs fixing with how the objs are deleted.
-/*     delete hManager;
+    delete hManager;
 	hManager = NULL;
 	
 	// delete holesprite pointers
-	using vecIter = std::vector<HoleSprite *>::const_iterator;
-	for (vecIter iter = holeSprites.begin(); iter != holeSprites.end(); iter++)
+	for (HoleSprite* hole : holeSprites)
     {
-        delete (*iter);
+        delete hole;
     }
-	holeSprites.clear(); */
+	holeSprites.clear();
 	printf("Deleted play scene.\n");
 }
 
@@ -201,25 +200,25 @@ void PlayScene::update()
 	}
 
     // Collision check
-    for (std::vector<HoleSprite *>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++)
+    for (HoleSprite* hole : holeSprites)
     {
-        bool collided = isPointCollide(mpos, (*iter)->getRect());
+        bool collided = isPointCollide(mpos, hole->getRect());
         if (collided && mMouseClicked)
         {
-            bool isWhacked = (*iter)->whack();
+            bool isWhacked = hole->whack();
             mMouseClicked = false;
 
             if (isWhacked)
             {
-                if ((*iter)->getType() == HT_Goon)
+                if (hole->getType() == HT_Goon)
                 {
                     score++;
                 }
-                else if ((*iter)->getType() == HT_Townie)
+                else if (hole->getType() == HT_Townie)
                 {
                     score -= 3;
                 }
-                else if ((*iter)->getType() == HT_Mayor)
+                else if (hole->getType() == HT_Mayor)
                 {
                     printf("Debug: You hit the Mayor. Game over!\n");
 					isGameOver = true;
@@ -234,9 +233,9 @@ void PlayScene::update()
     }
 
     // run update methods for the holes
-    for (std::vector<HoleSprite *>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++)
+    for (HoleSprite* hole : holeSprites)
     {
-        (*iter)->update();
+        hole->update();
     }
 
     hManager->update();
@@ -252,9 +251,9 @@ void PlayScene::draw(SDL_Renderer *renderer)
     SDL_RenderCopy(renderer, bgTexture, NULL, NULL);
 
     // Draw holes ------------------------
-    for (std::vector<HoleSprite*>::const_iterator iter = holeSprites.begin(); iter != holeSprites.end(); iter++)
+    for (HoleSprite* hole : holeSprites)
     {
-        (*iter)->draw(renderer);
+        hole->draw(renderer);
     }
 
     // Draw texts -----------------------------------------
@@ -346,12 +345,6 @@ void PlayScene::draw(SDL_Renderer *renderer)
 	// Render crap ----------------------------------------
     SDL_RenderPresent(renderer);
  }
- 
- 
- 
- 
- 
- 
  
  
  
