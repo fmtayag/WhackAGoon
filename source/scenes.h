@@ -6,6 +6,7 @@
 #include <vector>
 #include <SDL2/SDL.h>
 #include "sprites.h"
+#include "widgets.h"
 
 class AbstractScene {
 public:
@@ -123,6 +124,7 @@ public:
     void draw(SDL_Renderer* renderer);
 
 private:
+	std::vector<Button*> buttons;
 	SceneContext* mContext;
 	bool mMouseClicked;
  };

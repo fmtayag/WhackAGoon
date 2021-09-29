@@ -105,6 +105,7 @@ void SceneContext::Draw(SDL_Renderer *renderer)
  */
 PlayScene::PlayScene(SceneContext *context)
 {
+	
     mContext = context;
 
     gameTimer = SDL_GetTicks();
@@ -113,7 +114,7 @@ PlayScene::PlayScene(SceneContext *context)
     isGameOver = false;
     gameOverMessage = "GAME OVER MESSAGE";
     mMouseClicked = false;
-	
+
 	// HoleSprite initialization.
     const int centerW = (WINDOW_WIDTH / 2) - (HOLE_WIDTH / 2);
     const int centerH = (WINDOW_HEIGHT / 2) - (HOLE_HEIGHT / 2);
@@ -130,6 +131,7 @@ PlayScene::PlayScene(SceneContext *context)
     holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW, centerH + 72 + offsetH));
 
     hManager = new HoleManager(holeSprites);
+
 }
 
 PlayScene::~PlayScene()
@@ -175,7 +177,7 @@ void PlayScene::handleEvents(SDL_Event *e)
 		}
     }
 
-    // End game check
+    // Game over check
     if (isGameOver)
     {
         printf("Game over: %s!\n", gameOverMessage.c_str());
@@ -353,9 +355,16 @@ void PlayScene::draw(SDL_Renderer *renderer)
  * -------------------------------------------------
  */
  
+ 
  MenuScene::MenuScene(SceneContext* context) {
 	mContext = context;
-	mMouseClicked = false;
+	mMouseClicked = false;	
+	
+	
+	
+	// Buttons
+	buttons.push_back(new Button(btnTexture, "TESTING", 100, 100));
+	
  }
  
  MenuScene::~MenuScene() {
@@ -403,6 +412,11 @@ void PlayScene::draw(SDL_Renderer *renderer)
 	
 	drawText(renderer, "MENU SCENE", gFont, 0, 0, {255, 255, 255});
 	drawText(renderer, "PRESS ENTER TO PLAY", gFont, 0, 64, {255, 255, 255});
+	
+	// Draw buttons --------------------------
+	for (Button* button : buttons) {
+		button->draw(renderer);
+	}
 	
 	// Render crap ----------------------------------------
     SDL_RenderPresent(renderer);
