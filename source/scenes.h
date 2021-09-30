@@ -50,8 +50,25 @@ private:
 
 
 
+/* -------------------------------------------------
+ * Menu scene
+ * -------------------------------------------------
+ */
+ 
+class MenuScene: public AbstractScene {
+public:
+	MenuScene(SceneContext* context);
+	~MenuScene();
+	
+	void handleEvents(SDL_Event* e);
+    void update();
+    void draw(SDL_Renderer* renderer);
 
-
+private:
+	std::vector<Button*> buttons;
+	SceneContext* mContext;
+	bool mMouseClicked;
+ };
 
 /* -------------------------------------------------
  * Play Scene
@@ -73,12 +90,16 @@ private:
 	void u_timecheck();
 	void u_collision();
 	void u_holes();
+	void u_activateDur();
 	void u_activateHoles();
 	
 	// draw() sub-methods
 	void draw_texts(SDL_Renderer* renderer);
 	void draw_holes(SDL_Renderer* renderer);
 	void draw_bg(SDL_Renderer* renderer);
+	
+	// helper methods
+	int pick_holeType();
 	
 	// Context
     SceneContext* mContext;
@@ -91,17 +112,19 @@ private:
     SDL_Point mpos;
 	
 	// Game rules
-	const int GAME_DUR = SDL_GetTicks() + 30000; // 30000 ticks is 30 seconds
+	const int GAME_DUR = SDL_GetTicks() + 45000; // 1000 ticks is 1 second
 	const int SCOR_PENALTY = 3;
 	int tmr_activateHole = SDL_GetTicks();
-	int dur_activateHole = 300;
+	int dur_activateHole = 3000;
 	int tmr_game = SDL_GetTicks();
     int score = 0;
+	int tmr_upd_durActv = SDL_GetTicks();
+	const int DUR_UPD_DURACTV = 5000;
+	const int MIN_DURACTV_VAL = 600;
 	bool isGameOver;
 	std::vector<HoleSprite*> holeSprites;
 	
 };
-
 
 /* -------------------------------------------------
  * Game over scene
@@ -121,28 +144,6 @@ private:
     SceneContext* mContext;
 	bool mMouseClicked;
 };
-
-
-/* -------------------------------------------------
- * Menu scene
- * -------------------------------------------------
- */
- 
-class MenuScene: public AbstractScene {
-public:
-	MenuScene(SceneContext* context);
-	~MenuScene();
-	
-	void handleEvents(SDL_Event* e);
-    void update();
-    void draw(SDL_Renderer* renderer);
-
-private:
-	std::vector<Button*> buttons;
-	SceneContext* mContext;
-	bool mMouseClicked;
- };
-
 
 #endif // SCENES_H
 

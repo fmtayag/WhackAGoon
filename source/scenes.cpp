@@ -260,6 +260,7 @@ void PlayScene::update()
 	u_timecheck();
 	u_collision();
     u_holes();
+	u_activateDur();
 	u_activateHoles();
 }
 
@@ -318,6 +319,22 @@ void PlayScene::u_holes() {
     }
 }
 
+void PlayScene::u_activateDur() {
+	// Update dur_activateHole as time goes on.
+	int now = SDL_GetTicks();
+	bool timesUp = now - tmr_upd_durActv > DUR_UPD_DURACTV;
+	bool aboveMin = dur_activateHole > MIN_DURACTV_VAL;
+	
+	if(timesUp && aboveMin) {
+		tmr_upd_durActv = now;
+		
+		dur_activateHole -= 500;
+		printf("Debug: dur_activateHole is %d.\n", dur_activateHole);
+	}
+	
+	
+}
+
 void PlayScene::u_activateHoles() {
 	int now = SDL_GetTicks();
 	bool timesUp = now - tmr_activateHole > dur_activateHole;
@@ -330,27 +347,9 @@ void PlayScene::u_activateHoles() {
 			bool holeIsResting = hole->getAnimState() == AS_Resting;
 			
 			if(selectThis && holeIsResting) {
-				// Pick hole type
-				std::vector<HoleType> bag;
-				int wgt_goon = 10;
-				int wgt_town = 3;
-				int wgt_mayr = 1;
-				
-				for(int i=0; i < wgt_goon; i++) {
-					bag.push_back(HT_Goon);
-				}
-				for(int i=0; i < wgt_town; i++) {
-					bag.push_back(HT_Townie);
-				}
-				for(int i=0; i < wgt_mayr; i++) {
-					bag.push_back(HT_Mayor);
-				}
-				
-				std::random_shuffle(bag.begin(), bag.end());
-				int pick = rand() % bag.size() + 0;
-				
 				// Awake hole
-				hole->awake(bag[pick]);
+				HoleType ht = (HoleType) pick_holeType();
+				hole->awake(ht);
 				break;
 			}
 			
@@ -412,6 +411,28 @@ void PlayScene::draw_bg(SDL_Renderer* renderer) {
 	SDL_RenderCopy(renderer, bgTexture, NULL, NULL);
 }
 
+int PlayScene::pick_holeType() {
+	// Pick hole type
+	std::vector<HoleType> bag;
+	int wgt_goon = 85;
+	int wgt_town = 10;
+	int wgt_mayr = 5;
+	
+	for(int i=0; i < wgt_goon; i++) {
+		bag.push_back(HT_Goon);
+	}
+	for(int i=0; i < wgt_town; i++) {
+		bag.push_back(HT_Townie);
+	}
+	for(int i=0; i < wgt_mayr; i++) {
+		bag.push_back(HT_Mayor);
+	}
+	
+	std::random_shuffle(bag.begin(), bag.end());
+	int pick = rand() % bag.size() + 0;
+	
+	return bag[pick];
+}
 
 /* -------------------------------------------------
  * Game over scene def
