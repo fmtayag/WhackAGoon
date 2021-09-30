@@ -25,7 +25,8 @@ enum HoleType {
     HT_None,
     HT_Goon,
     HT_Townie,
-    HT_Mayor
+    HT_Mayor,
+	HT_MaxNum
 };
 
 class HoleSprite: public ISprite {

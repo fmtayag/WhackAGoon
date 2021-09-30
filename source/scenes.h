@@ -91,10 +91,10 @@ private:
     SDL_Point mpos;
 	
 	// Game rules
-	const int GAME_DUR = SDL_GetTicks() + 5000; // 30000 ticks is 30 seconds
-	const int SCR_PENALTY = 3;
+	const int GAME_DUR = SDL_GetTicks() + 30000; // 30000 ticks is 30 seconds
+	const int SCOR_PENALTY = 3;
 	int tmr_activateHole = SDL_GetTicks();
-	int dur_activateHole = 1000;
+	int dur_activateHole = 300;
 	int tmr_game = SDL_GetTicks();
     int score = 0;
 	bool isGameOver;

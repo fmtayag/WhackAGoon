@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iterator>
 #include <vector>
+#include <algorithm>
 #include <stdlib.h>
 #include <stdio.h>
 #include <SDL2/SDL.h>
@@ -255,7 +256,7 @@ void PlayScene::handleEvents(SDL_Event *e)
 
 void PlayScene::update()
 {
-	//u_timer();
+	u_timer();
 	u_timecheck();
 	u_collision();
     u_holes();
@@ -290,7 +291,7 @@ void PlayScene::u_collision() {
 						score++;
 						break;
 					case HT_Townie:
-						score -= SCR_PENALTY;
+						score -= SCOR_PENALTY;
 						break;
 					case HT_Mayor:
 						isGameOver = true;
@@ -329,7 +330,27 @@ void PlayScene::u_activateHoles() {
 			bool holeIsResting = hole->getAnimState() == AS_Resting;
 			
 			if(selectThis && holeIsResting) {
-				hole->awake();
+				// Pick hole type
+				std::vector<HoleType> bag;
+				int wgt_goon = 10;
+				int wgt_town = 3;
+				int wgt_mayr = 1;
+				
+				for(int i=0; i < wgt_goon; i++) {
+					bag.push_back(HT_Goon);
+				}
+				for(int i=0; i < wgt_town; i++) {
+					bag.push_back(HT_Townie);
+				}
+				for(int i=0; i < wgt_mayr; i++) {
+					bag.push_back(HT_Mayor);
+				}
+				
+				std::random_shuffle(bag.begin(), bag.end());
+				int pick = rand() % bag.size() + 0;
+				
+				// Awake hole
+				hole->awake(bag[pick]);
 				break;
 			}
 			
