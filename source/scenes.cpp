@@ -88,7 +88,77 @@ void SceneContext::Draw(SDL_Renderer *renderer)
 }
 
 
+/* -------------------------------------------------
+ * Menu scene def
+ * -------------------------------------------------
+ */
+ 
+ 
+ MenuScene::MenuScene(SceneContext* context) {
+	mContext = context;
+	mMouseClicked = false;	
+	
+	
+	
+	// Buttons
+	buttons.push_back(new Button(btnTexture, "TESTING", 96, 32, 100, 100));
+	
+ }
+ 
+ MenuScene::~MenuScene() {
+	printf("Deleted menu scene.\n");
+ }
+ 
+ void MenuScene::handleEvents(SDL_Event* e) {
+	// Handle events --------------------------------------
+    while (SDL_PollEvent(e))
+    {
+        if (e->type == SDL_QUIT)
+        {
+            mContext->quit();
+        }
+        else if (e->type == SDL_MOUSEBUTTONDOWN)
+        {
+            mMouseClicked = true;
+        }
+        else if (e->type == SDL_MOUSEBUTTONUP)
+        {
+            mMouseClicked = false;
+        }
+		
+		else if(e->type == SDL_KEYDOWN) {
+			switch(e->key.keysym.sym) {
+			case SDLK_RETURN:
+				mContext->changeScene(PLAY_SCENE);
+				break;
+			default:
+				break;
+			}
+		}
+    }
 
+ }
+ 
+ void MenuScene::update() {
+	 
+ }
+ 
+ void MenuScene::draw(SDL_Renderer* renderer) {
+	// Set render draw color, and clear renderer ----------
+    SDL_SetRenderDrawColor(renderer, 5, 10, 10, 255);
+    SDL_RenderClear(renderer);
+	
+	drawText(renderer, "MENU SCENE", gFont, 0, 0, {255, 255, 255});
+	drawText(renderer, "PRESS ENTER TO PLAY", gFont, 0, 64, {255, 255, 255});
+	
+	// Draw buttons --------------------------
+	for (Button* button : buttons) {
+		button->draw(renderer);
+	}
+	
+	// Render
+    SDL_RenderPresent(renderer);
+ }
 
 
 
@@ -115,11 +185,12 @@ PlayScene::PlayScene(SceneContext *context)
     gameOverMessage = "GAME OVER MESSAGE";
     mMouseClicked = false;
 
-	// HoleSprite initialization.
+	// HoleSprite initialization
     const int centerW = (WINDOW_WIDTH / 2) - (HOLE_WIDTH / 2);
     const int centerH = (WINDOW_HEIGHT / 2) - (HOLE_HEIGHT / 2);
     const int offsetW = 48;
     const int offsetH = 32;
+	
     // Column 1
     holeSprites.push_back(new HoleSprite(spritesTexture, centerW - offsetW, centerH - 72 + offsetH));
     holeSprites.push_back(new HoleSprite(spritesTexture, centerW - offsetW - 32, centerH + offsetH));
@@ -185,23 +256,30 @@ void PlayScene::handleEvents(SDL_Event *e)
     }
 
     // Update mouse position
-    SDL_GetMouseState(&mx, &my);
-    mpos[0] = mx;
-    mpos[1] = my;
+    SDL_GetMouseState(&mpos.x, &mpos.y);
 }
 
 void PlayScene::update()
 {
-	// Update timer
+	u_timer();
+	u_timecheck();
+	u_collision();
+    u_holes();
+}
+
+void PlayScene::u_timer() {
 	gameTimer = SDL_GetTicks();
-	
-	// time up check
+}
+
+void PlayScene::u_timecheck() {
 	if( (GAME_DUR - gameTimer) / 1000 <= 0) {
 		isGameOver = true;
 		gameOverMessage = "Time's up!";
 	}
+}
 
-    // Collision check
+void PlayScene::u_collision() {
+	
     for (HoleSprite* hole : holeSprites)
     {
         bool collided = isPointCollide(mpos, hole->getRect());
@@ -212,20 +290,21 @@ void PlayScene::update()
 
             if (isWhacked)
             {
-                if (hole->getType() == HT_Goon)
-                {
-                    score++;
-                }
-                else if (hole->getType() == HT_Townie)
-                {
-                    score -= 3;
-                }
-                else if (hole->getType() == HT_Mayor)
-                {
-                    printf("Debug: You hit the Mayor. Game over!\n");
-					isGameOver = true;
-                    gameOverMessage = "You hit the Mayor!\n";
-                }
+				switch(hole->getType()) {
+					case HT_Goon:
+						score++;
+						break;
+					case HT_Townie:
+						score -= SCR_PENALTY;
+						break;
+					case HT_Mayor:
+						isGameOver = true;
+						gameOverMessage = "You hit the Mayor!\n";
+						break;
+					default:
+						printf("Warning: default case has been reached for collision check.\n");
+						break;
+				}
             }
 
             // neg score check
@@ -233,8 +312,11 @@ void PlayScene::update()
                 score = 0;
         }
     }
+	
+}
 
-    // run update methods for the holes
+void PlayScene::u_holes() {
+	
     for (HoleSprite* hole : holeSprites)
     {
         hole->update();
@@ -245,42 +327,58 @@ void PlayScene::update()
 
 void PlayScene::draw(SDL_Renderer *renderer)
 {
-    // Set render draw color, and clear renderer ----------
-    SDL_SetRenderDrawColor(renderer, 5, 10, 10, 255);
+	// Colors
+	SDL_Color BLACK = {0, 0, 0, 255};
+	SDL_Color WHITE = {255, 255, 255, 255};
+	SDL_Color BG_COLOR = BLACK;
+	
+    SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, BG_COLOR.a);
     SDL_RenderClear(renderer);
+	
+	draw_bg(renderer);
+	draw_holes(renderer);
+	draw_texts(renderer);
 
-    // Draw background ------------------------------------
-    SDL_RenderCopy(renderer, bgTexture, NULL, NULL);
+    SDL_RenderPresent(renderer);
+}
 
-    // Draw holes ------------------------
+void PlayScene::draw_texts(SDL_Renderer* renderer) {
+	// Colors
+	SDL_Color WHITE = {255, 255, 255, 255};
+	SDL_Color RED = {255, 0, 0, 255};
+	
+	// Anchor points, offsets
+	const int txtCenterW = WINDOW_WIDTH / 2;
+    const int offsetX = 16;
+	
+	// Messages
+	int timeLeft = (GAME_DUR - gameTimer) / 1000;
+	std::string timeMessage = std::to_string(timeLeft) + "s";
+	std::string scoreMessage = std::to_string(score);
+	
+	// Time message color
+	SDL_Color timeColor = WHITE;
+	int critTimeThreshold = 10;
+	bool critTime = ((GAME_DUR - gameTimer) / 1000) <= critTimeThreshold;
+	if(critTime) { timeColor = RED; }
+	
+	// Draw texts
+    drawText(renderer, "SCORE", gFont, txtCenterW - 64, 42, WHITE, true);
+    drawText(renderer, scoreMessage.c_str(), gFont, txtCenterW - 64, 64, WHITE, true);
+    drawText(renderer, "TIME", gFont, txtCenterW + 64, 42, timeColor, true);
+    drawText(renderer, timeMessage.c_str(), gFont, txtCenterW + 64, 64, timeColor, true);
+}
+
+void PlayScene::draw_holes(SDL_Renderer* renderer) {
     for (HoleSprite* hole : holeSprites)
     {
         hole->draw(renderer);
     }
-
-    // Draw texts -----------------------------------------
-    std::string scoreMessage = std::to_string(score);
-	int timeLeft = (GAME_DUR - gameTimer) / 1000;
-	std::string timeMessage = std::to_string(timeLeft) + "s";
-    const int txtCenterW = WINDOW_WIDTH / 2;
-    const int offsetX = 16;
-	
-	// time msg color
-	SDL_Color timeColor = {255, 255, 255};
-	if( (GAME_DUR - gameTimer) / 1000 <= 10) {
-		timeColor = {255, 0, 0};
-	}
-	
-    drawText(renderer, "SCORE", gFont, txtCenterW - 64, 42, {255, 255, 255}, true);
-    drawText(renderer, scoreMessage.c_str(), gFont, txtCenterW - 64, 64, {255, 255, 255}, true);
-	
-    drawText(renderer, "TIME", gFont, txtCenterW + 64, 42, timeColor, true);
-    drawText(renderer, timeMessage.c_str(), gFont, txtCenterW + 64, 64, timeColor, true);
-
-    // Render crap ----------------------------------------
-    SDL_RenderPresent(renderer);
 }
 
+void PlayScene::draw_bg(SDL_Renderer* renderer) {
+	SDL_RenderCopy(renderer, bgTexture, NULL, NULL);
+}
 
 
 
@@ -344,80 +442,9 @@ void PlayScene::draw(SDL_Renderer *renderer)
 	drawText(renderer, "GAME OVER", gFont, 0, 0, {255, 255, 255});
 	drawText(renderer, "PRESS ENTER TO GO TO MENU", gFont, 0, 64, {255, 255, 255});
 	
-	// Render crap ----------------------------------------
+	// Render 
     SDL_RenderPresent(renderer);
  }
  
  
  
- /* -------------------------------------------------
- * Menu scene def
- * -------------------------------------------------
- */
- 
- 
- MenuScene::MenuScene(SceneContext* context) {
-	mContext = context;
-	mMouseClicked = false;	
-	
-	
-	
-	// Buttons
-	buttons.push_back(new Button(btnTexture, "TESTING", 100, 100));
-	
- }
- 
- MenuScene::~MenuScene() {
-	printf("Deleted menu scene.\n");
- }
- 
- void MenuScene::handleEvents(SDL_Event* e) {
-	// Handle events --------------------------------------
-    while (SDL_PollEvent(e))
-    {
-        if (e->type == SDL_QUIT)
-        {
-            mContext->quit();
-        }
-        else if (e->type == SDL_MOUSEBUTTONDOWN)
-        {
-            mMouseClicked = true;
-        }
-        else if (e->type == SDL_MOUSEBUTTONUP)
-        {
-            mMouseClicked = false;
-        }
-		
-		else if(e->type == SDL_KEYDOWN) {
-			switch(e->key.keysym.sym) {
-			case SDLK_RETURN:
-				mContext->changeScene(PLAY_SCENE);
-				break;
-			default:
-				break;
-			}
-		}
-    }
-
- }
- 
- void MenuScene::update() {
-	 
- }
- 
- void MenuScene::draw(SDL_Renderer* renderer) {
-	// Set render draw color, and clear renderer ----------
-    SDL_SetRenderDrawColor(renderer, 5, 10, 10, 255);
-    SDL_RenderClear(renderer);
-	
-	drawText(renderer, "MENU SCENE", gFont, 0, 0, {255, 255, 255});
-	drawText(renderer, "PRESS ENTER TO PLAY", gFont, 0, 64, {255, 255, 255});
-	
-	// Draw buttons --------------------------
-	for (Button* button : buttons) {
-		button->draw(renderer);
-	}
-	
-	// Render crap ----------------------------------------
-    SDL_RenderPresent(renderer);
- }

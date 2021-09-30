@@ -4,13 +4,13 @@
 #include "utils.h"
 #include "assets.h"
 
-Button::Button(SDL_Texture* btnTexture, std::string btnText, int btnX, int btnY) {
+Button::Button(SDL_Texture* btnTexture, std::string btnText, int btnW, int btnH, int btnX, int btnY) {
 	m_texture = btnTexture;
 	m_text = btnText;
 	m_rect.x = btnX;
 	m_rect.y = btnY;
-	m_rect.w = 96;
-	m_rect.h = 32;
+	m_rect.w = btnW;
+	m_rect.h = btnH;
 }
 
 Button::~Button() {

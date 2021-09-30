@@ -20,7 +20,7 @@ enum BtnState {
 
 class Button {
 	public:
-		Button(SDL_Texture* btnTexture, std::string btnText, int btnX, int btnY);
+		Button(SDL_Texture* btnTexture, std::string btnText, int btnW, int btnH, int btnX, int btnY);
 		~Button();
 		void update(BtnEvent event);
 		void draw(SDL_Renderer* renderer);

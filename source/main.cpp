@@ -56,7 +56,7 @@ int main(int argv, char **args)
         SDL_Event e;
 		
 		// Create game context
-		gContext = new SceneContext();
+		gContext = new SceneContext(PLAY_SCENE);
 		if (gContext == NULL) {
 			printf("Failed to initialize the game context.\n");
 		}
