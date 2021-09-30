@@ -25,8 +25,7 @@ enum HoleType {
     HT_None,
     HT_Goon,
     HT_Townie,
-    HT_Mayor,
-    HT_MaxNum
+    HT_Mayor
 };
 
 class HoleSprite: public ISprite {
@@ -58,20 +57,6 @@ private:
     int awake_timer;
     int awake_dur;
 	int m_CurFrame;
-};
-
-/////////////////////// Hole Manager
-class HoleManager {
-public:
-    HoleManager(std::vector<HoleSprite*>& holes);
-    ~HoleManager() { m_Holes = NULL; } ;
-
-    void update();
-
-private:
-    std::vector<HoleSprite*>* m_Holes;
-    int wakeUpDelay;
-    int wakeUpTimer;
 };
 
 #endif // SPRITES_H

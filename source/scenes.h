@@ -73,27 +73,33 @@ private:
 	void u_timecheck();
 	void u_collision();
 	void u_holes();
+	void u_activateHoles();
 	
 	// draw() sub-methods
 	void draw_texts(SDL_Renderer* renderer);
 	void draw_holes(SDL_Renderer* renderer);
 	void draw_bg(SDL_Renderer* renderer);
-
+	
+	// Context
     SceneContext* mContext;
+	
+	// Messages
     std::string gameOverMessage;
-    bool isGameOver;
+    
+	// Mouse
     bool mMouseClicked;
     SDL_Point mpos;
-    int gameTimer;
-    int score;
-    int towniesHit;
-    HoleManager* hManager;
-    std::vector<HoleSprite*> holeSprites;
 	
 	// Game rules
 	const int GAME_DUR = SDL_GetTicks() + 5000; // 30000 ticks is 30 seconds
 	const int SCR_PENALTY = 3;
-
+	int tmr_activateHole = SDL_GetTicks();
+	int dur_activateHole = 1000;
+	int tmr_game = SDL_GetTicks();
+    int score = 0;
+	bool isGameOver;
+	std::vector<HoleSprite*> holeSprites;
+	
 };
 
 

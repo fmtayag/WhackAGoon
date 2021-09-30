@@ -177,15 +177,11 @@ PlayScene::PlayScene(SceneContext *context)
 {
 	
     mContext = context;
-
-    gameTimer = SDL_GetTicks();
-    score = 0;
-    towniesHit = 0;
     isGameOver = false;
     gameOverMessage = "GAME OVER MESSAGE";
     mMouseClicked = false;
 
-	// HoleSprite initialization
+	// Anchor points, offsets
     const int centerW = (WINDOW_WIDTH / 2) - (HOLE_WIDTH / 2);
     const int centerH = (WINDOW_HEIGHT / 2) - (HOLE_HEIGHT / 2);
     const int offsetW = 48;
@@ -201,17 +197,15 @@ PlayScene::PlayScene(SceneContext *context)
     holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW + 32, centerH + offsetH));
     holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW, centerH + 72 + offsetH));
 
-    hManager = new HoleManager(holeSprites);
+    // holeMgr = new HoleManager(holeSprites);
 
 }
 
 PlayScene::~PlayScene()
 {
-	// TODO: Still needs fixing with how the objs are deleted.
-    delete hManager;
-	hManager = NULL;
+    // delete holeMgr;
+	// holeMgr = NULL;
 	
-	// delete holesprite pointers
 	for (HoleSprite* hole : holeSprites)
     {
         delete hole;
@@ -261,18 +255,19 @@ void PlayScene::handleEvents(SDL_Event *e)
 
 void PlayScene::update()
 {
-	u_timer();
+	//u_timer();
 	u_timecheck();
 	u_collision();
     u_holes();
+	u_activateHoles();
 }
 
 void PlayScene::u_timer() {
-	gameTimer = SDL_GetTicks();
+	tmr_game = SDL_GetTicks();
 }
 
 void PlayScene::u_timecheck() {
-	if( (GAME_DUR - gameTimer) / 1000 <= 0) {
+	if( (GAME_DUR - tmr_game) / 1000 <= 0) {
 		isGameOver = true;
 		gameOverMessage = "Time's up!";
 	}
@@ -316,17 +311,33 @@ void PlayScene::u_collision() {
 }
 
 void PlayScene::u_holes() {
-	
     for (HoleSprite* hole : holeSprites)
     {
         hole->update();
     }
-
-    hManager->update();
 }
 
-void PlayScene::draw(SDL_Renderer *renderer)
-{
+void PlayScene::u_activateHoles() {
+	int now = SDL_GetTicks();
+	bool timesUp = now - tmr_activateHole > dur_activateHole;
+	
+	if(timesUp) {
+		tmr_activateHole = now;
+		for(HoleSprite* hole : holeSprites) {
+			
+			bool selectThis = rand() & 1; // choose either 0 or 1
+			bool holeIsResting = hole->getAnimState() == AS_Resting;
+			
+			if(selectThis && holeIsResting) {
+				hole->awake();
+				break;
+			}
+			
+		}
+	}
+}
+
+void PlayScene::draw(SDL_Renderer *renderer) {
 	// Colors
 	SDL_Color BLACK = {0, 0, 0, 255};
 	SDL_Color WHITE = {255, 255, 255, 255};
@@ -352,14 +363,14 @@ void PlayScene::draw_texts(SDL_Renderer* renderer) {
     const int offsetX = 16;
 	
 	// Messages
-	int timeLeft = (GAME_DUR - gameTimer) / 1000;
+	int timeLeft = (GAME_DUR - tmr_game) / 1000;
 	std::string timeMessage = std::to_string(timeLeft) + "s";
 	std::string scoreMessage = std::to_string(score);
 	
 	// Time message color
 	SDL_Color timeColor = WHITE;
 	int critTimeThreshold = 10;
-	bool critTime = ((GAME_DUR - gameTimer) / 1000) <= critTimeThreshold;
+	bool critTime = ((GAME_DUR - tmr_game) / 1000) <= critTimeThreshold;
 	if(critTime) { timeColor = RED; }
 	
 	// Draw texts
@@ -379,11 +390,6 @@ void PlayScene::draw_holes(SDL_Renderer* renderer) {
 void PlayScene::draw_bg(SDL_Renderer* renderer) {
 	SDL_RenderCopy(renderer, bgTexture, NULL, NULL);
 }
-
-
-
-
-
 
 
 /* -------------------------------------------------
