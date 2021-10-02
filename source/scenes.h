@@ -119,7 +119,7 @@ private:
 	int tmr_game = SDL_GetTicks();
     int score = 0;
 	int tmr_upd_durActv = SDL_GetTicks();
-	const int DUR_UPD_DURACTV = 5000;
+	const int DUR_UPD_DURACTV = 2500;
 	const int MIN_DURACTV_VAL = 600;
 	bool isGameOver;
 	std::vector<HoleSprite*> holeSprites;

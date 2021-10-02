@@ -1,6 +1,6 @@
 /*
  * Whack-A-Goon!
- * An SDL video game developed by zyenapz
+ * Author: zyenapz
  * The source code for this game is available on my GitHub page
  * and is licensed under the GPLv3 license.
  * My GitHub Page: github.com/zyenapz

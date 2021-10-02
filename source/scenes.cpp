@@ -197,16 +197,11 @@ PlayScene::PlayScene(SceneContext *context)
     holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW, centerH - 72 + offsetH));
     holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW + 32, centerH + offsetH));
     holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW, centerH + 72 + offsetH));
-
-    // holeMgr = new HoleManager(holeSprites);
-
+	
 }
 
 PlayScene::~PlayScene()
 {
-    // delete holeMgr;
-	// holeMgr = NULL;
-	
 	for (HoleSprite* hole : holeSprites)
     {
         delete hole;
@@ -328,7 +323,7 @@ void PlayScene::u_activateDur() {
 	if(timesUp && aboveMin) {
 		tmr_upd_durActv = now;
 		
-		dur_activateHole -= 500;
+		dur_activateHole -= 800;
 		printf("Debug: dur_activateHole is %d.\n", dur_activateHole);
 	}
 	
