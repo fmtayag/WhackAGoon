@@ -1,4 +1,5 @@
 /source/*.bat
 /source/*.exe
 /source/*.dll
-/dev/*
+/plan/
+/release/

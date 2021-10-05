@@ -95,18 +95,11 @@ void SceneContext::Draw(SDL_Renderer *renderer)
  * -------------------------------------------------
  */
  
- 
+
  MenuScene::MenuScene(SceneContext* context) {
 	mContext = context;
 	z_mouse.isClicked = false;
-	
-	if(z_mouse.isClicked) {
-		printf("Mouse is clicked.\n");
-	}
-	else {
-		printf("Mouse is not clicked.\n");
-	}
-	
+
 	// Buttons
 	Button* btn1 = new Button(btnTexture, "TESTING", 96, 32, 100, 100);
 	btn1->bindCallback(std::bind(&MenuScene::chs_playGame, this));

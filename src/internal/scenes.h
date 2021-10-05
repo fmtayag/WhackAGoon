@@ -8,28 +8,21 @@
 #include "sprites.h"
 #include "widgets.h"
 
-class AbstractScene {
-public:
-	virtual ~AbstractScene(){ 
-		// printf("Base class destroyed.\n"); 
-	};
-    virtual void handleEvents(SDL_Event* e) = 0;
-    virtual void update() = 0;
-    virtual void draw(SDL_Renderer* renderer) = 0;
-};
-
-/* -------------------------------------------------
- * Scene Context
- * -------------------------------------------------	
- */
- 
-
 enum SceneID {
 	MENU_SCENE,
 	PLAY_SCENE,
 	GAMEOVER_SCENE
 };
 
+class AbstractScene {
+public:
+	virtual ~AbstractScene() = default;
+	
+    virtual void handleEvents(SDL_Event* e) = 0;
+    virtual void update() = 0;
+    virtual void draw(SDL_Renderer* renderer) = 0;
+};
+ 
 class SceneContext {
 public:
     SceneContext(SceneID scene=MENU_SCENE);
@@ -46,39 +39,26 @@ private:
     AbstractScene* pScene;
     bool isRunning;
 };
-
-
-
-
-/* -------------------------------------------------
- * Menu scene
- * -------------------------------------------------
- */
  
 class MenuScene: public AbstractScene {
 public:
 	MenuScene(SceneContext* context);
 	~MenuScene();
-	
+
 	void handleEvents(SDL_Event* e);
-    void update();
-    void draw(SDL_Renderer* renderer);
-	
+	void update();
+	void draw(SDL_Renderer* renderer);
+
 	void chs_playGame();
 
 private:
 	std::vector<Button*> buttons;
 	SceneContext* mContext;
-	
+
 	// Mouse
 	MouseState z_mouse;
-	
- };
 
-/* -------------------------------------------------
- * Play Scene
- * -------------------------------------------------
- */
+};
 
 class PlayScene : public AbstractScene {
 public:
@@ -130,11 +110,6 @@ private:
 	std::vector<HoleSprite*> holeSprites;
 	
 };
-
-/* -------------------------------------------------
- * Game over scene
- * -------------------------------------------------
- */
 
 class GameOverScene: public AbstractScene {
 public:

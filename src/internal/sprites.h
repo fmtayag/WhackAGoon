@@ -6,13 +6,6 @@
 #include <vector>
 #include <iterator>
 
-/////////////////////// sprite interf
-class ISprite {
-    virtual void update() = 0;
-    virtual void draw(SDL_Renderer* renderer) = 0;
-};
-
-/////////////////////// Hole Sprite
 enum AnimState {
     AS_Resting,
     AS_ToAwake,
@@ -27,6 +20,11 @@ enum HoleType {
     HT_Townie,
     HT_Mayor,
 	HT_MaxNum
+};
+
+class ISprite {
+    virtual void update() = 0;
+    virtual void draw(SDL_Renderer* renderer) = 0;
 };
 
 class HoleSprite: public ISprite {

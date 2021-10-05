@@ -5,11 +5,6 @@
 #include <functional>
 #include <SDL2/SDL.h>
 
-struct MouseState {
-	bool isClicked;
-	SDL_Point pos;
-};
-
 enum BtnEvent {
 	BEVNT_CLICK,
 	BEVNT_UNCLICK,
@@ -22,6 +17,11 @@ enum BtnState {
 	BST_NORMAL,
 	BST_CLICKED,
 	BST_HOVERED
+};
+
+struct MouseState {
+	bool isClicked;
+	SDL_Point pos;
 };
 
 class Button {
