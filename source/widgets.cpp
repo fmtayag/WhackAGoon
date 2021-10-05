@@ -11,39 +11,57 @@ Button::Button(SDL_Texture* btnTexture, std::string btnText, int btnW, int btnH,
 	m_rect.y = btnY;
 	m_rect.w = btnW;
 	m_rect.h = btnH;
+	m_state = BST_NORMAL;
 }
 
 Button::~Button() {
 	
 }
 
-void Button::update(BtnEvent event) {
-	switch(event) {
-		case BEVNT_CLICK:
-			break;
-		case BEVNT_UNCLICK:
-			break;
-		case BEVNT_HOVER:
-			break;
-		case BEVNT_UNHOVER:
-			break;
+void Button::update(MouseState mouse_s) {
+	u_state(mouse_s);
+}
+
+void Button::u_state(MouseState mouse_s) {
+	bool collided = isPointCollide(mouse_s.pos, this->getRect());
+	if(collided) {
+		this->setState(BST_HOVERED);
+		
+		if(mouse_s.isClicked) {
+			this->setState(BST_CLICKED);
+		}
+	}
+	else {
+		this->setState(BST_NORMAL);
 	}
 }
 
 void Button::draw(SDL_Renderer* renderer) {
+	std::string btnText = "";
+	
 	switch(m_state) {
-		case BST_INACTIVE:
+		case BST_DISABLED:
+			btnText = "INACT";
 			break;
-		case BST_ACTIVE:
+		case BST_NORMAL:
+			btnText = "NORMAL";
 			break;
 		case BST_CLICKED:
+			btnText = "CLICKED";
 			break;
 		case BST_HOVERED:
+			btnText = "HOVER";
 			break;
 	}
 	
 	SDL_RenderCopy(renderer, m_texture, NULL, &m_rect);
-
-	drawText(renderer, m_text.c_str(), gFont, m_rect.x, m_rect.y, {255, 255, 255});
 	
+	drawText(renderer, btnText.c_str(), gFont, m_rect.x, m_rect.y, {255, 255, 255});
+	
+}
+
+void Button::setState(BtnState state) {
+	if(m_state != BST_DISABLED) {
+		m_state = state;
+	}
 }

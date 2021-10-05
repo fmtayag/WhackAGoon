@@ -97,12 +97,17 @@ void SceneContext::Draw(SDL_Renderer *renderer)
  
  MenuScene::MenuScene(SceneContext* context) {
 	mContext = context;
-	mMouseClicked = false;	
 	
-	
+	if(z_mouse.isClicked) {
+		printf("Mouse is clicked.\n");
+	}
+	else {
+		printf("Mouse is not clicked.\n");
+	}
 	
 	// Buttons
 	buttons.push_back(new Button(btnTexture, "TESTING", 96, 32, 100, 100));
+	buttons.push_back(new Button(btnTexture, "TESTING", 120, 32, 100, 140));
 	
  }
  
@@ -120,11 +125,11 @@ void SceneContext::Draw(SDL_Renderer *renderer)
         }
         else if (e->type == SDL_MOUSEBUTTONDOWN)
         {
-            mMouseClicked = true;
+            z_mouse.isClicked = true;
         }
         else if (e->type == SDL_MOUSEBUTTONUP)
         {
-            mMouseClicked = false;
+            z_mouse.isClicked = false;
         }
 		
 		else if(e->type == SDL_KEYDOWN) {
@@ -137,12 +142,18 @@ void SceneContext::Draw(SDL_Renderer *renderer)
 			}
 		}
     }
+	
+	// Update mouse position
+    SDL_GetMouseState(&z_mouse.pos.x, &z_mouse.pos.y);
 
  }
  
- void MenuScene::update() {
-	 
- }
+void MenuScene::update() {
+	//  Update buttons
+	for(Button* btn : buttons) {
+		btn->update(z_mouse);
+	}
+}
  
  void MenuScene::draw(SDL_Renderer* renderer) {
 	// Set render draw color, and clear renderer ----------

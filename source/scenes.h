@@ -67,7 +67,10 @@ public:
 private:
 	std::vector<Button*> buttons;
 	SceneContext* mContext;
-	bool mMouseClicked;
+	
+	// Mouse
+	MouseState z_mouse;
+	
  };
 
 /* -------------------------------------------------
