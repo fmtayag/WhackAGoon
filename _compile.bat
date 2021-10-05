@@ -7,14 +7,14 @@ for /F "tokens=1,2 delims=#" %%a in ('"prompt #$H#$E# & echo on & for %%b in (1)
 )
 @echo on	
 
-g++ internal\*.cpp main.cpp -IC:\Dev\allSDL_x86\include -LC:\Dev\allSDL_x86\lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -o dwhack.exe
+g++ internal\*.cpp main.cpp -IC:\Dev\allSDL_x86\include -LC:\Dev\allSDL_x86\lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -o _dwhack.exe
 @echo off
 
 if EXIST dwhack.exe (
 	:: run output file
 	call :colorEcho a0 "Compilation is a success."
 	echo:
-	dwhack.exe
+	_dwhack.exe
 	
 ) else (
 	call :colorEcho 40 "Compilation has failed."
