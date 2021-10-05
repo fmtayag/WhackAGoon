@@ -1,5 +1,5 @@
-/source/*.bat
-/source/*.exe
-/source/*.dll
+/src/*.bat
+/src/*.exe
+/src/*.dll
 /plan/
 /release/
