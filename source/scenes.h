@@ -63,6 +63,8 @@ public:
 	void handleEvents(SDL_Event* e);
     void update();
     void draw(SDL_Renderer* renderer);
+	
+	void chs_playGame();
 
 private:
 	std::vector<Button*> buttons;

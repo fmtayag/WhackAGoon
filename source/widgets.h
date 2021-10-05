@@ -2,6 +2,7 @@
 #define WIDGETS_H
 #pragma once
 
+#include <functional>
 #include <SDL2/SDL.h>
 
 struct MouseState {
@@ -27,20 +28,25 @@ class Button {
 	public:
 		Button(SDL_Texture* btnTexture, std::string btnText, int btnW, int btnH, int btnX, int btnY);
 		~Button();
-		void update(MouseState mouse_s);
+		void update(MouseState* mouse_s);
 		void draw(SDL_Renderer* renderer);
 		
 		SDL_Rect getRect() { return m_rect; };
 		void setState(BtnState state);
+		void bindCallback(std::function<void()> cback);
 		
 	private:
 		// update() sub-methods
-		void u_state(MouseState mouse_s);
+		void u_state(MouseState* mouse_s);
 	
 		SDL_Rect m_rect;
 		SDL_Texture* m_texture;
 		std::string m_text;
 		BtnState m_state;
+		
+		// Callback
+		std::function<void()> m_callback;
+		void makeCallback();
 	
 };
 

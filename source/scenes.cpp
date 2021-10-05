@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <stdlib.h>
 #include <stdio.h>
+#include <functional>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "scenes.h"
@@ -97,6 +98,7 @@ void SceneContext::Draw(SDL_Renderer *renderer)
  
  MenuScene::MenuScene(SceneContext* context) {
 	mContext = context;
+	z_mouse.isClicked = false;
 	
 	if(z_mouse.isClicked) {
 		printf("Mouse is clicked.\n");
@@ -106,12 +108,17 @@ void SceneContext::Draw(SDL_Renderer *renderer)
 	}
 	
 	// Buttons
-	buttons.push_back(new Button(btnTexture, "TESTING", 96, 32, 100, 100));
-	buttons.push_back(new Button(btnTexture, "TESTING", 120, 32, 100, 140));
+	Button* btn1 = new Button(btnTexture, "TESTING", 96, 32, 100, 100);
+	btn1->bindCallback(std::bind(&MenuScene::chs_playGame, this));
+	buttons.push_back(btn1);
 	
  }
  
  MenuScene::~MenuScene() {
+	for(Button* btn : buttons) {
+		delete btn;
+		btn = NULL;
+	}
 	printf("Deleted menu scene.\n");
  }
  
@@ -131,16 +138,6 @@ void SceneContext::Draw(SDL_Renderer *renderer)
         {
             z_mouse.isClicked = false;
         }
-		
-		else if(e->type == SDL_KEYDOWN) {
-			switch(e->key.keysym.sym) {
-			case SDLK_RETURN:
-				mContext->changeScene(PLAY_SCENE);
-				break;
-			default:
-				break;
-			}
-		}
     }
 	
 	// Update mouse position
@@ -151,26 +148,30 @@ void SceneContext::Draw(SDL_Renderer *renderer)
 void MenuScene::update() {
 	//  Update buttons
 	for(Button* btn : buttons) {
-		btn->update(z_mouse);
+		btn->update(&z_mouse);
 	}
 }
  
- void MenuScene::draw(SDL_Renderer* renderer) {
+void MenuScene::draw(SDL_Renderer* renderer) {
 	// Set render draw color, and clear renderer ----------
-    SDL_SetRenderDrawColor(renderer, 5, 10, 10, 255);
-    SDL_RenderClear(renderer);
-	
+	SDL_SetRenderDrawColor(renderer, 5, 10, 10, 255);
+	SDL_RenderClear(renderer);
+
 	drawText(renderer, "MENU SCENE", gFont, 0, 0, {255, 255, 255});
 	drawText(renderer, "PRESS ENTER TO PLAY", gFont, 0, 64, {255, 255, 255});
-	
+
 	// Draw buttons --------------------------
 	for (Button* button : buttons) {
 		button->draw(renderer);
 	}
-	
+
 	// Render
-    SDL_RenderPresent(renderer);
- }
+	SDL_RenderPresent(renderer);
+}
+ 
+void MenuScene::chs_playGame() {
+	mContext->changeScene(PLAY_SCENE);
+}
 
 
 

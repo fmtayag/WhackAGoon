@@ -1,4 +1,5 @@
 #include <iostream>
+#include <functional>
 #include <SDL2/SDL.h>
 #include "widgets.h"
 #include "utils.h"
@@ -15,25 +16,33 @@ Button::Button(SDL_Texture* btnTexture, std::string btnText, int btnW, int btnH,
 }
 
 Button::~Button() {
-	
+	printf("Deleted button.\n");
 }
 
-void Button::update(MouseState mouse_s) {
+void Button::update(MouseState* mouse_s) {
 	u_state(mouse_s);
+	
+	if(m_state == BST_CLICKED) {
+		makeCallback();
+		m_state = BST_NORMAL;
+		mouse_s->isClicked = false;
+	}
 }
 
-void Button::u_state(MouseState mouse_s) {
-	bool collided = isPointCollide(mouse_s.pos, this->getRect());
+void Button::u_state(MouseState* mouse_s) {
+	
+	bool collided = isPointCollide(mouse_s->pos, this->getRect());
 	if(collided) {
 		this->setState(BST_HOVERED);
 		
-		if(mouse_s.isClicked) {
+		if(mouse_s->isClicked) {
 			this->setState(BST_CLICKED);
 		}
 	}
 	else {
 		this->setState(BST_NORMAL);
 	}
+	
 }
 
 void Button::draw(SDL_Renderer* renderer) {
@@ -63,5 +72,15 @@ void Button::draw(SDL_Renderer* renderer) {
 void Button::setState(BtnState state) {
 	if(m_state != BST_DISABLED) {
 		m_state = state;
+	}
+}
+
+void Button::bindCallback(std::function<void()> cback) {
+	m_callback = cback;
+}
+
+void Button::makeCallback() {
+	if(m_callback != NULL) {
+		m_callback();
 	}
 }
