@@ -38,8 +38,7 @@ bool initialize();
 bool loadAssets();
 void cleanUp();
 
-int main(int argv, char** args)
-{
+int main(int argv, char** args) {
     // Initialize and load assets
     bool isInitialized = initialize();
     bool hasLoadedAssets = loadAssets();
@@ -78,8 +77,7 @@ int main(int argv, char** args)
     return 0;
 }
 
-bool initialize()
-{
+bool initialize() {
     bool isSuccessful = true;
 
     // Initialize SDL subsystems
@@ -130,8 +128,7 @@ bool initialize()
     return isSuccessful;
 }
 
-bool loadAssets()
-{
+bool loadAssets() {
     bool isSuccessful = true;
 
     // Load frame data
@@ -175,8 +172,7 @@ bool loadAssets()
     return isSuccessful;
 }
 
-void cleanUp()
-{	
+void cleanUp() {	
 	// Destroy font
 	TTF_CloseFont(gFont);	
 	gFont = NULL;

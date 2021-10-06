@@ -164,9 +164,6 @@ PlayScene::PlayScene(SceneContext *context)
 {
 	
     mContext = context;
-    isGameOver = false;
-    gameOverMessage = "GAME OVER MESSAGE";
-    mMouseClicked = false;
 
 	// Anchor points, offsets
     const int centerW = (WINDOW_WIDTH / 2) - (HOLE_WIDTH / 2);
@@ -218,17 +215,14 @@ void PlayScene::handleEvents(SDL_Event *e)
 			case SDLK_ESCAPE:
 				mContext->changeScene(MENU_SCENE);
 				break;
+			case SDLK_RETURN:
+				// FOR DEBUGGING ONLY!!
+				ch_gstate(PS_GAMEOVER);
+				break;
 			default:
 				break;
 			}
 		}
-    }
-
-    // Game over check
-    if (isGameOver)
-    {
-        printf("Game over: %s!\n", gameOverMessage.c_str());
-		mContext->changeScene(GAMEOVER_SCENE);
     }
 
     // Update mouse position
@@ -236,13 +230,53 @@ void PlayScene::handleEvents(SDL_Event *e)
 }
 
 void PlayScene::update()
-{
-	u_timer();
-	u_timecheck();
-	u_collision();
-    u_holes();
-	u_activateDur();
-	u_activateHoles();
+{	
+	switch(m_gstate) {
+		case PS_PAUSED:
+			break;
+		case PS_WARMUP:
+			u_wuTimer();
+			break;
+		case PS_GAMEOVER:
+			u_transgameover();
+			break;
+		case PS_RUNNING:
+			//u_timer();
+			u_timecheck();
+			u_collision();
+			u_holes();
+			u_activateDur();
+			u_activateHoles();
+			break;
+		default:
+			printf("Warning: m_gstate reached default case.\n");
+			break;
+	}
+		
+}
+
+void PlayScene::u_wuTimer() {
+	// Update warm up timer
+	int now = SDL_GetTicks();
+	bool timesUp = now - tmr_warmuptimer > DUR_WARMUPTIMER;
+	
+	if(timesUp) {
+		ch_gstate(PS_RUNNING);
+	}
+}
+
+void PlayScene::u_transgameover() {
+	// Init TMR for game over transition 
+	if(tmr_transtogameover == 0) {
+		tmr_transtogameover = SDL_GetTicks();
+	}
+
+	int now = SDL_GetTicks();
+	bool timesUp = now - tmr_transtogameover > DUR_TRANSTOGAMEOVER;
+	
+	if(timesUp) {
+		mContext->changeScene(GAMEOVER_SCENE);
+	}
 }
 
 void PlayScene::u_timer() {
@@ -250,8 +284,10 @@ void PlayScene::u_timer() {
 }
 
 void PlayScene::u_timecheck() {
-	if( (GAME_DUR - tmr_game) / 1000 <= 0) {
-		isGameOver = true;
+	int now = SDL_GetTicks();
+	bool timesUp = now - tmr_game > dur_game;
+	if(timesUp) {
+		ch_gstate(PS_GAMEOVER);
 		gameOverMessage = "Time's up!";
 	}
 }
@@ -276,7 +312,7 @@ void PlayScene::u_collision() {
 						score -= SCOR_PENALTY;
 						break;
 					case HT_Mayor:
-						isGameOver = true;
+						ch_gstate(PS_GAMEOVER);
 						gameOverMessage = "You hit the Mayor!\n";
 						break;
 					default:
@@ -309,11 +345,9 @@ void PlayScene::u_activateDur() {
 	if(timesUp && aboveMin) {
 		tmr_upd_durActv = now;
 		
-		dur_activateHole -= 800;
+		dur_activateHole -= rand() % DECREMENT_MIN + DECREMENT_MAX;
 		printf("Debug: dur_activateHole is %d.\n", dur_activateHole);
 	}
-	
-	
 }
 
 void PlayScene::u_activateHoles() {
@@ -360,25 +394,38 @@ void PlayScene::draw_texts(SDL_Renderer* renderer) {
 	SDL_Color RED = {255, 0, 0, 255};
 	
 	// Anchor points, offsets
-	const int txtCenterW = WINDOW_WIDTH / 2;
+	const int winCenterW = WINDOW_WIDTH / 2;
+	const int winCenterH = WINDOW_HEIGHT / 2;
     const int offsetX = 16;
-	
-	// Messages
-	int timeLeft = (GAME_DUR - tmr_game) / 1000;
-	std::string timeMessage = std::to_string(timeLeft) + "s";
-	std::string scoreMessage = std::to_string(score);
-	
-	// Time message color
-	SDL_Color timeColor = WHITE;
-	int critTimeThreshold = 10;
-	bool critTime = ((GAME_DUR - tmr_game) / 1000) <= critTimeThreshold;
-	if(critTime) { timeColor = RED; }
-	
-	// Draw texts
-    drawText(renderer, "SCORE", gFont, txtCenterW - 64, 42, WHITE, true);
-    drawText(renderer, scoreMessage.c_str(), gFont, txtCenterW - 64, 64, WHITE, true);
-    drawText(renderer, "TIME", gFont, txtCenterW + 64, 42, timeColor, true);
-    drawText(renderer, timeMessage.c_str(), gFont, txtCenterW + 64, 64, timeColor, true);
+
+	if(m_gstate == PS_RUNNING) {
+		// Messages
+		int now = SDL_GetTicks();
+		int timeLeft = (dur_game - (now - tmr_game)) / 1000;
+		std::string timeMessage = std::to_string(timeLeft) + "s";
+		std::string scoreMessage = std::to_string(score);
+		
+		// Time message color
+		SDL_Color timeColor = WHITE;
+		bool underCritTime = (dur_game - (now - tmr_game)) <= critTime;
+		if(underCritTime) { timeColor = RED; }
+		
+		// Draw texts
+		drawText(renderer, "SCORE", gFont, winCenterW - 64, 42, WHITE, true);
+		drawText(renderer, scoreMessage.c_str(), gFont, winCenterW - 64, 64, WHITE, true);
+		drawText(renderer, "TIME", gFont, winCenterW + 64, 42, timeColor, true);
+		drawText(renderer, timeMessage.c_str(), gFont, winCenterW + 64, 64, timeColor, true);
+	}
+	else if(m_gstate == PS_WARMUP) {
+		int now = SDL_GetTicks();
+		int warmupTimeLeft = (DUR_WARMUPTIMER - (now - tmr_warmuptimer)) / 1000;
+		std::string warmupTimeMsg = std::to_string(warmupTimeLeft);
+		drawText(renderer, "GET READY", gFont, winCenterW, winCenterH, WHITE, true);
+		drawText(renderer, warmupTimeMsg.c_str(), gFont, winCenterW , winCenterH + 32, WHITE, true);
+	}
+	else if(m_gstate == PS_GAMEOVER) {
+		drawText(renderer, "GAME OVER", gFont, winCenterW, WINDOW_WIDTH/2, WHITE, true);
+	}
 }
 
 void PlayScene::draw_holes(SDL_Renderer* renderer) {
@@ -413,6 +460,24 @@ int PlayScene::pick_holeType() {
 	int pick = rand() % bag.size() + 0;
 	
 	return bag[pick];
+}
+
+void PlayScene::ch_gstate(PlaySceneState n_state) {
+	// Change state and apply changes based on past state and new state
+	if(m_gstate == PS_WARMUP && n_state == PS_RUNNING) {
+		m_gstate = n_state;
+		
+		// Update timers
+		int now = SDL_GetTicks();
+		tmr_activateHole = now;
+		tmr_game = now;
+		tmr_upd_durActv = now;
+		dur_game = now + MAX_GAME_DURATION;
+		critTime = dur_game * ctPerc;
+	}
+	else {
+		m_gstate = n_state;
+	}
 }
 //}
 

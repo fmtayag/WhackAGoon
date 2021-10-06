@@ -14,6 +14,13 @@ enum SceneID {
 	GAMEOVER_SCENE
 };
 
+enum PlaySceneState {
+	PS_PAUSED,
+	PS_WARMUP,
+	PS_RUNNING,
+	PS_GAMEOVER
+};
+
 class AbstractScene {
 public:
 	virtual ~AbstractScene() = default;
@@ -71,6 +78,8 @@ public:
 
 private:
 	// update() sub-methods
+	void u_wuTimer();
+	void u_transgameover();
 	void u_timer();
 	void u_timecheck();
 	void u_collision();
@@ -85,6 +94,7 @@ private:
 	
 	// helper methods
 	int pick_holeType();
+	void ch_gstate(PlaySceneState n_state);
 	
 	// Context
     SceneContext* mContext;
@@ -93,21 +103,40 @@ private:
     std::string gameOverMessage;
     
 	// Mouse
-    bool mMouseClicked;
+    bool mMouseClicked = false;
     SDL_Point mpos;
 	
+	// Holes
+	std::vector<HoleSprite*> holeSprites;
+	
+	// Game state
+	PlaySceneState m_gstate = PS_WARMUP;
+	
 	// Game rules
-	const int GAME_DUR = SDL_GetTicks() + 45000; // 1000 ticks is 1 second
 	const int SCOR_PENALTY = 3;
-	int tmr_activateHole = SDL_GetTicks();
+	const int MAX_GAME_DURATION = 45000; // 1000 ticks is approx 1 sec
+	int score = 0;
+	
+	// Durations and timers
+	int dur_game;
+	int tmr_game;
+	int critTime;
+	const double ctPerc = 0.25; 
+	
+	int tmr_activateHole;
 	int dur_activateHole = 3000;
-	int tmr_game = SDL_GetTicks();
-    int score = 0;
-	int tmr_upd_durActv = SDL_GetTicks();
+
+	int tmr_upd_durActv;
 	const int DUR_UPD_DURACTV = 2500;
 	const int MIN_DURACTV_VAL = 600;
-	bool isGameOver;
-	std::vector<HoleSprite*> holeSprites;
+	const int DECREMENT_MIN = 100;
+	const int DECREMENT_MAX = 400;
+	
+	const int DUR_TRANSTOGAMEOVER = 3000;
+	int tmr_transtogameover = 0;
+	
+	const int DUR_WARMUPTIMER = 4000;
+	int tmr_warmuptimer = SDL_GetTicks();
 	
 };
 

@@ -13,7 +13,7 @@ for /F "tokens=1,2 delims=#" %%a in ('"prompt #$H#$E# & echo on & for %%b in (1)
 )
 @echo on	
 
-g++ source\*.cpp -I%INCLUDE% -L%LIB% -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -o %OUTPATH% -mwindows
+g++ source\*.cpp -I%INCLUDE% -L%LIB% -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -o %OUTPATH% 
 @echo off
 
 if EXIST %OUTPATH% (
