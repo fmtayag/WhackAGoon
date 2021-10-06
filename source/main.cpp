@@ -20,16 +20,16 @@
 #include "frames.h"
 
 // Window and renderer
-SDL_Window *gWindow;
-SDL_Renderer *gRenderer;
+SDL_Window* gWindow;
+SDL_Renderer* gRenderer;
 
 // Font
-TTF_Font *gFont;
+TTF_Font* gFont;
 
 // Textures
-SDL_Texture *bgTexture;
-SDL_Texture *spritesTexture;
-SDL_Texture *btnTexture;
+SDL_Texture* bgTexture;
+SDL_Texture* spritesTexture;
+SDL_Texture* btnTexture;
 
 // Game Context
 SceneContext* gContext;
@@ -38,7 +38,7 @@ bool initialize();
 bool loadAssets();
 void cleanUp();
 
-int main(int argv, char **args)
+int main(int argv, char** args)
 {
     // Initialize and load assets
     bool isInitialized = initialize();

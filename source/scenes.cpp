@@ -13,10 +13,7 @@
 #include "sprites.h"
 #include "utils.h"
 
-/* -------------------------------------------------
- * Scene Context def
- * -------------------------------------------------
- */
+//{ SceneContext
 SceneContext::SceneContext(SceneID scene)
 {	
 	switch(scene) {
@@ -88,15 +85,10 @@ void SceneContext::Draw(SDL_Renderer *renderer)
 		pScene->draw(renderer);
 	}
 }
+//}
 
-
-/* -------------------------------------------------
- * Menu scene def
- * -------------------------------------------------
- */
- 
-
- MenuScene::MenuScene(SceneContext* context) {
+//{ MenuScene
+MenuScene::MenuScene(SceneContext* context) {
 	mContext = context;
 	z_mouse.isClicked = false;
 
@@ -104,39 +96,39 @@ void SceneContext::Draw(SDL_Renderer *renderer)
 	Button* btn1 = new Button(btnTexture, "TESTING", 96, 32, 100, 100);
 	btn1->bindCallback(std::bind(&MenuScene::chs_playGame, this));
 	buttons.push_back(btn1);
-	
- }
+
+}
  
- MenuScene::~MenuScene() {
+MenuScene::~MenuScene() {
 	for(Button* btn : buttons) {
 		delete btn;
 		btn = NULL;
 	}
 	printf("Deleted menu scene.\n");
- }
+}
  
- void MenuScene::handleEvents(SDL_Event* e) {
+void MenuScene::handleEvents(SDL_Event* e) {
 	// Handle events --------------------------------------
-    while (SDL_PollEvent(e))
-    {
-        if (e->type == SDL_QUIT)
-        {
-            mContext->quit();
-        }
-        else if (e->type == SDL_MOUSEBUTTONDOWN)
-        {
-            z_mouse.isClicked = true;
-        }
-        else if (e->type == SDL_MOUSEBUTTONUP)
-        {
-            z_mouse.isClicked = false;
-        }
-    }
-	
-	// Update mouse position
-    SDL_GetMouseState(&z_mouse.pos.x, &z_mouse.pos.y);
+	while (SDL_PollEvent(e))
+	{
+		if (e->type == SDL_QUIT)
+		{
+			mContext->quit();
+		}
+		else if (e->type == SDL_MOUSEBUTTONDOWN)
+		{
+			z_mouse.isClicked = true;
+		}
+		else if (e->type == SDL_MOUSEBUTTONUP)
+		{
+			z_mouse.isClicked = false;
+		}
+	}
 
- }
+	// Update mouse position
+	SDL_GetMouseState(&z_mouse.pos.x, &z_mouse.pos.y);
+
+}
  
 void MenuScene::update() {
 	//  Update buttons
@@ -165,20 +157,9 @@ void MenuScene::draw(SDL_Renderer* renderer) {
 void MenuScene::chs_playGame() {
 	mContext->changeScene(PLAY_SCENE);
 }
+//}
 
-
-
-
-
-
-
-
-
-
-/* -------------------------------------------------
- * Play Scene def
- * -------------------------------------------------
- */
+//{ PlayScene
 PlayScene::PlayScene(SceneContext *context)
 {
 	
@@ -433,37 +414,34 @@ int PlayScene::pick_holeType() {
 	
 	return bag[pick];
 }
+//}
 
-/* -------------------------------------------------
- * Game over scene def
- * -------------------------------------------------
- */
- 
- GameOverScene::GameOverScene(SceneContext* context) {
+//{ GameOverScene
+GameOverScene::GameOverScene(SceneContext* context) {
 	mContext = context;
 	mMouseClicked = false;
- }
+}
  
- GameOverScene::~GameOverScene() {
+GameOverScene::~GameOverScene() {
 	printf("Deleted game over scene.\n");
- }
+}
  
- void GameOverScene::handleEvents(SDL_Event* e) {
+void GameOverScene::handleEvents(SDL_Event* e) {
 	// Handle events --------------------------------------
-    while (SDL_PollEvent(e))
-    {
-        if (e->type == SDL_QUIT)
-        {
-            mContext->quit();
-        }
-        else if (e->type == SDL_MOUSEBUTTONDOWN)
-        {
-            mMouseClicked = true;
-        }
-        else if (e->type == SDL_MOUSEBUTTONUP)
-        {
-            mMouseClicked = false;
-        }
+	while (SDL_PollEvent(e))
+	{
+		if (e->type == SDL_QUIT)
+		{
+			mContext->quit();
+		}
+		else if (e->type == SDL_MOUSEBUTTONDOWN)
+		{
+			mMouseClicked = true;
+		}
+		else if (e->type == SDL_MOUSEBUTTONUP)
+		{
+			mMouseClicked = false;
+		}
 		
 		else if(e->type == SDL_KEYDOWN) {
 			switch(e->key.keysym.sym) {
@@ -474,25 +452,25 @@ int PlayScene::pick_holeType() {
 				break;
 			}
 		}
-    }
+	}
 
- }
+}
  
- void GameOverScene::update() {
+void GameOverScene::update() {
 
- }
- 
- void GameOverScene::draw(SDL_Renderer* renderer) {
+}
+
+void GameOverScene::draw(SDL_Renderer* renderer) {
 	// Set render draw color, and clear renderer ----------
-    SDL_SetRenderDrawColor(renderer, 5, 10, 10, 255);
-    SDL_RenderClear(renderer);
-	
+	SDL_SetRenderDrawColor(renderer, 5, 10, 10, 255);
+	SDL_RenderClear(renderer);
+
 	drawText(renderer, "GAME OVER", gFont, 0, 0, {255, 255, 255});
 	drawText(renderer, "PRESS ENTER TO GO TO MENU", gFont, 0, 64, {255, 255, 255});
-	
+
 	// Render 
-    SDL_RenderPresent(renderer);
- }
- 
+	SDL_RenderPresent(renderer);
+}
+//}
  
  

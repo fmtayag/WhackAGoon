@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "assets.h"
 
+//{ Button
 Button::Button(SDL_Texture* btnTexture, std::string btnText, int btnW, int btnH, int btnX, int btnY) {
 	m_texture = btnTexture;
 	m_text = btnText;
@@ -84,3 +85,4 @@ void Button::makeCallback() {
 		m_callback();
 	}
 }
+//}

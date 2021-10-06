@@ -29,11 +29,6 @@ SDL_Texture* loadTextureFromFile(SDL_Renderer* renderer, std::string path) {
     return texture;
 }
 
-
-
-
-
-
 void drawText(SDL_Renderer* renderer, std::string message, TTF_Font* font, int x, int y, SDL_Color color, bool cenX) {
     // Create temp surface
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, message.c_str(), color);
@@ -62,18 +57,10 @@ void drawText(SDL_Renderer* renderer, std::string message, TTF_Font* font, int x
     SDL_DestroyTexture(texture);
 }
 
-
-
-
-
 void cleanUpTexture(SDL_Texture*& texture) {
     SDL_DestroyTexture(texture);
     texture = NULL;
 }
-
-
-
-
 
 bool isPointCollide(SDL_Point point, SDL_Rect rect) {
     int px = point.x;
@@ -90,10 +77,6 @@ bool isPointCollide(SDL_Point point, SDL_Rect rect) {
 
     return true;
 }
-
-
-
-
 
 std::string Z_ClipID(AnimState state, HoleType type) {
     // turn state, and type into a key string
