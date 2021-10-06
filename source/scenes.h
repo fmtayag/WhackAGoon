@@ -93,6 +93,7 @@ private:
 	void draw_bg(SDL_Renderer* renderer);
 	
 	// helper methods
+	void mk_holes();
 	int pick_holeType();
 	void ch_gstate(PlaySceneState n_state);
 	

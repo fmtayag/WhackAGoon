@@ -162,25 +162,8 @@ void MenuScene::chs_playGame() {
 //{ PlayScene
 PlayScene::PlayScene(SceneContext *context)
 {
-	
     mContext = context;
-
-	// Anchor points, offsets
-    const int centerW = (WINDOW_WIDTH / 2) - (HOLE_WIDTH / 2);
-    const int centerH = (WINDOW_HEIGHT / 2) - (HOLE_HEIGHT / 2);
-    const int offsetW = 48;
-    const int offsetH = 32;
-	
-    // Column 1
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - offsetW, centerH - 72 + offsetH));
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - offsetW - 32, centerH + offsetH));
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - offsetW, centerH + 72 + offsetH));
-
-    // Column 2
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW, centerH - 72 + offsetH));
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW + 32, centerH + offsetH));
-    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW, centerH + 72 + offsetH));
-	
+	mk_holes();
 }
 
 PlayScene::~PlayScene()
@@ -420,6 +403,7 @@ void PlayScene::draw_texts(SDL_Renderer* renderer) {
 		int now = SDL_GetTicks();
 		int warmupTimeLeft = (DUR_WARMUPTIMER - (now - tmr_warmuptimer)) / 1000;
 		std::string warmupTimeMsg = std::to_string(warmupTimeLeft);
+		
 		drawText(renderer, "GET READY", gFont, winCenterW, winCenterH, WHITE, true);
 		drawText(renderer, warmupTimeMsg.c_str(), gFont, winCenterW , winCenterH + 32, WHITE, true);
 	}
@@ -437,6 +421,26 @@ void PlayScene::draw_holes(SDL_Renderer* renderer) {
 
 void PlayScene::draw_bg(SDL_Renderer* renderer) {
 	SDL_RenderCopy(renderer, bgTexture, NULL, NULL);
+}
+
+void PlayScene::mk_holes() {
+	/*** Create the holes ***/
+	
+	// Anchor points, offsets
+    const int centerW = (WINDOW_WIDTH / 2) - (HOLE_WIDTH / 2);
+    const int centerH = (WINDOW_HEIGHT / 2) - (HOLE_HEIGHT / 2);
+    const int offsetW = 48;
+    const int offsetH = 32;
+	
+    // Column 1
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - offsetW, centerH - 72 + offsetH));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - offsetW - 32, centerH + offsetH));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW - offsetW, centerH + 72 + offsetH));
+
+    // Column 2
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW, centerH - 72 + offsetH));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW + 32, centerH + offsetH));
+    holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW, centerH + 72 + offsetH));
 }
 
 int PlayScene::pick_holeType() {
@@ -472,7 +476,7 @@ void PlayScene::ch_gstate(PlaySceneState n_state) {
 		tmr_activateHole = now;
 		tmr_game = now;
 		tmr_upd_durActv = now;
-		dur_game = now + MAX_GAME_DURATION;
+		dur_game = MAX_GAME_DURATION;
 		critTime = dur_game * ctPerc;
 	}
 	else {
