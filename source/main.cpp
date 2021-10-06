@@ -13,11 +13,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
-#include "internal/scenes.h"
-#include "internal/metadata.h"
-#include "internal/assets.h"
-#include "internal/utils.h"
-#include "internal/frames.h"
+#include "scenes.h"
+#include "metadata.h"
+#include "assets.h"
+#include "utils.h"
+#include "frames.h"
 
 // Window and renderer
 SDL_Window *gWindow;
