@@ -139,7 +139,7 @@ void MenuScene::update() {
  
 void MenuScene::draw(SDL_Renderer* renderer) {
 	// Set render draw color, and clear renderer ----------
-	SDL_SetRenderDrawColor(renderer, 5, 10, 10, 255);
+	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, 255);
 	SDL_RenderClear(renderer);
 
 	drawText(renderer, "MENU SCENE", gFont, 0, 0, {255, 255, 255});
@@ -359,7 +359,6 @@ void PlayScene::draw(SDL_Renderer *renderer) {
 	// Colors
 	SDL_Color BLACK = {0, 0, 0, 255};
 	SDL_Color WHITE = {255, 255, 255, 255};
-	SDL_Color BG_COLOR = BLACK;
 	
     SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, BG_COLOR.a);
     SDL_RenderClear(renderer);
@@ -527,12 +526,12 @@ void GameOverScene::handleEvents(SDL_Event* e) {
 }
  
 void GameOverScene::update() {
-
+	
 }
 
 void GameOverScene::draw(SDL_Renderer* renderer) {
 	// Set render draw color, and clear renderer ----------
-	SDL_SetRenderDrawColor(renderer, 5, 10, 10, 255);
+	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, 255);
 	SDL_RenderClear(renderer);
 
 	drawText(renderer, "GAME OVER", gFont, 0, 0, {255, 255, 255});

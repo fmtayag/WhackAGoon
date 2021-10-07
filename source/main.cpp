@@ -28,6 +28,9 @@ TTF_Font* gFont;
 TTF_Font* gFontM;
 TTF_Font* gFontL;
 
+// Colors
+SDL_Color BG_COLOR;
+
 // Textures
 SDL_Texture* bgTexture;
 SDL_Texture* spritesTexture;
@@ -132,7 +135,9 @@ bool initialize() {
 
 bool loadAssets() {
     bool isSuccessful = true;
-
+	
+	BG_COLOR = {9, 13, 23};
+	
     // Load frame data
     loadFrameData();
 
