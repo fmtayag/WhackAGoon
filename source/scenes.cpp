@@ -194,13 +194,22 @@ void PlayScene::handleEvents(SDL_Event *e)
             mMouseClicked = false;
         }
 		else if (e->type == SDL_KEYDOWN) {
+			// FOR DEBUGGING ONLY!!
 			switch(e->key.keysym.sym) {
 			case SDLK_ESCAPE:
 				mContext->changeScene(MENU_SCENE);
 				break;
 			case SDLK_RETURN:
-				// FOR DEBUGGING ONLY!!
 				ch_gstate(PS_GAMEOVER);
+				break;
+			case SDLK_LEFT:
+				targRect.x -= 5;
+				break;
+			case SDLK_RIGHT:
+				targRect.x += 5;
+				break;
+			case SDLK_s:
+				genShake();
 				break;
 			default:
 				break;
@@ -222,6 +231,7 @@ void PlayScene::update()
 			break;
 		case PS_GAMEOVER:
 			u_transgameover();
+			shake();
 			break;
 		case PS_RUNNING:
 			//u_timer();
@@ -230,6 +240,7 @@ void PlayScene::update()
 			u_holes();
 			u_activateDur();
 			u_activateHoles();
+			shake();
 			break;
 		default:
 			printf("Warning: m_gstate reached default case.\n");
@@ -293,10 +304,12 @@ void PlayScene::u_collision() {
 						break;
 					case HT_Townie:
 						score -= SCOR_PENALTY;
+						genShake();
 						break;
 					case HT_Mayor:
 						ch_gstate(PS_GAMEOVER);
 						gOverMsg = "YOU HIT THE MAYOR!";
+						genShake();
 						break;
 					default:
 						printf("Warning: default case has been reached for collision check.\n");
@@ -360,14 +373,26 @@ void PlayScene::draw(SDL_Renderer *renderer) {
 	SDL_Color BLACK = {0, 0, 0, 255};
 	SDL_Color WHITE = {255, 255, 255, 255};
 	
+	SDL_Texture* targetTexture = SDL_CreateTexture(
+		renderer, 
+		SDL_PIXELFORMAT_RGBA8888, 
+		SDL_TEXTUREACCESS_TARGET, 
+		targRect.w, 
+		targRect.h
+	);
+	SDL_SetRenderTarget(renderer, targetTexture);
+	
     SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, BG_COLOR.a);
-    SDL_RenderClear(renderer);
+	SDL_RenderClear(renderer);
 	
 	draw_bg(renderer);
 	draw_holes(renderer);
 	draw_texts(renderer);
-
+	
+	SDL_SetRenderTarget(renderer, NULL);
+	SDL_RenderCopy(renderer, targetTexture, NULL, &targRect);
     SDL_RenderPresent(renderer);
+	
 }
 
 void PlayScene::draw_texts(SDL_Renderer* renderer) {
@@ -483,6 +508,38 @@ void PlayScene::ch_gstate(PlaySceneState n_state) {
 		m_gstate = n_state;
 	}
 }
+
+void PlayScene::genShake() {
+	for(int i=0; i<MAX_SHAKE; i++) {
+		int val;
+		if(i % 2 == 0) {
+			val = 5;
+		} else {
+			val = -5;
+		}
+		vShake.push_back(val);
+	}
+	
+	tmr_shake = SDL_GetTicks();
+}
+
+void PlayScene::shake() {
+	if(!vShake.empty()) {
+		int now = SDL_GetTicks();
+		bool timesUp = now - tmr_shake > DELAY_SHAKE;
+		
+		if(timesUp) {
+			tmr_shake = now;
+			int val = vShake.back();
+			vShake.pop_back();
+			
+			targRect.x = val;
+			
+		}
+	}
+	
+}
+
 //}
 
 //{ GameOverScene
@@ -531,7 +588,7 @@ void GameOverScene::update() {
 
 void GameOverScene::draw(SDL_Renderer* renderer) {
 	// Set render draw color, and clear renderer ----------
-	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, 255);
+	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, 255);	
 	SDL_RenderClear(renderer);
 
 	drawText(renderer, "GAME OVER", gFont, 0, 0, {255, 255, 255});

@@ -7,6 +7,7 @@
 #include <SDL2/SDL.h>
 #include "sprites.h"
 #include "widgets.h"
+#include "metadata.h"
 
 enum SceneID {
 	MENU_SCENE,
@@ -96,6 +97,17 @@ private:
 	void mk_holes();
 	int pick_holeType();
 	void ch_gstate(PlaySceneState n_state);
+	
+	// For screen shake
+	int tmr_shake;
+	const int DELAY_SHAKE = 50;
+	const int MAX_SHAKE = 5;
+	std::vector<int> vShake; // 'generate' -n and n alternately and store into this arr
+	void genShake();
+	void shake();
+	
+	// Target texture stuff
+	SDL_Rect targRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
 	
 	// Context
     SceneContext* mContext;
