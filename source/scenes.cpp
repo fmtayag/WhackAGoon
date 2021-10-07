@@ -271,7 +271,7 @@ void PlayScene::u_timecheck() {
 	bool timesUp = now - tmr_game > dur_game;
 	if(timesUp) {
 		ch_gstate(PS_GAMEOVER);
-		gameOverMessage = "Time's up!";
+		gOverMsg = "TIME'S UP!";
 	}
 }
 
@@ -296,7 +296,7 @@ void PlayScene::u_collision() {
 						break;
 					case HT_Mayor:
 						ch_gstate(PS_GAMEOVER);
-						gameOverMessage = "You hit the Mayor!\n";
+						gOverMsg = "YOU HIT THE MAYOR!";
 						break;
 					default:
 						printf("Warning: default case has been reached for collision check.\n");
@@ -404,11 +404,12 @@ void PlayScene::draw_texts(SDL_Renderer* renderer) {
 		int warmupTimeLeft = (DUR_WARMUPTIMER - (now - tmr_warmuptimer)) / 1000;
 		std::string warmupTimeMsg = std::to_string(warmupTimeLeft);
 		
-		drawText(renderer, "GET READY", gFont, winCenterW, winCenterH, WHITE, true);
-		drawText(renderer, warmupTimeMsg.c_str(), gFont, winCenterW , winCenterH + 32, WHITE, true);
+		drawText(renderer, "GET READY", gFontL, winCenterW, 22, WHITE, true);
+		drawText(renderer, warmupTimeMsg.c_str(), gFontL, winCenterW , 58, WHITE, true);
 	}
 	else if(m_gstate == PS_GAMEOVER) {
-		drawText(renderer, "GAME OVER", gFont, winCenterW, WINDOW_WIDTH/2, WHITE, true);
+		drawText(renderer, "GAME OVER!", gFontL, winCenterW, 28, WHITE, true);
+		drawText(renderer, gOverMsg.c_str(), gFontM, winCenterW, 64, WHITE, true);
 	}
 }
 

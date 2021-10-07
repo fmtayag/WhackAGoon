@@ -25,6 +25,8 @@ SDL_Renderer* gRenderer;
 
 // Font
 TTF_Font* gFont;
+TTF_Font* gFontM;
+TTF_Font* gFontL;
 
 // Textures
 SDL_Texture* bgTexture;
@@ -147,6 +149,18 @@ bool loadAssets() {
         printf("Failed to load font.\n");
         isSuccessful = false;
     }
+	
+	gFontM = TTF_OpenFont("assets/fonts/zyn8.ttf", 31);
+	if(gFontM == NULL) {
+		printf("Failed to load gFontM.\n");
+		isSuccessful = false;
+	}
+	
+	gFontL = TTF_OpenFont("assets/fonts/zyn8.ttf", 41);
+	if(gFontL == NULL) {
+		printf("Failed to load gFontL.\n");
+		isSuccessful = false;
+	}
 
     // Load textures
     bgTexture = loadTextureFromFile(gRenderer, "assets/images/bg.png");

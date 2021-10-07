@@ -6,6 +6,8 @@
 
 // Font
 extern TTF_Font* gFont;
+extern TTF_Font* gFontM;
+extern TTF_Font* gFontL;
 
 // Textures
 extern SDL_Texture* bgTexture;

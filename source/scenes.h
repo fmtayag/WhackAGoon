@@ -101,7 +101,7 @@ private:
     SceneContext* mContext;
 	
 	// Messages
-    std::string gameOverMessage;
+    std::string gOverMsg = "DEBUG";
     
 	// Mouse
     bool mMouseClicked = false;
@@ -136,7 +136,7 @@ private:
 	const int DUR_TRANSTOGAMEOVER = 3000;
 	int tmr_transtogameover = 0;
 	
-	const int DUR_WARMUPTIMER = 4000;
+	const int DUR_WARMUPTIMER = 3500;
 	int tmr_warmuptimer = SDL_GetTicks();
 	
 };
