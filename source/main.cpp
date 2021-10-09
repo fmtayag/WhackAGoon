@@ -58,7 +58,7 @@ int main(int argv, char** args) {
     if (isInitialized && hasLoadedAssets)
     {
         SDL_Event e;
-		
+			
 		// Create game context
 		gContext = new SceneContext(MENU_SCENE);
 		if (gContext == NULL) {

@@ -82,10 +82,10 @@ public:
 
 private:
 	// update() sub-methods
+	void u_initTransitionTimer();
+	void u_checklives();
 	void u_wuTimer();
 	void u_transgameover();
-	void u_timer();
-	void u_timecheck();
 	void u_collision();
 	void u_holes();
 	void u_activateDur();
@@ -130,20 +130,16 @@ private:
 	
 	// Game rules
 	const int SCOR_PENALTY = 10;
-	const int MAX_GAME_DURATION = 45000; // 1000 ticks is approx 1 sec
+	const int MAX_GAME_DURATION = 450000; // 1000 ticks is approx 1 sec
 	int score = 0;
+	int lives = 3;
 	
 	// Durations and timers
-	int dur_game;
-	int tmr_game;
-	int critTime;
-	const double ctPerc = 0.25; 
-	
 	int tmr_activateHole;
 	int dur_activateHole = 3000;
 
 	int tmr_upd_durActv;
-	const int DUR_UPD_DURACTV = 2500;
+	const int DUR_UPD_DURACTV = 1950; // this is horribly named, i admit.
 	const int MIN_DURACTV_VAL = 600;
 	const int DECREMENT_MIN = 100;
 	const int DECREMENT_MAX = 400;

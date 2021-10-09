@@ -160,14 +160,12 @@ void MenuScene::chs_playGame() {
 //}
 
 //{ PlayScene
-PlayScene::PlayScene(SceneContext *context)
-{
+PlayScene::PlayScene(SceneContext *context) {
     mContext = context;
 	mk_holes();
 }
 
-PlayScene::~PlayScene()
-{
+PlayScene::~PlayScene() {
 	for (HoleSprite* hole : holeSprites)
     {
         delete hole;
@@ -176,8 +174,7 @@ PlayScene::~PlayScene()
 	printf("Deleted play scene.\n");
 }
 
-void PlayScene::handleEvents(SDL_Event *e)
-{
+void PlayScene::handleEvents(SDL_Event *e) {
     // Handle events --------------------------------------
     while (SDL_PollEvent(e))
     {
@@ -221,8 +218,7 @@ void PlayScene::handleEvents(SDL_Event *e)
     SDL_GetMouseState(&mpos.x, &mpos.y);
 }
 
-void PlayScene::update()
-{	
+void PlayScene::update() {	
 	switch(m_gstate) {
 		case PS_PAUSED:
 			break;
@@ -230,12 +226,12 @@ void PlayScene::update()
 			u_wuTimer();
 			break;
 		case PS_GAMEOVER:
+			u_initTransitionTimer();
 			u_transgameover();
 			shake();
 			break;
 		case PS_RUNNING:
-			//u_timer();
-			u_timecheck();
+			u_checklives();
 			u_collision();
 			u_holes();
 			u_activateDur();
@@ -249,6 +245,13 @@ void PlayScene::update()
 		
 }
 
+void PlayScene::u_checklives() {
+	if(lives <= 0) {
+		ch_gstate(PS_GAMEOVER);
+		gOverMsg = "NO MORE LIVES!";
+	}
+}
+
 void PlayScene::u_wuTimer() {
 	// Update warm up timer
 	int now = SDL_GetTicks();
@@ -259,12 +262,15 @@ void PlayScene::u_wuTimer() {
 	}
 }
 
-void PlayScene::u_transgameover() {
-	// Init TMR for game over transition 
-	if(tmr_transtogameover == 0) {
+void PlayScene::u_initTransitionTimer() {
+	// init timer
+	if(tmr_transtogameover == 0)
 		tmr_transtogameover = SDL_GetTicks();
-	}
+}
 
+void PlayScene::u_transgameover() {
+	
+	
 	int now = SDL_GetTicks();
 	bool timesUp = now - tmr_transtogameover > DUR_TRANSTOGAMEOVER;
 	
@@ -273,19 +279,6 @@ void PlayScene::u_transgameover() {
 		
 		// should be placed as last instruction!
 		mContext->changeScene(GAMEOVER_SCENE);
-	}
-}
-
-void PlayScene::u_timer() {
-	tmr_game = SDL_GetTicks();
-}
-
-void PlayScene::u_timecheck() {
-	int now = SDL_GetTicks();
-	bool timesUp = now - tmr_game > dur_game;
-	if(timesUp) {
-		ch_gstate(PS_GAMEOVER);
-		gOverMsg = "TIME'S UP!";
 	}
 }
 
@@ -307,6 +300,7 @@ void PlayScene::u_collision() {
 						break;
 					case HT_Townie:
 						score -= SCOR_PENALTY;
+						lives -= 1;
 						genShake();
 						break;
 					case HT_Mayor:
@@ -318,11 +312,13 @@ void PlayScene::u_collision() {
 						printf("Warning: default case has been reached for collision check.\n");
 						break;
 				}
+				
+				// neg score check
+				if (score < 0)
+					score = 0;
             }
 
-            // neg score check
-            if (score < 0)
-                score = 0;
+            
         }
     }
 	
@@ -410,21 +406,14 @@ void PlayScene::draw_texts(SDL_Renderer* renderer) {
 
 	if(m_gstate == PS_RUNNING) {
 		// Messages
-		int now = SDL_GetTicks();
-		int timeLeft = (dur_game - (now - tmr_game)) / 1000;
-		std::string timeMessage = std::to_string(timeLeft) + "s";
 		std::string scoreMessage = std::to_string(score);
-		
-		// Time message color
-		SDL_Color timeColor = WHITE;
-		bool underCritTime = (dur_game - (now - tmr_game)) <= critTime;
-		if(underCritTime) { timeColor = RED; }
 		
 		// Draw texts
 		drawText(renderer, "SCORE", gFont, winCenterW - 64, 42, WHITE, true);
 		drawText(renderer, scoreMessage.c_str(), gFont, winCenterW - 64, 64, WHITE, true);
-		drawText(renderer, "TIME", gFont, winCenterW + 64, 42, timeColor, true);
-		drawText(renderer, timeMessage.c_str(), gFont, winCenterW + 64, 64, timeColor, true);
+		drawText(renderer, "LIVES", gFont, winCenterW + 64, 42, WHITE, true);
+		drawText(renderer, std::to_string(lives).c_str(), gFont, winCenterW + 64, 64, WHITE, true);		
+		
 	}
 	else if(m_gstate == PS_WARMUP) {
 		int now = SDL_GetTicks();
@@ -457,7 +446,7 @@ void PlayScene::mk_holes() {
 	// Anchor points, offsets
     const int centerW = (WINDOW_WIDTH / 2) - (HOLE_WIDTH / 2);
     const int centerH = (WINDOW_HEIGHT / 2) - (HOLE_HEIGHT / 2);
-    const int offsetW = 48;
+    const int offsetW = 48;	
     const int offsetH = 32;
 	
     // Column 1
@@ -502,10 +491,7 @@ void PlayScene::ch_gstate(PlaySceneState n_state) {
 		// Update timers
 		int now = SDL_GetTicks();
 		tmr_activateHole = now;
-		tmr_game = now;
 		tmr_upd_durActv = now;
-		dur_game = MAX_GAME_DURATION;
-		critTime = dur_game * ctPerc;
 	}
 	else {
 		m_gstate = n_state;
