@@ -269,6 +269,9 @@ void PlayScene::u_transgameover() {
 	bool timesUp = now - tmr_transtogameover > DUR_TRANSTOGAMEOVER;
 	
 	if(timesUp) {
+		mContext->setScore(score);
+		
+		// should be placed as last instruction!
 		mContext->changeScene(GAMEOVER_SCENE);
 	}
 }
@@ -545,6 +548,7 @@ void PlayScene::shake() {
 //{ GameOverScene
 GameOverScene::GameOverScene(SceneContext* context) {
 	mContext = context;
+	finalScore = mContext->getScore();
 	mMouseClicked = false;
 }
  
@@ -591,8 +595,11 @@ void GameOverScene::draw(SDL_Renderer* renderer) {
 	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, 255);	
 	SDL_RenderClear(renderer);
 
+	std::string scoreMsg = "YOU SCORED " + std::to_string(finalScore) + " PTS!";
+
 	drawText(renderer, "GAME OVER", gFont, 0, 0, {255, 255, 255});
 	drawText(renderer, "PRESS ENTER TO GO TO MENU", gFont, 0, 64, {255, 255, 255});
+	drawText(renderer, scoreMsg.c_str(), gFont, 0, 128, {255, 255, 255});
 
 	// Render 
 	SDL_RenderPresent(renderer);

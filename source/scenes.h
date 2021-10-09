@@ -42,10 +42,13 @@ public:
     void HandleEvents(SDL_Event* e);
     void Update();
     void Draw(SDL_Renderer* renderer);
-
+	
+	void setScore(int val) { score = val; };
+	int getScore() { return score; };
+	
 private:
     AbstractScene* pScene;
-    bool isRunning;
+	int score;
 };
  
 class MenuScene: public AbstractScene {
@@ -126,7 +129,7 @@ private:
 	PlaySceneState m_gstate = PS_WARMUP;
 	
 	// Game rules
-	const int SCOR_PENALTY = 3;
+	const int SCOR_PENALTY = 10;
 	const int MAX_GAME_DURATION = 45000; // 1000 ticks is approx 1 sec
 	int score = 0;
 	
@@ -165,6 +168,8 @@ public:
 private:
     SceneContext* mContext;
 	bool mMouseClicked;
+	
+	int finalScore;
 };
 
 #endif // SCENES_H
