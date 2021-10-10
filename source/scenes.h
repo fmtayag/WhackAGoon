@@ -48,7 +48,7 @@ public:
 	
 private:
     AbstractScene* pScene;
-	int score;
+	int score=0;
 };
  
 class MenuScene: public AbstractScene {
@@ -160,10 +160,16 @@ public:
 	void handleEvents(SDL_Event* e);
     void update();
     void draw(SDL_Renderer* renderer);
+	
+	// Callbacks
+	void chs_menu();
 
 private:
+	std::vector<Button*> buttons;
     SceneContext* mContext;
-	bool mMouseClicked;
+	
+	// Mouse
+	MouseState z_mouse;
 	
 	int finalScore;
 };

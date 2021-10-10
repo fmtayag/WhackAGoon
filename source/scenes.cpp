@@ -535,10 +535,21 @@ void PlayScene::shake() {
 GameOverScene::GameOverScene(SceneContext* context) {
 	mContext = context;
 	finalScore = mContext->getScore();
-	mMouseClicked = false;
+	
+	// Mouse
+	z_mouse.isClicked = false;
+	
+	// Buttons
+	Button* btn1 = new Button(btnTexture, "TESTING", 96, 32, 100, 100);
+	btn1->bindCallback(std::bind(&GameOverScene::chs_menu, this));
+	buttons.push_back(btn1);
 }
  
 GameOverScene::~GameOverScene() {
+	for(Button* btn : buttons) {
+		delete btn;
+		btn = NULL;
+	}
 	printf("Deleted game over scene.\n");
 }
  
@@ -552,28 +563,23 @@ void GameOverScene::handleEvents(SDL_Event* e) {
 		}
 		else if (e->type == SDL_MOUSEBUTTONDOWN)
 		{
-			mMouseClicked = true;
+			z_mouse.isClicked = true;
 		}
 		else if (e->type == SDL_MOUSEBUTTONUP)
 		{
-			mMouseClicked = false;
-		}
-		
-		else if(e->type == SDL_KEYDOWN) {
-			switch(e->key.keysym.sym) {
-			case SDLK_RETURN:
-				mContext->changeScene(MENU_SCENE);
-				break;
-			default:
-				break;
-			}
+			z_mouse.isClicked = false;
 		}
 	}
-
+	
+	// Update mouse position
+	SDL_GetMouseState(&z_mouse.pos.x, &z_mouse.pos.y);
 }
  
 void GameOverScene::update() {
-	
+	//  Update buttons
+	for(Button* btn : buttons) {
+		btn->update(&z_mouse);
+	}
 }
 
 void GameOverScene::draw(SDL_Renderer* renderer) {
@@ -584,12 +590,21 @@ void GameOverScene::draw(SDL_Renderer* renderer) {
 	std::string scoreMsg = "YOU SCORED " + std::to_string(finalScore) + " PTS!";
 
 	drawText(renderer, "GAME OVER", gFont, 0, 0, {255, 255, 255});
-	drawText(renderer, "PRESS ENTER TO GO TO MENU", gFont, 0, 64, {255, 255, 255});
-	drawText(renderer, scoreMsg.c_str(), gFont, 0, 128, {255, 255, 255});
+	drawText(renderer, scoreMsg.c_str(), gFont, 0, 32, {255, 255, 255});
+	
+	// Draw buttons --------------------------
+	for (Button* button : buttons) {
+		button->draw(renderer);
+	}
 
 	// Render 
 	SDL_RenderPresent(renderer);
 }
+
+void GameOverScene::chs_menu() {
+	mContext->changeScene(MENU_SCENE);
+}
+
 //}
  
  
