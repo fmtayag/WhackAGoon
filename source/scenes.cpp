@@ -231,6 +231,7 @@ void PlayScene::update() {
 			shake();
 			break;
 		case PS_RUNNING:
+			u_checkDeathTimer();
 			u_checklives();
 			u_collision();
 			u_holes();
@@ -243,6 +244,17 @@ void PlayScene::update() {
 			break;
 	}
 		
+}
+
+void PlayScene::u_checkDeathTimer() {
+	int now = SDL_GetTicks();
+	bool timesUp = now - tmr_deathCdown > dur_deathCdown;
+	printf("tmr: %d, dur: %d\n", now - tmr_deathCdown, dur_deathCdown);
+	
+	if(timesUp) {
+		ch_gstate(PS_GAMEOVER);
+		gOverMsg = "SMASH, YA LAZY BUM!";
+	}
 }
 
 void PlayScene::u_checklives() {
@@ -297,11 +309,13 @@ void PlayScene::u_collision() {
 				switch(hole->getType()) {
 					case HT_Goon:
 						score++;
+						delayDeathCdown();
 						break;
 					case HT_Townie:
 						score -= SCOR_PENALTY;
 						lives -= 1;
 						genShake();
+						decrDthCdownDur();
 						break;
 					case HT_Mayor:
 						ch_gstate(PS_GAMEOVER);
@@ -492,6 +506,7 @@ void PlayScene::ch_gstate(PlaySceneState n_state) {
 		int now = SDL_GetTicks();
 		tmr_activateHole = now;
 		tmr_upd_durActv = now;
+		tmr_deathCdown = now;
 	}
 	else {
 		m_gstate = n_state;
@@ -527,6 +542,15 @@ void PlayScene::shake() {
 		}
 	}
 	
+}
+
+void PlayScene::delayDeathCdown() {
+	tmr_deathCdown = SDL_GetTicks();
+}
+
+void PlayScene::decrDthCdownDur() {
+	// Decrease dur_deathCdown;
+	dur_deathCdown -= DECREMENT_DUR_DEATHCDOWN;
 }
 
 //}

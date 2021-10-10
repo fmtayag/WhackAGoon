@@ -83,6 +83,7 @@ public:
 private:
 	// update() sub-methods
 	void u_initTransitionTimer();
+	void u_checkDeathTimer();
 	void u_checklives();
 	void u_wuTimer();
 	void u_transgameover();
@@ -100,6 +101,8 @@ private:
 	void mk_holes();
 	int pick_holeType();
 	void ch_gstate(PlaySceneState n_state);
+	void delayDeathCdown();
+	void decrDthCdownDur();
 	
 	// For screen shake
 	int tmr_shake;
@@ -133,6 +136,9 @@ private:
 	const int MAX_GAME_DURATION = 450000; // 1000 ticks is approx 1 sec
 	int score = 0;
 	int lives = 3;
+	const int DECREMENT_DUR_DEATHCDOWN = 3000;
+	int dur_deathCdown = 10000;
+	int tmr_deathCdown; // initialized at ch_gstate()
 	
 	// Durations and timers
 	int tmr_activateHole;
