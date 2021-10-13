@@ -103,6 +103,7 @@ private:
 	void ch_gstate(PlaySceneState n_state);
 	void delayDeathCdown();
 	void decrDthCdownDur();
+	void initDthCdown();
 	
 	// For screen shake
 	int tmr_shake;
@@ -136,9 +137,9 @@ private:
 	const int MAX_GAME_DURATION = 450000; // 1000 ticks is approx 1 sec
 	int score = 0;
 	int lives = 3;
-	const int DECREMENT_DUR_DEATHCDOWN = 3000;
-	int dur_deathCdown = 10000;
-	int tmr_deathCdown; // initialized at ch_gstate()
+	const int DECREMENT_DUR_DEATHCDOWN = 2000;
+	int dur_deathCdown = 6000;
+	int tmr_deathCdown = 0; // initialized after player hits the first goon
 	
 	// Durations and timers
 	int tmr_activateHole;

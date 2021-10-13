@@ -249,9 +249,10 @@ void PlayScene::update() {
 void PlayScene::u_checkDeathTimer() {
 	int now = SDL_GetTicks();
 	bool timesUp = now - tmr_deathCdown > dur_deathCdown;
-	printf("tmr: %d, dur: %d\n", now - tmr_deathCdown, dur_deathCdown);
+	bool timerInitialized = tmr_deathCdown != 0;
+	printf("now - tmr: %d, dur: %d\n", now - tmr_deathCdown, dur_deathCdown);
 	
-	if(timesUp) {
+	if(timesUp && timerInitialized) {
 		ch_gstate(PS_GAMEOVER);
 		gOverMsg = "SMASH, YA LAZY BUM!";
 	}
@@ -310,6 +311,7 @@ void PlayScene::u_collision() {
 					case HT_Goon:
 						score++;
 						delayDeathCdown();
+						initDthCdown();
 						break;
 					case HT_Townie:
 						score -= SCOR_PENALTY;
@@ -502,11 +504,10 @@ void PlayScene::ch_gstate(PlaySceneState n_state) {
 	if(m_gstate == PS_WARMUP && n_state == PS_RUNNING) {
 		m_gstate = n_state;
 		
-		// Update timers
+		// Init timers
 		int now = SDL_GetTicks();
 		tmr_activateHole = now;
 		tmr_upd_durActv = now;
-		tmr_deathCdown = now;
 	}
 	else {
 		m_gstate = n_state;
@@ -551,6 +552,13 @@ void PlayScene::delayDeathCdown() {
 void PlayScene::decrDthCdownDur() {
 	// Decrease dur_deathCdown;
 	dur_deathCdown -= DECREMENT_DUR_DEATHCDOWN;
+}
+
+void PlayScene::initDthCdown() {
+	if(tmr_deathCdown == 0) {
+		int now = SDL_GetTicks();
+		tmr_deathCdown = now; 
+	}
 }
 
 //}
