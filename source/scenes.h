@@ -96,6 +96,7 @@ private:
 	void draw_texts(SDL_Renderer* renderer);
 	void draw_holes(SDL_Renderer* renderer);
 	void draw_bg(SDL_Renderer* renderer);
+	void draw_deathTimer(SDL_Renderer* renderer);
 	
 	// helper methods
 	void mk_holes();
@@ -137,8 +138,8 @@ private:
 	const int MAX_GAME_DURATION = 450000; // 1000 ticks is approx 1 sec
 	int score = 0;
 	int lives = 3;
-	const int DECREMENT_DUR_DEATHCDOWN = 2000;
-	int dur_deathCdown = 6000;
+	const int DECREMENT_DUR_DEATHCDOWN = 500;
+	int dur_deathCdown = 3000;
 	int tmr_deathCdown = 0; // initialized after player hits the first goon
 	
 	// Durations and timers

@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <stdlib.h>
 #include <stdio.h>
+#include <cmath>
 #include <functional>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -247,15 +248,19 @@ void PlayScene::update() {
 }
 
 void PlayScene::u_checkDeathTimer() {
-	int now = SDL_GetTicks();
-	bool timesUp = now - tmr_deathCdown > dur_deathCdown;
 	bool timerInitialized = tmr_deathCdown != 0;
-	printf("now - tmr: %d, dur: %d\n", now - tmr_deathCdown, dur_deathCdown);
-	
-	if(timesUp && timerInitialized) {
-		ch_gstate(PS_GAMEOVER);
-		gOverMsg = "SMASH, YA LAZY BUM!";
+	if (timerInitialized) {
+		int now = SDL_GetTicks();
+		bool timesUp = now - tmr_deathCdown > dur_deathCdown;
+		
+		//printf("now - tmr: %d, dur: %d\n", now - tmr_deathCdown, dur_deathCdown);
+		
+		if(timesUp) {
+			ch_gstate(PS_GAMEOVER);
+			gOverMsg = "SMASH, YA LAZY BUM!";
+		}
 	}
+	
 }
 
 void PlayScene::u_checklives() {
@@ -403,6 +408,7 @@ void PlayScene::draw(SDL_Renderer *renderer) {
 	draw_bg(renderer);
 	draw_holes(renderer);
 	draw_texts(renderer);
+	draw_deathTimer(renderer);
 	
 	SDL_SetRenderTarget(renderer, NULL);
 	SDL_RenderCopy(renderer, targetTexture, NULL, &targRect);
@@ -454,6 +460,39 @@ void PlayScene::draw_holes(SDL_Renderer* renderer) {
 
 void PlayScene::draw_bg(SDL_Renderer* renderer) {
 	SDL_RenderCopy(renderer, bgTexture, NULL, NULL);
+}
+
+void PlayScene::draw_deathTimer(SDL_Renderer* renderer) {
+	if(m_gstate == PS_RUNNING) {
+		int now = SDL_GetTicks();
+		int tmr = tmr_deathCdown;
+		double dur = dur_deathCdown;
+		
+		// Normalize time left
+		float val = now-tmr;
+		float min = 0;
+		float max = dur_deathCdown;
+		float normalized = (val - min) / (max - min);
+		
+		// Set bar width
+		float y = 256;
+		float bar_width = y - (y*normalized);
+		if(bar_width <= 0) {
+			bar_width = 0;
+		}
+		
+		if(tmr_deathCdown != 0) {
+			SDL_Rect dtbarRect;
+			dtbarRect.x = 0;
+			dtbarRect.y = 100;
+			dtbarRect.w = (int) bar_width;
+			dtbarRect.h = 16;
+			
+			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+			SDL_RenderFillRect(renderer, &dtbarRect);
+		}
+	}
+	
 }
 
 void PlayScene::mk_holes() {
