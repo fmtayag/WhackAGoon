@@ -425,29 +425,28 @@ void PlayScene::draw_texts(SDL_Renderer* renderer) {
 	const int winCenterW = WINDOW_WIDTH / 2;
 	const int winCenterH = WINDOW_HEIGHT / 2;
     const int offsetX = 16;
-
-	if(m_gstate == PS_RUNNING) {
-		// Messages
-		std::string scoreMessage = std::to_string(score);
-		
-		// Draw texts
+	
+	// Messages
+	std::string scoreMessage = std::to_string(score);
+	
+	if(m_gstate == PS_RUNNING | m_gstate == PS_GAMEOVER) {
 		drawText(renderer, "SCORE", gFont, winCenterW - 64, 42, WHITE, true);
 		drawText(renderer, scoreMessage.c_str(), gFont, winCenterW - 64, 64, WHITE, true);
 		drawText(renderer, "LIVES", gFont, winCenterW + 64, 42, WHITE, true);
-		drawText(renderer, std::to_string(lives).c_str(), gFont, winCenterW + 64, 64, WHITE, true);		
-		
+		drawText(renderer, std::to_string(lives).c_str(), gFont, winCenterW + 64, 64, WHITE, true);	
 	}
-	else if(m_gstate == PS_WARMUP) {
+
+	if(m_gstate == PS_WARMUP) {
 		int now = SDL_GetTicks();
 		int warmupTimeLeft = (DUR_WARMUPTIMER - (now - tmr_warmuptimer)) / 1000;
-		std::string warmupTimeMsg = std::to_string(warmupTimeLeft);
+		std::string warmupTimeMsg = std::to_string(warmupTimeLeft).c_str();
 		
-		drawText(renderer, "GET READY", gFontL, winCenterW, 22, WHITE, true);
-		drawText(renderer, warmupTimeMsg.c_str(), gFontL, winCenterW , 58, WHITE, true);
+		drawText(renderer, "GET READY", gFontL, winCenterW, winCenterH, WHITE, true);
+		drawText(renderer, warmupTimeMsg, gFontL, winCenterW, winCenterH+32, WHITE, true);
 	}
 	else if(m_gstate == PS_GAMEOVER) {
-		drawText(renderer, "GAME OVER!", gFontL, winCenterW, 28, WHITE, true);
-		drawText(renderer, gOverMsg.c_str(), gFontM, winCenterW, 64, WHITE, true);
+		drawText(renderer, "GAME OVER!", gFontL, winCenterW, winCenterH, WHITE, true);
+		drawText(renderer, gOverMsg.c_str(), gFontM, winCenterW, winCenterH+32, WHITE, true);
 	}
 }
 
@@ -482,8 +481,12 @@ void PlayScene::draw_deathTimer(SDL_Renderer* renderer) {
 		}
 		
 		if(tmr_deathCdown != 0) {
+			short int wcW = WINDOW_WIDTH / 2;
+			short int bwc = bar_width / 2;
+			short int x = wcW - bwc;
+			
 			SDL_Rect dtbarRect;
-			dtbarRect.x = 0;
+			dtbarRect.x = x;
 			dtbarRect.y = 100;
 			dtbarRect.w = (int) bar_width;
 			dtbarRect.h = 16;
