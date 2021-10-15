@@ -90,7 +90,7 @@ private:
 	void u_collision();
 	void u_holes();
 	void u_activateDur();
-	void u_activateHoles();
+	void u_activateHoles(bool isForced=false, HoleType forcedType=HT_None);
 	
 	// draw() sub-methods
 	void draw_texts(SDL_Renderer* renderer);
@@ -143,11 +143,14 @@ private:
 	int tmr_deathCdown = 0; // initialized after player hits the first goon
 	
 	// Durations and timers
+	int tmr_fspawning;
+	const int DUR_FSPAWNING=2000;
+	
 	int tmr_activateHole;
 	int dur_activateHole = 3000;
 
-	int tmr_upd_durActv;
-	const int DUR_UPD_DURACTV = 1950; // this is horribly named, i admit.
+	int tmr_progression;
+	const int DUR_PROGRESSION = 1950; // this is horribly named, i admit.
 	const int MIN_DURACTV_VAL = 600;
 	const int DECREMENT_MIN = 100;
 	const int DECREMENT_MAX = 400;

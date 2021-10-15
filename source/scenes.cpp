@@ -251,11 +251,24 @@ void PlayScene::u_checkDeathTimer() {
 	bool timerInitialized = tmr_deathCdown != 0;
 	if (timerInitialized) {
 		int now = SDL_GetTicks();
-		bool timesUp = now - tmr_deathCdown > dur_deathCdown;
+		int timeLeft = now - tmr_deathCdown;
+		bool tUp = timeLeft > dur_deathCdown; // is time up?
+		
+		const int troThreshold = 1000;
+		bool trOut = (dur_deathCdown-timeLeft) <= troThreshold;// is time running out?  
+		bool fsAllowed = now - tmr_fspawning > DUR_FSPAWNING;
 		
 		//printf("now - tmr: %d, dur: %d\n", now - tmr_deathCdown, dur_deathCdown);
 		
-		if(timesUp) {
+		if(trOut && fsAllowed) {
+			tmr_fspawning = now;
+			
+			// force spawn a goon type hole
+			u_activateHoles(true, HT_Goon);
+			printf("Force spawning a goon!\n");
+		}
+		
+		if(tUp) {
 			ch_gstate(PS_GAMEOVER);
 			gOverMsg = "SMASH, YA LAZY BUM!";
 		}
@@ -355,22 +368,22 @@ void PlayScene::u_holes() {
 void PlayScene::u_activateDur() {
 	// Update dur_activateHole as time goes on.
 	int now = SDL_GetTicks();
-	bool timesUp = now - tmr_upd_durActv > DUR_UPD_DURACTV;
+	bool timesUp = now - tmr_progression > DUR_PROGRESSION;
 	bool aboveMin = dur_activateHole > MIN_DURACTV_VAL;
 	
 	if(timesUp && aboveMin) {
-		tmr_upd_durActv = now;
+		tmr_progression = now;
 		
 		dur_activateHole -= rand() % DECREMENT_MIN + DECREMENT_MAX;
 		printf("Debug: dur_activateHole is %d.\n", dur_activateHole);
 	}
 }
 
-void PlayScene::u_activateHoles() {
+void PlayScene::u_activateHoles(bool isForced, HoleType forcedType) {
 	int now = SDL_GetTicks();
 	bool timesUp = now - tmr_activateHole > dur_activateHole;
 	
-	if(timesUp) {
+	if(timesUp || isForced) {
 		tmr_activateHole = now;
 		for(HoleSprite* hole : holeSprites) {
 			
@@ -379,7 +392,13 @@ void PlayScene::u_activateHoles() {
 			
 			if(selectThis && holeIsResting) {
 				// Awake hole
-				HoleType ht = (HoleType) pick_holeType();
+				HoleType ht = HT_None;
+				
+				if(forcedType != HT_None)
+					ht = forcedType;
+				else
+					ht = (HoleType) pick_holeType();
+				
 				hole->awake(ht);
 				break;
 			}
@@ -549,7 +568,8 @@ void PlayScene::ch_gstate(PlaySceneState n_state) {
 		// Init timers
 		int now = SDL_GetTicks();
 		tmr_activateHole = now;
-		tmr_upd_durActv = now;
+		tmr_progression = now;
+		tmr_fspawning = now;
 	}
 	else {
 		m_gstate = n_state;
