@@ -448,6 +448,7 @@ void PlayScene::draw_texts(SDL_Renderer* renderer) {
 	// Messages
 	std::string scoreMessage = std::to_string(score);
 	
+	
 	if(m_gstate == PS_RUNNING | m_gstate == PS_GAMEOVER) {
 		drawText(renderer, "SCORE", gFont, winCenterW - 64, 42, WHITE, true);
 		drawText(renderer, scoreMessage.c_str(), gFont, winCenterW - 64, 64, WHITE, true);

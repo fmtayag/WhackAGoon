@@ -150,8 +150,8 @@ private:
 	int dur_activateHole = 3000;
 
 	int tmr_progression;
-	const int DUR_PROGRESSION = 1950; // this is horribly named, i admit.
-	const int MIN_DURACTV_VAL = 600;
+	const int DUR_PROGRESSION = 1950; 
+	const int MIN_DURACTV_VAL = 300; 
 	const int DECREMENT_MIN = 100;
 	const int DECREMENT_MAX = 400;
 	
