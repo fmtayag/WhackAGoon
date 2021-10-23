@@ -491,14 +491,20 @@ void PlayScene::draw_deathTimer(SDL_Renderer* renderer) {
 		double dur = dur_deathCdown;
 		
 		// Normalize time left
-		float val = now-tmr;
-		float min = 0;
-		float max = dur_deathCdown;
-		float normalized = (val - min) / (max - min);
+		float valTL = now-tmr;
+		float minTL = 0;
+		float maxTL = dur_deathCdown;
+		float normTL= (valTL - minTL) / (maxTL - minTL);
+		
+		// Normalize death countdown duration
+		float valDD = dur_deathCdown;
+		float minDD = 0;
+		float maxDD = MAX_DUR_DEATHCDOWN;
+		float normDD = (valDD - minDD) / (maxDD - minDD);
 		
 		// Set bar width
-		float y = 256;
-		float bar_width = y - (y*normalized);
+		float y = 256 * normDD;
+		float bar_width = y - (y*normTL);
 		if(bar_width <= 0) {
 			bar_width = 0;
 		}

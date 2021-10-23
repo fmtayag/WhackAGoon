@@ -139,7 +139,8 @@ private:
 	int score = 0;
 	int lives = 3;
 	const int DECREMENT_DUR_DEATHCDOWN = 500;
-	int dur_deathCdown = 3250;
+	const int MAX_DUR_DEATHCDOWN = 3250;
+	int dur_deathCdown = MAX_DUR_DEATHCDOWN;
 	int tmr_deathCdown = 0; // initialized after player hits the first goon
 	
 	// Durations and timers
