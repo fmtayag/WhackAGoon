@@ -452,7 +452,7 @@ void PlayScene::draw_texts(SDL_Renderer* renderer) {
 	if(m_gstate == PS_RUNNING | m_gstate == PS_GAMEOVER) {
 		drawText(renderer, "SCORE", gFont, winCenterW - 64, 42, WHITE, true);
 		drawText(renderer, scoreMessage.c_str(), gFont, winCenterW - 64, 64, WHITE, true);
-		drawText(renderer, "LIVES", gFont, winCenterW + 64, 42, WHITE, true);
+		drawText(renderer, "LIVES-2", gFont, winCenterW + 64, 42, WHITE, true);
 		drawText(renderer, std::to_string(lives).c_str(), gFont, winCenterW + 64, 64, WHITE, true);	
 	}
 
@@ -634,8 +634,16 @@ GameOverScene::GameOverScene(SceneContext* context) {
 	// Mouse
 	z_mouse.isClicked = false;
 	
+	// Anchor points
+	const int wcx = WINDOW_WIDTH / 2;
+	const int wcy = WINDOW_HEIGHT / 2;
+	const int wbtom = WINDOW_HEIGHT;
+	const int btnW = 96;
+	const int btnH = 32;
+	const int bcx = btnW / 2;
+	
 	// Buttons
-	Button* btn1 = new Button(btnTexture, "TESTING", 96, 32, 100, 100);
+	Button* btn1 = new Button(btnTexture, "TESTING", btnW, btnH, wcx-bcx, wbtom-64);
 	btn1->bindCallback(std::bind(&GameOverScene::chs_menu, this));
 	buttons.push_back(btn1);
 }
@@ -678,14 +686,18 @@ void GameOverScene::update() {
 }
 
 void GameOverScene::draw(SDL_Renderer* renderer) {
+	// Anchor points
+	const int wcx = WINDOW_WIDTH / 2;
+	const int wcy = WINDOW_HEIGHT / 2;
+	
 	// Set render draw color, and clear renderer ----------
 	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, 255);	
 	SDL_RenderClear(renderer);
 
 	std::string scoreMsg = "YOU SCORED " + std::to_string(finalScore) + " PTS!";
 
-	drawText(renderer, "GAME OVER", gFont, 0, 0, {255, 255, 255});
-	drawText(renderer, scoreMsg.c_str(), gFont, 0, 32, {255, 255, 255});
+	drawText(renderer, "GAME OVER", gFontXL, wcx, 16, {255, 255, 255}, true);
+	drawText(renderer, scoreMsg.c_str(), gFontM, wcx, 96, {255, 255, 255}, true);
 	
 	// Draw buttons --------------------------
 	for (Button* button : buttons) {

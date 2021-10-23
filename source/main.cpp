@@ -27,6 +27,7 @@ SDL_Renderer* gRenderer;
 TTF_Font* gFont;
 TTF_Font* gFontM;
 TTF_Font* gFontL;
+TTF_Font* gFontXL;
 
 // Colors
 SDL_Color BG_COLOR;
@@ -60,7 +61,7 @@ int main(int argv, char** args) {
         SDL_Event e;
 			
 		// Create game context
-		gContext = new SceneContext(PLAY_SCENE);
+		gContext = new SceneContext(GAMEOVER_SCENE);
 		if (gContext == NULL) {
 			printf("Failed to initialize the game context.\n");
 		}
@@ -166,7 +167,13 @@ bool loadAssets() {
 		printf("Failed to load gFontL.\n");
 		isSuccessful = false;
 	}
-
+	
+	gFontXL = TTF_OpenFont("assets/fonts/zyn8.ttf", 81);
+	if(gFontL == NULL) {
+		printf("Failed to load gFontL.\n");
+		isSuccessful = false;
+	}
+	
     // Load textures
     bgTexture = loadTextureFromFile(gRenderer, "assets/images/bg.png");
     if (bgTexture == NULL)
