@@ -375,6 +375,9 @@ void PlayScene::u_activateDur() {
 		tmr_progression = now;
 		
 		dur_activateHole -= rand() % DECREMENT_MIN + DECREMENT_MAX;
+		if(dur_activateHole <= MIN_DURACTV_VAL) {
+			dur_activateHole = MIN_DURACTV_VAL;
+		}
 		printf("Debug: dur_activateHole is %d.\n", dur_activateHole);
 	}
 }
@@ -609,7 +612,18 @@ void PlayScene::shake() {
 }
 
 void PlayScene::delayDeathCdown() {
-	tmr_deathCdown = SDL_GetTicks();
+	if(tmr_deathCdown != 0) {
+		const float dcdown_incr = (float) dur_activateHole / 0.6;
+		tmr_deathCdown += (int) dcdown_incr;
+		const int now = SDL_GetTicks();
+		//printf("tmr: %d, now: %d\n", tmr_deathCdown, now);
+		
+		if(now - tmr_deathCdown <= 0) {
+			tmr_deathCdown = SDL_GetTicks();
+			//printf("DEBUG: Exceeded duration!\n");
+		}
+	}
+	
 }
 
 void PlayScene::decrDthCdownDur() {

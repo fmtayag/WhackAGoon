@@ -151,7 +151,7 @@ private:
 
 	int tmr_progression;
 	const int DUR_PROGRESSION = 1950; 
-	const int MIN_DURACTV_VAL = 300; 
+	const int MIN_DURACTV_VAL = 500; 
 	const int DECREMENT_MIN = 100;
 	const int DECREMENT_MAX = 400;
 	
