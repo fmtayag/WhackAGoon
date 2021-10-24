@@ -30,6 +30,9 @@ SceneContext::SceneContext(SceneID scene)
 	case GAMEOVER_SCENE:
 		this->pScene = new GameOverScene(this);
 		break;
+	case DEBUG_SCENE:
+		this->pScene = new DebugScene(this);
+		break;
 	default:
 		this->pScene = NULL;
 		break;
@@ -107,10 +110,6 @@ MenuScene::MenuScene(SceneContext *context)
 	Button *btn1 = new Button(btnTexture, "TESTING", 96, 32, 100, 100);
 	btn1->bindCallback(std::bind(&MenuScene::chs_playGame, this));
 	buttons.push_back(btn1);
-
-	// Decrement Text
-	DecrementText *decText1 = new DecrementText("LOL", {100, 100, 0, 0}, {0, 2});
-	decTexts.push_back(decText1);
 }
 
 MenuScene::~MenuScene()
@@ -120,11 +119,7 @@ MenuScene::~MenuScene()
 		delete btn;
 		btn = NULL;
 	}
-	for (DecrementText *decText : decTexts)
-	{
-		delete decText;
-		decText = NULL;
-	}
+
 	printf("Deleted menu scene.\n");
 }
 
@@ -158,19 +153,6 @@ void MenuScene::update()
 	{
 		btn->update(&z_mouse);
 	}
-
-	for (DecrementText *dec : decTexts)
-	{
-		if (dec->getf_dead() != true)
-		{
-			dec->update();
-		}
-		else
-		{
-			decTexts.pop_back();
-			printf("DEBUG: decText is dead. Removing from vector\n");
-		}
-	}
 }
 
 void MenuScene::draw(SDL_Renderer *renderer)
@@ -186,19 +168,6 @@ void MenuScene::draw(SDL_Renderer *renderer)
 	for (Button *button : buttons)
 	{
 		button->draw(renderer);
-	}
-
-	for (DecrementText *dec : decTexts)
-	{
-		if (dec->getf_dead() != true)
-		{
-			dec->draw(renderer);
-		}
-		else
-		{
-			decTexts.pop_back();
-			printf("DEBUG: decText is dead. Removing from vector\n");
-		}
 	}
 
 	// Render
@@ -843,3 +812,96 @@ void GameOverScene::chs_menu()
 }
 //}
 #pragma endregion GameOverScene
+
+#pragma region DebugScene
+DebugScene::DebugScene(SceneContext *context)
+{
+	m_context = context;
+
+	// Decrement Text
+	spawnDecTxt();
+}
+DebugScene::~DebugScene()
+{
+	// Destructor
+}
+void DebugScene::handleEvents(SDL_Event *e)
+{
+	// Handle events --------------------------------------
+	while (SDL_PollEvent(e))
+	{
+		if (e->type == SDL_QUIT)
+		{
+			m_context->quit();
+		}
+		else if (e->type == SDL_MOUSEBUTTONDOWN)
+		{
+			z_mouse.isClicked = true;
+		}
+		else if (e->type == SDL_MOUSEBUTTONUP)
+		{
+			z_mouse.isClicked = false;
+		}
+		else if (e->type == SDL_KEYDOWN)
+		{
+			switch (e->key.keysym.sym)
+			{
+			case SDLK_e:
+				spawnDecTxt();
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	// Update mouse position
+	SDL_GetMouseState(&z_mouse.pos.x, &z_mouse.pos.y);
+}
+void DebugScene::update()
+{
+	for (DecrementText *dec : decTexts)
+	{
+		if (dec->getf_dead() != true)
+		{
+			dec->update();
+		}
+		else
+		{
+			decTexts.pop_back();
+			printf("DEBUG: decText is dead. Removing from vector\n");
+			break;
+		}
+	}
+}
+void DebugScene::draw(SDL_Renderer *renderer)
+{
+	SDL_RenderClear(renderer);
+	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, BG_COLOR.a);
+
+	for (DecrementText *dec : decTexts)
+	{
+		if (dec->getf_dead() != true)
+		{
+			dec->draw(renderer);
+		}
+		else
+		{
+			decTexts.pop_back();
+			printf("DEBUG: decText is dead. Removing from vector\n");
+			break;
+		}
+	}
+
+	drawText(renderer, "DEBUG ROOM", gFontL, 0, 0, {255, 255, 255}, false);
+
+	SDL_RenderPresent(renderer);
+}
+
+void DebugScene::spawnDecTxt()
+{
+	DecrementText *txt = new DecrementText("DEBUG BRUH", {100, 100, 0, 0}, {0, 2});
+	decTexts.push_back(txt);
+}
+
+#pragma endregion DebugScene

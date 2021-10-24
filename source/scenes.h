@@ -13,7 +13,8 @@ enum SceneID
 {
 	MENU_SCENE,
 	PLAY_SCENE,
-	GAMEOVER_SCENE
+	GAMEOVER_SCENE,
+	DEBUG_SCENE
 };
 
 enum PlaySceneState
@@ -69,7 +70,6 @@ public:
 
 private:
 	std::vector<Button *> buttons;
-	std::vector<DecrementText *> decTexts;
 	SceneContext *mContext;
 
 	// Mouse
@@ -183,13 +183,32 @@ public:
 	void chs_menu();
 
 private:
-	std::vector<Button *> buttons;
 	SceneContext *mContext;
+	std::vector<Button *> buttons;
 
 	// Mouse
 	MouseState z_mouse;
 
 	int finalScore;
+};
+
+class DebugScene : public AbstractScene
+{
+public:
+	DebugScene(SceneContext *context);
+	~DebugScene();
+
+	void handleEvents(SDL_Event *e);
+	void update();
+	void draw(SDL_Renderer *renderer);
+
+	void spawnDecTxt();
+
+private:
+	SceneContext *m_context;
+	MouseState z_mouse;
+
+	std::vector<DecrementText *> decTexts;
 };
 
 #endif // SCENES_H
