@@ -158,13 +158,14 @@ void MenuScene::update()
 
 	for (DecrementText *dec : decTexts)
 	{
-		if (dec != nullptr)
+		if (dec->getf_dead() != true)
 		{
 			dec->update();
 		}
 		else
 		{
-			printf("DEBUG: Cannot run dec->update() cuz it's null.\n");
+			decTexts.pop_back();
+			printf("DEBUG: decText is dead. Removing from vector\n");
 		}
 	}
 }
@@ -186,13 +187,14 @@ void MenuScene::draw(SDL_Renderer *renderer)
 
 	for (DecrementText *dec : decTexts)
 	{
-		if (dec != nullptr)
+		if (dec->getf_dead() != true)
 		{
 			dec->draw(renderer);
 		}
 		else
 		{
-			printf("DEBUG: Cannot run dec->draw() cuz it's null.\n");
+			decTexts.pop_back();
+			printf("DEBUG: decText is dead. Removing from vector\n");
 		}
 	}
 

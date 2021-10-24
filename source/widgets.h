@@ -65,6 +65,7 @@ public:
 	void makeTransparent();
 	void move();
 	void checkVisible();
+	bool getf_dead() { return flag_dead; };
 
 private:
 	std::string m_text;
@@ -72,6 +73,7 @@ private:
 	const short int OPAC_STEP = -10;
 	SDL_Rect m_rect;
 	SDL_Point m_velocity;
+	bool flag_dead = false;
 
 	// timers
 	int tmr_text = 0;
