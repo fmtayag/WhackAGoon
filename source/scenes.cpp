@@ -846,7 +846,7 @@ void DebugScene::handleEvents(SDL_Event *e)
 		{
 			switch (e->key.keysym.sym)
 			{
-			case SDLK_e:
+			case SDLK_1:
 				spawnDecTxt();
 				break;
 			default:
@@ -892,13 +892,14 @@ void DebugScene::draw(SDL_Renderer *renderer)
 	}
 
 	drawText(renderer, "DEBUG ROOM", gFontL, 0, 0, {255, 255, 255}, false);
+	drawText(renderer, "1 ... SPAWN DECTEXT", gFont, 0, 64, {255, 255, 255}, false);
 
 	SDL_RenderPresent(renderer);
 }
 
 void DebugScene::spawnDecTxt()
 {
-	DecrementText *txt = new DecrementText("DEBUG BRUH", {100, 100, 0, 0}, {0, 2});
+	DecrementText *txt = new DecrementText("DEBUG BRUH", {WINDOW_WIDTH / 2, 0, 0, 0}, {0, 2});
 	decTexts.push_back(txt);
 }
 
