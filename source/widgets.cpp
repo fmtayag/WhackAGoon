@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "assets.h"
 
+#pragma region Button
 //{ Button
 Button::Button(SDL_Texture *btnTexture, std::string btnText, int btnW, int btnH, int btnX, int btnY)
 {
@@ -99,7 +100,9 @@ void Button::makeCallback()
 	}
 }
 //}
+#pragma endregion Button
 
+#pragma region DecrementText
 //{ DecrementText
 DecrementText::DecrementText(std::string text, SDL_Rect rect, SDL_Point velocity)
 {
@@ -198,3 +201,4 @@ void DecrementText::checkVisible()
 }
 
 //}
+#pragma endregion DecrementText

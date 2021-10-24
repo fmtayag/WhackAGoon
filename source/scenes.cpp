@@ -15,6 +15,7 @@
 #include "utils.h"
 #include "widgets.h"
 
+#pragma region SceneContext
 //{ SceneContext
 SceneContext::SceneContext(SceneID scene)
 {
@@ -93,7 +94,9 @@ void SceneContext::Draw(SDL_Renderer *renderer)
 	}
 }
 //}
+#pragma endregion SceneContext
 
+#pragma region MenuScene
 //{ MenuScene
 MenuScene::MenuScene(SceneContext *context)
 {
@@ -207,7 +210,9 @@ void MenuScene::chs_playGame()
 	mContext->changeScene(PLAY_SCENE);
 }
 //}
+#pragma endregion MenuScene
 
+#pragma region PlayScene
 //{ PlayScene
 PlayScene::PlayScene(SceneContext *context)
 {
@@ -738,9 +743,10 @@ void PlayScene::initDthCdown()
 		tmr_deathCdown = now;
 	}
 }
-
 //}
+#pragma endregion PlayScene
 
+#pragma region GameOverScene
 //{ GameOverScene
 GameOverScene::GameOverScene(SceneContext *context)
 {
@@ -835,5 +841,5 @@ void GameOverScene::chs_menu()
 {
 	mContext->changeScene(MENU_SCENE);
 }
-
 //}
+#pragma endregion GameOverScene
