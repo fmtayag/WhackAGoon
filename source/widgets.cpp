@@ -111,12 +111,14 @@ DecrementText::DecrementText(std::string text, SDL_Rect rect, SDL_Point velocity
 
 DecrementText::~DecrementText()
 {
-	// TODO:
+	// Just for future reference here:
 	// (10:34pm) Memory leak or some shit here. It crashes some time after the destructor is called.
 	// (10:34pm) Perhaps it's because of the vector iteration calling a NULL object.
 	// (11:11pm )... I checked and I think it's because this destructor is being called twice...
 	// (11:11pm) the object is being freed twice because 'delete this' is being called twice when the
 	// (11:11pm) checkVisible() function is called.
+
+	m_flag_dead = true; // yeah i know, not the tidiest solution out there
 	printf("DEBUG: Deleting DecrementText.\n");
 }
 
@@ -189,9 +191,8 @@ void DecrementText::move()
 void DecrementText::checkVisible()
 {
 
-	if (m_opacity <= 0)
+	if (m_opacity <= 0 && m_flag_dead != true)
 	{
-		flag_dead = true; // yeah i know, not the tidiest solution out there
 		delete this;
 	}
 }
