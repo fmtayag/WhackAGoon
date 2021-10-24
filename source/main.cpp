@@ -20,31 +20,32 @@
 #include "frames.h"
 
 // Window and renderer
-SDL_Window* gWindow;
-SDL_Renderer* gRenderer;
+SDL_Window *gWindow;
+SDL_Renderer *gRenderer;
 
 // Font
-TTF_Font* gFont;
-TTF_Font* gFontM;
-TTF_Font* gFontL;
-TTF_Font* gFontXL;
+TTF_Font *gFont;
+TTF_Font *gFontM;
+TTF_Font *gFontL;
+TTF_Font *gFontXL;
 
 // Colors
 SDL_Color BG_COLOR;
 
 // Textures
-SDL_Texture* bgTexture;
-SDL_Texture* spritesTexture;
-SDL_Texture* btnTexture;
+SDL_Texture *bgTexture;
+SDL_Texture *spritesTexture;
+SDL_Texture *btnTexture;
 
 // Game Context
-SceneContext* gContext;
+SceneContext *gContext;
 
 bool initialize();
 bool loadAssets();
 void cleanUp();
 
-int main(int argv, char** args) {
+int main(int argv, char **args)
+{
     // Initialize and load assets
     bool isInitialized = initialize();
     bool hasLoadedAssets = loadAssets();
@@ -59,12 +60,13 @@ int main(int argv, char** args) {
     if (isInitialized && hasLoadedAssets)
     {
         SDL_Event e;
-			
-		// Create game context
-		gContext = new SceneContext(PLAY_SCENE);
-		if (gContext == NULL) {
-			printf("Failed to initialize the game context.\n");
-		}
+
+        // Create game context
+        gContext = new SceneContext(MENU_SCENE);
+        if (gContext == NULL)
+        {
+            printf("Failed to initialize the game context.\n");
+        }
 
         while (gContext->get_scene() != NULL && gContext != NULL)
         {
@@ -73,17 +75,17 @@ int main(int argv, char** args) {
             gContext->Update();
             gContext->Draw(gRenderer);
         }
-
     }
 
     // Clean up
     cleanUp();
-	
-	getchar();
+
+    getchar();
     return 0;
 }
 
-bool initialize() {
+bool initialize()
+{
     bool isSuccessful = true;
 
     // Initialize SDL subsystems
@@ -134,11 +136,12 @@ bool initialize() {
     return isSuccessful;
 }
 
-bool loadAssets() {
+bool loadAssets()
+{
     bool isSuccessful = true;
-	
-	BG_COLOR = {9, 13, 23};
-	
+
+    BG_COLOR = {9, 13, 23};
+
     // Load frame data
     loadFrameData();
 
@@ -155,25 +158,28 @@ bool loadAssets() {
         printf("Failed to load font.\n");
         isSuccessful = false;
     }
-	
-	gFontM = TTF_OpenFont("assets/fonts/zyn8.ttf", 31);
-	if(gFontM == NULL) {
-		printf("Failed to load gFontM.\n");
-		isSuccessful = false;
-	}
-	
-	gFontL = TTF_OpenFont("assets/fonts/zyn8.ttf", 41);
-	if(gFontL == NULL) {
-		printf("Failed to load gFontL.\n");
-		isSuccessful = false;
-	}
-	
-	gFontXL = TTF_OpenFont("assets/fonts/zyn8.ttf", 81);
-	if(gFontL == NULL) {
-		printf("Failed to load gFontL.\n");
-		isSuccessful = false;
-	}
-	
+
+    gFontM = TTF_OpenFont("assets/fonts/zyn8.ttf", 31);
+    if (gFontM == NULL)
+    {
+        printf("Failed to load gFontM.\n");
+        isSuccessful = false;
+    }
+
+    gFontL = TTF_OpenFont("assets/fonts/zyn8.ttf", 41);
+    if (gFontL == NULL)
+    {
+        printf("Failed to load gFontL.\n");
+        isSuccessful = false;
+    }
+
+    gFontXL = TTF_OpenFont("assets/fonts/zyn8.ttf", 81);
+    if (gFontL == NULL)
+    {
+        printf("Failed to load gFontL.\n");
+        isSuccessful = false;
+    }
+
     // Load textures
     bgTexture = loadTextureFromFile(gRenderer, "assets/images/bg.png");
     if (bgTexture == NULL)
@@ -188,25 +194,27 @@ bool loadAssets() {
         printf("Failed to load spritesTexture.\n");
         isSuccessful = false;
     }
-	
-	btnTexture = loadTextureFromFile(gRenderer, "assets/images/button.png");
-	if(btnTexture == NULL) {
-		printf("Failed to load btnTexture.\n");
-		isSuccessful = false;
-	}
+
+    btnTexture = loadTextureFromFile(gRenderer, "assets/images/button.png");
+    if (btnTexture == NULL)
+    {
+        printf("Failed to load btnTexture.\n");
+        isSuccessful = false;
+    }
 
     return isSuccessful;
 }
 
-void cleanUp() {	
-	// Destroy font
-	TTF_CloseFont(gFont);	
-	gFont = NULL;
-	
+void cleanUp()
+{
+    // Destroy font
+    TTF_CloseFont(gFont);
+    gFont = NULL;
+
     // Clean up textures
     cleanUpTexture(bgTexture);
     cleanUpTexture(spritesTexture);
-	cleanUpTexture(btnTexture);
+    cleanUpTexture(btnTexture);
 
     // Destroy window
     SDL_DestroyWindow(gWindow);
@@ -215,10 +223,10 @@ void cleanUp() {
     // Destroy renderer
     SDL_DestroyRenderer(gRenderer);
     gRenderer = NULL;
-	
-	// Clean up game context
-	delete gContext;
-	gContext = NULL;
+
+    // Clean up game context
+    delete gContext;
+    gContext = NULL;
 
     // Quit SDL subsystems
     TTF_Quit();
