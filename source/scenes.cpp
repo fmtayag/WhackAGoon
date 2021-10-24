@@ -868,9 +868,8 @@ void DebugScene::update()
 		}
 		else
 		{
-			decTexts.pop_back();
+			decTexts.erase(decTexts.begin());
 			printf("DEBUG: decText is dead. Removing from vector\n");
-			break;
 		}
 	}
 }
@@ -887,9 +886,8 @@ void DebugScene::draw(SDL_Renderer *renderer)
 		}
 		else
 		{
-			decTexts.pop_back();
+			decTexts.erase(decTexts.begin());
 			printf("DEBUG: decText is dead. Removing from vector\n");
-			break;
 		}
 	}
 
