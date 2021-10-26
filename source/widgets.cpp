@@ -7,14 +7,14 @@
 
 #pragma region Button
 //{ Button
-Button::Button(SDL_Texture *btnTexture, std::string btnText, int btnW, int btnH, int btnX, int btnY)
+Button::Button(SDL_Texture *btnTexture, std::string btnText, SDL_Rect rect)
 {
 	m_texture = btnTexture;
 	m_text = btnText;
-	m_rect.x = btnX;
-	m_rect.y = btnY;
-	m_rect.w = btnW;
-	m_rect.h = btnH;
+	m_rect.x = rect.x;
+	m_rect.y = rect.y;
+	m_rect.w = rect.w;
+	m_rect.h = rect.h;
 	m_state = BST_NORMAL;
 }
 
@@ -56,27 +56,74 @@ void Button::u_state(MouseState *mouse_s)
 
 void Button::draw(SDL_Renderer *renderer)
 {
-	std::string btnText = "";
+	// std::string btnText = "";
 
-	switch (m_state)
+	// switch (m_state)
+	// {
+	// case BST_DISABLED:
+	// 	btnText = "INACT";
+	// 	break;
+	// case BST_NORMAL:
+	// 	btnText = "NORMAL";
+	// 	break;
+	// case BST_CLICKED:
+	// 	btnText = "CLICKED";
+	// 	break;
+	// case BST_HOVERED:
+	// 	btnText = "HOVER";
+	// 	break;
+	// }
+
+	if (m_texture != NULL)
 	{
-	case BST_DISABLED:
-		btnText = "INACT";
-		break;
-	case BST_NORMAL:
-		btnText = "NORMAL";
-		break;
-	case BST_CLICKED:
-		btnText = "CLICKED";
-		break;
-	case BST_HOVERED:
-		btnText = "HOVER";
-		break;
+		SDL_RenderCopy(renderer, m_texture, NULL, &m_rect);
+	}
+	else
+	{
+		// Color
+		SDL_Color btn_bgColor;
+		switch (m_state)
+		{
+		case BST_DISABLED:
+			btn_bgColor = {50, 50, 50, 255};
+			break;
+		case BST_NORMAL:
+			btn_bgColor = {0, 0, 0, 0};
+			break;
+		case BST_CLICKED:
+			btn_bgColor = {255, 255, 255, 255};
+			break;
+		case BST_HOVERED:
+			btn_bgColor = {255, 255, 255, 255};
+			break;
+		}
+		SDL_Texture *targTexture = SDL_CreateTexture(
+			renderer,
+			SDL_PIXELFORMAT_RGBA8888,
+			SDL_TEXTUREACCESS_TARGET,
+			m_rect.w,
+			m_rect.h);
+
+		SDL_SetTextureBlendMode(targTexture, SDL_BLENDMODE_BLEND);
+
+		// Future reference: (1:14pm) problem with the RenderDrawRect 'spilling' over the entire screen.
+		// (1:18pm) well apparently i done goofed up on the DebugScene and accidentally put the
+		// SDL_RenderClear() routine BEFORE the SDL_SetRenderDrawColor routine.
+		// sometimes...problems have a comically simple solution.
+		SDL_SetRenderTarget(renderer, targTexture);
+		SDL_SetRenderDrawColor(renderer, btn_bgColor.r, btn_bgColor.g, btn_bgColor.b, btn_bgColor.a);
+		SDL_RenderClear(renderer);
+		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
+		SDL_SetRenderTarget(renderer, NULL);
+		SDL_RenderCopy(renderer, targTexture, NULL, &m_rect);
 	}
 
-	SDL_RenderCopy(renderer, m_texture, NULL, &m_rect);
+	unsigned int xcent = m_rect.x + (m_rect.w / 2);
+	unsigned int ycent = m_rect.y + (m_rect.h / 2);
 
-	drawText(renderer, btnText.c_str(), gFont, m_rect.x, m_rect.y, {255, 255, 255});
+	//drawText(renderer, btnText.c_str(), gFont, m_rect.x, m_rect.y, {255, 255, 255});
+	drawText(renderer, m_text.c_str(), gFont, xcent, ycent, {0, 0, 0}, true, true);
 }
 
 void Button::setState(BtnState state)

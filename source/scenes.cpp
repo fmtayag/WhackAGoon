@@ -107,7 +107,7 @@ MenuScene::MenuScene(SceneContext *context)
 	z_mouse.isClicked = false;
 
 	// Buttons
-	Button *btn1 = new Button(btnTexture, "TESTING", 96, 32, 100, 100);
+	Button *btn1 = new Button(btnTexture, "TESTING", {100, 100, 96, 32});
 	btn1->bindCallback(std::bind(&MenuScene::chs_playGame, this));
 	buttons.push_back(btn1);
 }
@@ -734,7 +734,12 @@ GameOverScene::GameOverScene(SceneContext *context)
 	const int bcx = btnW / 2;
 
 	// Buttons
-	Button *btn1 = new Button(btnTexture, "TESTING", btnW, btnH, wcx - bcx, wbtom - 64);
+	Button *btn1 = new Button(btnTexture, "TESTING", {
+														 wcx - bcx,
+														 wbtom - 64,
+														 btnW,
+														 btnH,
+													 });
 	btn1->bindCallback(std::bind(&GameOverScene::chs_menu, this));
 	buttons.push_back(btn1);
 }
@@ -818,12 +823,16 @@ DebugScene::DebugScene(SceneContext *context)
 {
 	m_context = context;
 
-	// Decrement Text
 	spawnDecTxt();
+	createButtons();
 }
 DebugScene::~DebugScene()
 {
-	// Destructor
+	for (Button *btn : buttons)
+	{
+		delete btn;
+		btn = NULL;
+	}
 }
 void DebugScene::handleEvents(SDL_Event *e)
 {
@@ -872,11 +881,16 @@ void DebugScene::update()
 			printf("DEBUG: decText is dead. Removing from vector\n");
 		}
 	}
+
+	for (Button *btn : buttons)
+	{
+		btn->update(&z_mouse);
+	}
 }
 void DebugScene::draw(SDL_Renderer *renderer)
 {
+	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, 255, BG_COLOR.a);
 	SDL_RenderClear(renderer);
-	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, BG_COLOR.a);
 
 	for (DecrementText *dec : decTexts)
 	{
@@ -891,6 +905,11 @@ void DebugScene::draw(SDL_Renderer *renderer)
 		}
 	}
 
+	for (Button *btn : buttons)
+	{
+		btn->draw(renderer);
+	}
+
 	drawText(renderer, "DEBUG ROOM", gFontL, 0, 0, {255, 255, 255}, false);
 	drawText(renderer, "1 ... SPAWN DECTEXT", gFont, 0, 64, {255, 255, 255}, false);
 
@@ -901,6 +920,13 @@ void DebugScene::spawnDecTxt()
 {
 	DecrementText *txt = new DecrementText("DEBUG BRUH", {WINDOW_WIDTH / 2, 0, 0, 0}, {0, 2});
 	decTexts.push_back(txt);
+}
+
+void DebugScene::createButtons()
+{
+	Button *btn1 = new Button(NULL, "CLICKME", {200, 200, 100, 50});
+	buttons.push_back(btn1);
+	printf("DEBUG: Spawned button.\n");
 }
 
 #pragma endregion DebugScene

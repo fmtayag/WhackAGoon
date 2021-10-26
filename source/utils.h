@@ -10,25 +10,25 @@
 #include "sprites.h"
 
 // Loading assets
-SDL_Texture* loadTextureFromFile(SDL_Renderer* renderer, std::string path);
+SDL_Texture *loadTextureFromFile(SDL_Renderer *renderer, std::string path);
 
 // Rendering texts
-void drawText(SDL_Renderer* renderer, std::string message, TTF_Font* font, int x, int y, SDL_Color color, bool cenX=false);
+void drawText(SDL_Renderer *renderer, std::string message, TTF_Font *font, int x, int y, SDL_Color color, bool cenX = false, bool cenY = false);
 
 // Destroying assets utils
-void cleanUpTexture(SDL_Texture*& texture);
+void cleanUpTexture(SDL_Texture *&texture);
 
 // Collision stuff
 bool isPointCollide(SDL_Point point, SDL_Rect rect);
 
 // RNG utils
 template <std::size_t N, std::size_t M>
-int pickWeighted(const int (&numbers)[N], const int (&weights)[M]) {
+int pickWeighted(const int (&numbers)[N], const int (&weights)[M])
+{
     std::piecewise_constant_distribution<> dist(
         std::begin(numbers),
         std::end(numbers),
-        std::begin(weights)
-    );
+        std::begin(weights));
 
     std::mt19937 generator(time(0));
     int randNum = static_cast<unsigned>(dist(generator));
@@ -36,8 +36,9 @@ int pickWeighted(const int (&numbers)[N], const int (&weights)[M]) {
 }
 
 // For getting size of array pointer
-template<typename T, size_t SIZE>
-size_t getSize(T (&)[SIZE]) {
+template <typename T, size_t SIZE>
+size_t getSize(T (&)[SIZE])
+{
     return SIZE;
 }
 

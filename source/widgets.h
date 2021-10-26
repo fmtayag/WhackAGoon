@@ -30,7 +30,7 @@ struct MouseState
 class Button
 {
 public:
-	Button(SDL_Texture *btnTexture, std::string btnText, int btnW, int btnH, int btnX, int btnY);
+	Button(SDL_Texture *btnTexture, std::string btnText, SDL_Rect rect);
 	~Button();
 	void update(MouseState *mouse_s);
 	void draw(SDL_Renderer *renderer);

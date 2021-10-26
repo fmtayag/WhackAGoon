@@ -203,12 +203,14 @@ public:
 	void draw(SDL_Renderer *renderer);
 
 	void spawnDecTxt();
+	void createButtons();
 
 private:
 	SceneContext *m_context;
 	MouseState z_mouse;
 
 	std::vector<DecrementText *> decTexts;
+	std::vector<Button *> buttons;
 };
 
 #endif // SCENES_H
