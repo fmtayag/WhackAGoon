@@ -823,7 +823,6 @@ DebugScene::DebugScene(SceneContext *context)
 {
 	m_context = context;
 
-	spawnDecTxt();
 	createButtons();
 }
 DebugScene::~DebugScene()
@@ -898,11 +897,6 @@ void DebugScene::draw(SDL_Renderer *renderer)
 		{
 			dec->draw(renderer);
 		}
-		else
-		{
-			decTexts.erase(decTexts.begin());
-			printf("DEBUG: decText is dead. Removing from vector\n");
-		}
 	}
 
 	for (Button *btn : buttons)
@@ -924,7 +918,7 @@ void DebugScene::spawnDecTxt()
 
 void DebugScene::createButtons()
 {
-	Button *btn1 = new Button(NULL, "CLICKME", {200, 200, 100, 50});
+	Button *btn1 = new Button(NULL, "CLICKME", {200, 200, 200, 32});
 	buttons.push_back(btn1);
 	printf("DEBUG: Spawned button.\n");
 }
