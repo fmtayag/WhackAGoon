@@ -5,18 +5,16 @@
 #include <SDL2/SDL_ttf.h>
 
 // Font
-extern TTF_Font* gFont;
-extern TTF_Font* gFontM;
-extern TTF_Font* gFontL;
-extern TTF_Font* gFontXL;
+extern TTF_Font *gFontS;
+extern TTF_Font *gFont;
+extern TTF_Font *gFontL;
 
 // Colors
 extern SDL_Color BG_COLOR;
 
 // Textures
-extern SDL_Texture* bgTexture;
-extern SDL_Texture* spritesTexture;
-extern SDL_Texture* btnTexture;
+extern SDL_Texture *bgTexture;
+extern SDL_Texture *spritesTexture;
+extern SDL_Texture *btnTexture;
 
 #endif // ASSETS_H
-

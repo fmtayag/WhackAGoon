@@ -24,10 +24,9 @@ SDL_Window *gWindow;
 SDL_Renderer *gRenderer;
 
 // Font
+TTF_Font *gFontS;
 TTF_Font *gFont;
-TTF_Font *gFontM;
 TTF_Font *gFontL;
-TTF_Font *gFontXL;
 
 // Colors
 SDL_Color BG_COLOR;
@@ -62,7 +61,7 @@ int main(int argv, char **args)
         SDL_Event e;
 
         // Create game context
-        gContext = new SceneContext(DEBUG_SCENE);
+        gContext = new SceneContext(MENU_SCENE);
         if (gContext == NULL)
         {
             printf("Failed to initialize the game context.\n");
@@ -152,28 +151,21 @@ bool loadAssets()
     iconSurface = NULL;
 
     // Load font
-    gFont = TTF_OpenFont("assets/fonts/zyn8.ttf", 25);
+    gFontS = TTF_OpenFont("assets/fonts/04B03.TTF", 12);
+    if (gFontS == NULL)
+    {
+        printf("Failed to load gFontS.\n");
+        isSuccessful = false;
+    }
+
+    gFont = TTF_OpenFont("assets/fonts/04B03.TTF", 24);
     if (gFont == NULL)
     {
-        printf("Failed to load font.\n");
+        printf("Failed to load gFont.\n");
         isSuccessful = false;
     }
 
-    gFontM = TTF_OpenFont("assets/fonts/zyn8.ttf", 31);
-    if (gFontM == NULL)
-    {
-        printf("Failed to load gFontM.\n");
-        isSuccessful = false;
-    }
-
-    gFontL = TTF_OpenFont("assets/fonts/zyn8.ttf", 41);
-    if (gFontL == NULL)
-    {
-        printf("Failed to load gFontL.\n");
-        isSuccessful = false;
-    }
-
-    gFontXL = TTF_OpenFont("assets/fonts/zyn8.ttf", 81);
+    gFontL = TTF_OpenFont("assets/fonts/04B03.TTF", 42);
     if (gFontL == NULL)
     {
         printf("Failed to load gFontL.\n");
@@ -208,8 +200,12 @@ bool loadAssets()
 void cleanUp()
 {
     // Destroy font
+    TTF_CloseFont(gFontS);
+    gFontS = NULL;
     TTF_CloseFont(gFont);
     gFont = NULL;
+    TTF_CloseFont(gFontL);
+    gFontL = NULL;
 
     // Clean up textures
     cleanUpTexture(bgTexture);

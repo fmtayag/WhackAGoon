@@ -107,7 +107,7 @@ MenuScene::MenuScene(SceneContext *context)
 	z_mouse.isClicked = false;
 
 	// Buttons
-	Button *btn1 = new Button(btnTexture, "TESTING", {100, 100, 96, 32});
+	Button *btn1 = new Button(NULL, "TESTING", {100, 100, 96, 32});
 	btn1->bindCallback(std::bind(&MenuScene::chs_playGame, this));
 	buttons.push_back(btn1);
 }
@@ -161,8 +161,11 @@ void MenuScene::draw(SDL_Renderer *renderer)
 	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, 255);
 	SDL_RenderClear(renderer);
 
-	drawText(renderer, "MENU SCENE", gFont, 0, 0, {255, 255, 255});
-	drawText(renderer, "PRESS ENTER TO PLAY", gFont, 0, 64, {255, 255, 255});
+	drawText(renderer, "MENU SCENE", gFontL, 0, 0, {255, 255, 255});
+	drawText(renderer, "PRESS ENTER TO PLAY", gFontL, 0, 64, {255, 255, 255});
+	//drawText(renderer, "Game v1.0", gFontS, WINDOW_WIDTH / 2, (int)(WINDOW_HEIGHT * 0.88), {255, 255, 255}, true);
+	drawText(renderer, "(c) 2021 Zyenapz / Francis Tayag", gFontS, WINDOW_WIDTH / 2, (int)(WINDOW_HEIGHT * 0.90), {255, 255, 255}, true);
+	drawText(renderer, "Codelic, GPL-3.0. Artlic CC BY-NC 4.0.", gFontS, WINDOW_WIDTH / 2, (int)(WINDOW_HEIGHT * 0.92), {255, 255, 255}, true);
 
 	// Draw buttons --------------------------
 	for (Button *button : buttons)
@@ -514,7 +517,7 @@ void PlayScene::draw_texts(SDL_Renderer *renderer)
 	else if (m_gstate == PS_GAMEOVER)
 	{
 		drawText(renderer, "GAME OVER!", gFontL, winCenterW, winCenterH, WHITE, true);
-		drawText(renderer, gOverMsg.c_str(), gFontM, winCenterW, winCenterH + 32, WHITE, true);
+		drawText(renderer, gOverMsg.c_str(), gFont, winCenterW, winCenterH + 32, WHITE, true);
 	}
 }
 
@@ -798,8 +801,8 @@ void GameOverScene::draw(SDL_Renderer *renderer)
 
 	std::string scoreMsg = "YOU SCORED " + std::to_string(finalScore) + " PTS!";
 
-	drawText(renderer, "GAME OVER", gFontXL, wcx, 16, {255, 255, 255}, true);
-	drawText(renderer, scoreMsg.c_str(), gFontM, wcx, 96, {255, 255, 255}, true);
+	drawText(renderer, "GAME OVER", gFontL, wcx, 16, {255, 255, 255}, true);
+	drawText(renderer, scoreMsg.c_str(), gFont, wcx, 96, {255, 255, 255}, true);
 
 	// Draw buttons --------------------------
 	for (Button *button : buttons)
@@ -888,7 +891,7 @@ void DebugScene::update()
 }
 void DebugScene::draw(SDL_Renderer *renderer)
 {
-	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, 255, BG_COLOR.a);
+	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, BG_COLOR.a);
 	SDL_RenderClear(renderer);
 
 	for (DecrementText *dec : decTexts)
