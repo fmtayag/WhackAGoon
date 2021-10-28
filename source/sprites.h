@@ -6,7 +6,8 @@
 #include <vector>
 #include <iterator>
 
-enum AnimState {
+enum AnimState
+{
     AS_Resting,
     AS_ToAwake,
     AS_Awake,
@@ -14,25 +15,28 @@ enum AnimState {
     AS_ToResting
 };
 
-enum HoleType {
+enum HoleType
+{
     HT_None,
     HT_Goon,
     HT_Townie,
     HT_Mayor,
-	HT_MaxNum
+    HT_MaxNum
 };
 
-class ISprite {
+class ISprite
+{
     virtual void update() = 0;
-    virtual void draw(SDL_Renderer* renderer) = 0;
+    virtual void draw(SDL_Renderer *renderer) = 0;
 };
 
-class HoleSprite: public ISprite {
+class HoleSprite : public ISprite
+{
 public:
-    HoleSprite(SDL_Texture* spritesheet, int x, int y);
+    HoleSprite(SDL_Texture *spritesheet, int x, int y);
     ~HoleSprite(){};
     void update();
-    void draw(SDL_Renderer* renderer);
+    void draw(SDL_Renderer *renderer);
 
     void animate();
     bool whack();
@@ -47,7 +51,7 @@ private:
     AnimState m_AnimState;
     HoleType m_Type;
 
-    SDL_Texture* mSpritesheet;
+    SDL_Texture *mSpritesheet;
     SDL_Rect m_Rect;
 
     int anim_timer;
@@ -55,7 +59,26 @@ private:
     int whacked_timer;
     int awake_timer;
     int awake_dur;
-	int m_CurFrame;
+    int m_CurFrame;
+};
+
+class Particle : public ISprite
+{
+public:
+    Particle(SDL_Rect rect, SDL_Color color, SDL_Point velocity);
+    ~Particle();
+
+    void update();
+    void draw(SDL_Renderer *renderer);
+
+    void checkNotVisible();
+    bool get_fdead() { return m_fdead; };
+
+private:
+    SDL_Rect m_rect;
+    SDL_Color m_color;
+    SDL_Point m_velocity;
+    bool m_fdead = false;
 };
 
 #endif // SPRITES_H

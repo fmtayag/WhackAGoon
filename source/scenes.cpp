@@ -164,8 +164,8 @@ void MenuScene::draw(SDL_Renderer *renderer)
 	drawText(renderer, "MENU SCENE", gFontL, 0, 0, {255, 255, 255});
 	drawText(renderer, "PRESS ENTER TO PLAY", gFontL, 0, 64, {255, 255, 255});
 	//drawText(renderer, "Game v1.0", gFontS, WINDOW_WIDTH / 2, (int)(WINDOW_HEIGHT * 0.88), {255, 255, 255}, true);
-	drawText(renderer, "(c) 2021 Zyenapz / Francis Tayag", gFontS, WINDOW_WIDTH / 2, (int)(WINDOW_HEIGHT * 0.90), {255, 255, 255}, true);
-	drawText(renderer, "Codelic, GPL-3.0. Artlic CC BY-NC 4.0.", gFontS, WINDOW_WIDTH / 2, (int)(WINDOW_HEIGHT * 0.92), {255, 255, 255}, true);
+	drawText(renderer, "(c) 2021 Zyenapz", gFontS, WINDOW_WIDTH / 2, (int)(WINDOW_HEIGHT * 0.90), {255, 255, 255}, true);
+	//drawText(renderer, "Codelic, GPL-3.0. Artlic CC BY-NC 4.0.", gFontS, WINDOW_WIDTH / 2, (int)(WINDOW_HEIGHT * 0.92), {255, 255, 255}, true);
 
 	// Draw buttons --------------------------
 	for (Button *button : buttons)
@@ -556,6 +556,7 @@ void PlayScene::draw_deathTimer(SDL_Renderer *renderer)
 
 		// Set bar width
 		float y = 256 * normDD;
+		//printf("y: %f.\n", y);
 		float bar_width = y - (y * normTL);
 		if (bar_width <= 0)
 		{
@@ -570,9 +571,9 @@ void PlayScene::draw_deathTimer(SDL_Renderer *renderer)
 
 			SDL_Rect dtbarRect;
 			dtbarRect.x = x;
-			dtbarRect.y = 100;
+			dtbarRect.y = 16;
 			dtbarRect.w = (int)bar_width;
-			dtbarRect.h = 16;
+			dtbarRect.h = 8;
 
 			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 			SDL_RenderFillRect(renderer, &dtbarRect);
@@ -860,6 +861,8 @@ void DebugScene::handleEvents(SDL_Event *e)
 			case SDLK_1:
 				spawnDecTxt();
 				break;
+			case SDLK_2:
+				spawnParticle();
 			default:
 				break;
 			}
@@ -888,6 +891,18 @@ void DebugScene::update()
 	{
 		btn->update(&z_mouse);
 	}
+
+	for (Particle *p : particles)
+	{
+		if (p->get_fdead() != true)
+		{
+			p->update();
+		}
+		else
+		{
+			particles.erase(particles.begin());
+		}
+	}
 }
 void DebugScene::draw(SDL_Renderer *renderer)
 {
@@ -907,8 +922,14 @@ void DebugScene::draw(SDL_Renderer *renderer)
 		btn->draw(renderer);
 	}
 
+	for (Particle *p : particles)
+	{
+		p->draw(renderer);
+	}
+
 	drawText(renderer, "DEBUG ROOM", gFontL, 0, 0, {255, 255, 255}, false);
 	drawText(renderer, "1 ... SPAWN DECTEXT", gFont, 0, 64, {255, 255, 255}, false);
+	drawText(renderer, "2 ... SPAWN PARTICLE", gFont, 0, 96, {255, 255, 255}, false);
 
 	SDL_RenderPresent(renderer);
 }
@@ -924,6 +945,12 @@ void DebugScene::createButtons()
 	Button *btn1 = new Button(NULL, "CLICKME", {200, 200, 200, 32});
 	buttons.push_back(btn1);
 	printf("DEBUG: Spawned button.\n");
+}
+
+void DebugScene::spawnParticle()
+{
+	Particle *p1 = new Particle({300, 50, PXSCALE, PXSCALE}, {255, 255, 255, 255}, {0, -1});
+	particles.push_back(p1);
 }
 
 #pragma endregion DebugScene

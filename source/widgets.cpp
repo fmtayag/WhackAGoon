@@ -96,6 +96,7 @@ void Button::draw(SDL_Renderer *renderer)
 		// (1:18pm) well apparently i done goofed up on the DebugScene and accidentally put the
 		// SDL_RenderClear() routine BEFORE the SDL_SetRenderDrawColor routine.
 		// sometimes...problems have a comically simple solution.
+
 		SDL_SetRenderTarget(renderer, targTexture);
 		//SDL_SetRenderDrawColor(renderer, btn_bgColor.r, btn_bgColor.g, btn_bgColor.b, btn_bgColor.a);
 		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);

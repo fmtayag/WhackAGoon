@@ -128,3 +128,40 @@ void HoleSprite::animate()
 }
 //}
 #pragma endregion HoleSprite
+
+#pragma region Particle
+//{ Particle
+Particle::Particle(SDL_Rect rect, SDL_Color color, SDL_Point velocity)
+{
+    m_rect = rect;
+    m_color = color;
+    m_velocity = velocity;
+}
+Particle::~Particle()
+{
+    printf("Debug: Particle deleted.\n");
+    m_fdead = true;
+}
+void Particle::update()
+{
+    checkNotVisible();
+    m_rect.x += m_velocity.x;
+    m_rect.y += m_velocity.y;
+}
+void Particle::draw(SDL_Renderer *renderer)
+{
+    SDL_SetRenderDrawColor(renderer, m_color.r, m_color.g, m_color.b, m_color.a);
+    SDL_RenderFillRect(renderer, &m_rect);
+}
+
+void Particle::checkNotVisible()
+{
+    if ((m_rect.x < -m_rect.w || m_rect.x > WINDOW_WIDTH + m_rect.w) ||
+        (m_rect.y < -m_rect.h || m_rect.y > WINDOW_HEIGHT + m_rect.h))
+    {
+        delete this;
+    }
+}
+
+//}
+#pragma endregion Particle

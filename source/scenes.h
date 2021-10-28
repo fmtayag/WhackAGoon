@@ -203,6 +203,7 @@ public:
 	void draw(SDL_Renderer *renderer);
 
 	void spawnDecTxt();
+	void spawnParticle();
 	void createButtons();
 
 private:
@@ -211,6 +212,7 @@ private:
 
 	std::vector<DecrementText *> decTexts;
 	std::vector<Button *> buttons;
+	std::vector<Particle *> particles;
 };
 
 #endif // SCENES_H
