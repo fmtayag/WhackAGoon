@@ -488,18 +488,18 @@ void PlayScene::u_prt()
 {
 	//printf("m_particles size: %d\n", m_particles.size());
 	// update particles
+	auto iter = m_particles.begin();
 	for (Particle &p : m_particles)
 	{
-
 		if (p.isVisible())
 		{
 			p.update();
 		}
 		else
 		{
-			printf("Deleting particle.\n");
-			m_particles.erase(m_particles.begin());
+			m_particles.erase(iter);
 		}
+		iter++;
 	}
 }
 
