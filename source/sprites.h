@@ -55,7 +55,7 @@ private:
     SDL_Rect m_Rect;
 
     int anim_timer;
-    const int WHACKED_DUR = 1300;
+    static const int WHACKED_DUR = 1300;
     int whacked_timer;
     int awake_timer;
     int awake_dur;
@@ -72,11 +72,13 @@ public:
     void draw(SDL_Renderer *renderer);
 
     bool isVisible();
+    void bindParentTargTexture(SDL_Texture *parent) { m_parentTargTexture = parent; };
 
 private:
     SDL_Rect m_rect;
     SDL_Color m_color;
     SDL_Point m_velocity;
+    SDL_Texture *m_parentTargTexture;
     bool m_fdead = false;
 };
 

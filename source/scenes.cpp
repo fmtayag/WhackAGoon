@@ -195,8 +195,7 @@ PlayScene::PlayScene(SceneContext *context)
 PlayScene::~PlayScene()
 {
 	holeSprites.clear();
-
-	//m_particles.clear();
+	m_particles.clear();
 
 	printf("Deleted play scene.\n");
 }
@@ -269,8 +268,8 @@ void PlayScene::update()
 		u_holes();
 		u_activateDur();
 		u_activateHoles();
-		//u_spawnPrt();
-		//u_prt();
+		u_spawnPrt();
+		u_prt();
 		shake();
 		break;
 	default:
@@ -457,52 +456,52 @@ void PlayScene::u_activateHoles(bool isForced, HoleType forcedType)
 	}
 }
 
-// void PlayScene::u_spawnPrt()
-// {
-// 	int now = SDL_GetTicks();
-// 	bool timesUp = now - tmr_prtspawn > DUR_PRTSPAWN;
+void PlayScene::u_spawnPrt()
+{
+	int now = SDL_GetTicks();
+	bool timesUp = now - tmr_prtspawn > DUR_PRTSPAWN;
 
-// 	if (timesUp)
-// 	{
-// 		tmr_prtspawn = now;
+	if (timesUp)
+	{
+		tmr_prtspawn = now;
 
-// 		// spawn particle
-// 		if (m_particles.size() < 1)
-// 		{
-// 			SDL_Rect prtRect;
-// 			prtRect.x = rand() % WINDOW_WIDTH + 1;
-// 			prtRect.y = rand() % 132 + 80;
-// 			prtRect.w = PXSCALE;
-// 			prtRect.h = PXSCALE;
+		// spawn particle
+		if (m_particles.size() < 10)
+		{
+			SDL_Rect prtRect;
+			prtRect.x = rand() % WINDOW_WIDTH + 1;
+			prtRect.y = rand() % 132 + 80;
+			prtRect.w = PXSCALE;
+			prtRect.h = PXSCALE;
 
-// 			printf("X: %d, Y: %d\n", prtRect.x, prtRect.y);
+			printf("X: %d, Y: %d\n", prtRect.x, prtRect.y);
 
-// 			SDL_Color prtCol = {155, 31, 11}; // toxic green
-// 			SDL_Point prtVel = {0, -1};
+			SDL_Color prtCol = {23, 31, 11}; // toxic green
+			SDL_Point prtVel = {0, -1};
 
-// 			m_particles.push_back(Particle(prtRect, prtCol, prtVel));
-// 		}
-// 	}
-// }
+			m_particles.push_back(Particle(prtRect, prtCol, prtVel));
+		}
+	}
+}
 
-// void PlayScene::u_prt()
-// {
-// 	printf("m_particles size: %d\n", m_particles.size());
-// 	// update particles
-// 	for (Particle p : m_particles)
-// 	{
+void PlayScene::u_prt()
+{
+	//printf("m_particles size: %d\n", m_particles.size());
+	// update particles
+	for (Particle &p : m_particles)
+	{
 
-// 		if (p.isVisible())
-// 		{
-// 			p.update();
-// 		}
-// 		else
-// 		{
-// 			printf("Deleting particle.\n");
-// 			m_particles.erase(m_particles.begin());
-// 		}
-// 	}
-// }
+		if (p.isVisible())
+		{
+			p.update();
+		}
+		else
+		{
+			printf("Deleting particle.\n");
+			m_particles.erase(m_particles.begin());
+		}
+	}
+}
 
 void PlayScene::draw(SDL_Renderer *renderer)
 {
@@ -522,7 +521,7 @@ void PlayScene::draw(SDL_Renderer *renderer)
 	SDL_SetRenderTarget(renderer, targetTexture);
 
 	draw_bg(renderer);
-	//draw_prt(renderer);
+	draw_prt(renderer, targetTexture);
 	draw_city(renderer);
 	draw_holes(renderer);
 	draw_texts(renderer);
@@ -531,8 +530,6 @@ void PlayScene::draw(SDL_Renderer *renderer)
 	SDL_SetRenderTarget(renderer, NULL);
 	SDL_RenderCopy(renderer, targetTexture, NULL, &targRect);
 	SDL_RenderPresent(renderer);
-
-	//printf("SDL_Error: %s\n", SDL_GetError());
 }
 
 void PlayScene::draw_texts(SDL_Renderer *renderer)
@@ -638,13 +635,14 @@ void PlayScene::draw_deathTimer(SDL_Renderer *renderer)
 	}
 }
 
-// void PlayScene::draw_prt(SDL_Renderer *renderer)
-// {
-// 	for (Particle p : m_particles)
-// 	{
-// 		p.draw(renderer);
-// 	}
-// }
+void PlayScene::draw_prt(SDL_Renderer *renderer, SDL_Texture *parentTargTexture)
+{
+	for (Particle &p : m_particles)
+	{
+		p.bindParentTargTexture(parentTargTexture);
+		p.draw(renderer);
+	}
+}
 
 void PlayScene::mk_holes()
 {

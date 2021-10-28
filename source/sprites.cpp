@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "frames.h"
 #include "metadata.h"
+#include "assets.h"
 
 #pragma region HoleSprite
 //{ HoleSprite
@@ -148,8 +149,19 @@ void Particle::update()
 }
 void Particle::draw(SDL_Renderer *renderer)
 {
+    SDL_Texture *targTexture = SDL_CreateTexture(
+        renderer,
+        SDL_PIXELFORMAT_RGBA8888,
+        SDL_TEXTUREACCESS_TARGET,
+        m_rect.w,
+        m_rect.h);
+    SDL_SetRenderTarget(renderer, targTexture);
     SDL_SetRenderDrawColor(renderer, m_color.r, m_color.g, m_color.b, m_color.a);
-    SDL_RenderFillRect(renderer, &m_rect);
+    SDL_RenderClear(renderer);
+    SDL_RenderFillRect(renderer, NULL);
+    SDL_SetRenderTarget(renderer, m_parentTargTexture);
+    SDL_RenderCopy(renderer, targTexture, NULL, &m_rect);
+    //printf("SDL_Error: %s\n", SDL_GetError());
 }
 
 bool Particle::isVisible()

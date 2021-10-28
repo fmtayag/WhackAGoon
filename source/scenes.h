@@ -98,15 +98,15 @@ private:
 	void u_holes();
 	void u_activateDur();
 	void u_activateHoles(bool isForced = false, HoleType forcedType = HT_None);
-	//void u_spawnPrt();
-	//void u_prt();
+	void u_spawnPrt();
+	void u_prt();
 
 	// draw() sub-methods
 	void draw_texts(SDL_Renderer *renderer);
 	void draw_holes(SDL_Renderer *renderer);
 	void draw_bg(SDL_Renderer *renderer);
 	void draw_deathTimer(SDL_Renderer *renderer);
-	//void draw_prt(SDL_Renderer *renderer);
+	void draw_prt(SDL_Renderer *renderer, SDL_Texture *parentTargTexture);
 	void draw_city(SDL_Renderer *renderer);
 
 	// helper methods
@@ -138,8 +138,9 @@ private:
 	bool mMouseClicked = false;
 	SDL_Point mpos;
 
-	// Sprites
+	// Sprite groups
 	std::vector<HoleSprite> holeSprites;
+	std::vector<Particle> m_particles;
 
 	// Game state
 	PlaySceneState m_gstate = PS_WARMUP;
