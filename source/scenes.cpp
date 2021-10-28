@@ -609,7 +609,7 @@ void PlayScene::draw_deathTimer(SDL_Renderer *renderer)
 		float normDD = (valDD - minDD) / (maxDD - minDD);
 
 		// Set bar width
-		float y = 256 * normDD;
+		float y = 192 * normDD;
 		//printf("y: %f.\n", y);
 		float bar_width = y - (y * normTL);
 		if (bar_width <= 0)
