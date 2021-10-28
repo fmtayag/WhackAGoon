@@ -20,7 +20,6 @@ Button::Button(SDL_Texture *btnTexture, std::string btnText, SDL_Rect rect)
 
 Button::~Button()
 {
-	printf("Deleted button.\n");
 }
 
 void Button::update(MouseState *mouse_s)

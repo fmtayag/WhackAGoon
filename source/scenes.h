@@ -50,6 +50,7 @@ public:
 
 	void setScore(int val) { score = val; };
 	int getScore() { return score; };
+	void sceneSwitch(SceneID scene);
 
 private:
 	AbstractScene *pScene;
@@ -138,7 +139,7 @@ private:
 	SDL_Point mpos;
 
 	// Sprites
-	std::vector<HoleSprite *> holeSprites;
+	std::vector<HoleSprite> holeSprites;
 
 	// Game state
 	PlaySceneState m_gstate = PS_WARMUP;
@@ -191,7 +192,7 @@ public:
 
 private:
 	SceneContext *mContext;
-	std::vector<Button *> buttons;
+	std::vector<Button> buttons;
 
 	// Mouse
 	MouseState z_mouse;

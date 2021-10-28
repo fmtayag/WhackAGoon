@@ -19,24 +19,7 @@
 //{ SceneContext
 SceneContext::SceneContext(SceneID scene)
 {
-	switch (scene)
-	{
-	case MENU_SCENE:
-		this->pScene = new MenuScene(this);
-		break;
-	case PLAY_SCENE:
-		this->pScene = new PlayScene(this);
-		break;
-	case GAMEOVER_SCENE:
-		this->pScene = new GameOverScene(this);
-		break;
-	case DEBUG_SCENE:
-		this->pScene = new DebugScene(this);
-		break;
-	default:
-		this->pScene = NULL;
-		break;
-	}
+	sceneSwitch(scene);
 }
 
 SceneContext::~SceneContext()
@@ -50,24 +33,7 @@ void SceneContext::changeScene(SceneID scene)
 	delete this->pScene;
 	this->pScene = NULL;
 
-	switch (scene)
-	{
-	case MENU_SCENE:
-		this->pScene = new MenuScene(this);
-		break;
-	case PLAY_SCENE:
-		this->pScene = new PlayScene(this);
-		break;
-	case GAMEOVER_SCENE:
-		this->pScene = new GameOverScene(this);
-		break;
-	case DEBUG_SCENE:
-		this->pScene = new DebugScene(this);
-		break;
-	default:
-		this->pScene = NULL;
-		break;
-	}
+	sceneSwitch(scene);
 }
 
 void SceneContext::quit()
@@ -99,6 +65,29 @@ void SceneContext::Draw(SDL_Renderer *renderer)
 		pScene->draw(renderer);
 	}
 }
+
+void SceneContext::sceneSwitch(SceneID scene)
+{
+	switch (scene)
+	{
+	case MENU_SCENE:
+		this->pScene = new MenuScene(this);
+		break;
+	case PLAY_SCENE:
+		this->pScene = new PlayScene(this);
+		break;
+	case GAMEOVER_SCENE:
+		this->pScene = new GameOverScene(this);
+		break;
+	case DEBUG_SCENE:
+		this->pScene = new DebugScene(this);
+		break;
+	default:
+		this->pScene = NULL;
+		break;
+	}
+}
+
 //}
 #pragma endregion SceneContext
 
@@ -205,10 +194,6 @@ PlayScene::PlayScene(SceneContext *context)
 
 PlayScene::~PlayScene()
 {
-	for (HoleSprite *hole : holeSprites)
-	{
-		delete hole;
-	}
 	holeSprites.clear();
 
 	//m_particles.clear();
@@ -372,17 +357,17 @@ void PlayScene::u_transgameover()
 void PlayScene::u_collision()
 {
 
-	for (HoleSprite *hole : holeSprites)
+	for (HoleSprite &hole : holeSprites)
 	{
-		bool collided = isPointCollide(mpos, hole->getRect());
+		bool collided = isPointCollide(mpos, hole.getRect());
 		if (collided && mMouseClicked)
 		{
-			bool isWhacked = hole->whack();
+			bool isWhacked = hole.whack();
 			mMouseClicked = false;
 
 			if (isWhacked)
 			{
-				switch (hole->getType())
+				switch (hole.getType())
 				{
 				case HT_Goon:
 					score++;
@@ -415,9 +400,9 @@ void PlayScene::u_collision()
 
 void PlayScene::u_holes()
 {
-	for (HoleSprite *hole : holeSprites)
+	for (HoleSprite &hole : holeSprites)
 	{
-		hole->update();
+		hole.update();
 	}
 }
 
@@ -449,11 +434,11 @@ void PlayScene::u_activateHoles(bool isForced, HoleType forcedType)
 	if (timesUp || isForced)
 	{
 		tmr_activateHole = now;
-		for (HoleSprite *hole : holeSprites)
+		for (HoleSprite &hole : holeSprites)
 		{
 
 			bool selectThis = rand() & 1; // choose either 0 or 1
-			bool holeIsResting = hole->getAnimState() == AS_Resting;
+			bool holeIsResting = hole.getAnimState() == AS_Resting;
 
 			if (selectThis && holeIsResting)
 			{
@@ -465,7 +450,7 @@ void PlayScene::u_activateHoles(bool isForced, HoleType forcedType)
 				else
 					ht = (HoleType)pick_holeType();
 
-				hole->awake(ht);
+				hole.awake(ht);
 				break;
 			}
 		}
@@ -590,9 +575,9 @@ void PlayScene::draw_texts(SDL_Renderer *renderer)
 
 void PlayScene::draw_holes(SDL_Renderer *renderer)
 {
-	for (HoleSprite *hole : holeSprites)
+	for (HoleSprite &hole : holeSprites)
 	{
-		hole->draw(renderer);
+		hole.draw(renderer);
 	}
 }
 
@@ -672,14 +657,14 @@ void PlayScene::mk_holes()
 	const int offsetH = 32;
 
 	// Column 1
-	holeSprites.push_back(new HoleSprite(spritesTexture, centerW - offsetW, centerH - 72 + offsetH));
-	holeSprites.push_back(new HoleSprite(spritesTexture, centerW - offsetW - 32, centerH + offsetH));
-	holeSprites.push_back(new HoleSprite(spritesTexture, centerW - offsetW, centerH + 72 + offsetH));
+	holeSprites.push_back(HoleSprite(spritesTexture, centerW - offsetW, centerH - 72 + offsetH));
+	holeSprites.push_back(HoleSprite(spritesTexture, centerW - offsetW - 32, centerH + offsetH));
+	holeSprites.push_back(HoleSprite(spritesTexture, centerW - offsetW, centerH + 72 + offsetH));
 
 	// Column 2
-	holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW, centerH - 72 + offsetH));
-	holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW + 32, centerH + offsetH));
-	holeSprites.push_back(new HoleSprite(spritesTexture, centerW + offsetW, centerH + 72 + offsetH));
+	holeSprites.push_back(HoleSprite(spritesTexture, centerW + offsetW, centerH - 72 + offsetH));
+	holeSprites.push_back(HoleSprite(spritesTexture, centerW + offsetW + 32, centerH + offsetH));
+	holeSprites.push_back(HoleSprite(spritesTexture, centerW + offsetW, centerH + 72 + offsetH));
 }
 
 int PlayScene::pick_holeType()
@@ -818,25 +803,18 @@ GameOverScene::GameOverScene(SceneContext *context)
 	const int btnH = 32;
 	const int bcx = btnW / 2;
 
-	// Buttons
-	Button *btn1 = new Button(btnTexture, "TESTING", {
-														 wcx - bcx,
-														 wbtom - 64,
-														 btnW,
-														 btnH,
-													 });
-	btn1->bindCallback(std::bind(&GameOverScene::chs_menu, this));
+	// Create button
+	Button btn1(
+		btnTexture,
+		"TESTING",
+		{wcx - bcx, wbtom - 64, btnW, btnH});
+
+	btn1.bindCallback(std::bind(&GameOverScene::chs_menu, this));
 	buttons.push_back(btn1);
 }
 
 GameOverScene::~GameOverScene()
 {
-	for (Button *btn : buttons)
-	{
-		delete btn;
-		btn = NULL;
-	}
-	printf("Deleted game over scene.\n");
 }
 
 void GameOverScene::handleEvents(SDL_Event *e)
@@ -865,9 +843,9 @@ void GameOverScene::handleEvents(SDL_Event *e)
 void GameOverScene::update()
 {
 	//  Update buttons
-	for (Button *btn : buttons)
+	for (Button btn : buttons)
 	{
-		btn->update(&z_mouse);
+		btn.update(&z_mouse);
 	}
 }
 
@@ -887,9 +865,9 @@ void GameOverScene::draw(SDL_Renderer *renderer)
 	drawText(renderer, scoreMsg.c_str(), gFont, wcx, 96, {255, 255, 255}, true);
 
 	// Draw buttons --------------------------
-	for (Button *button : buttons)
+	for (Button button : buttons)
 	{
-		button->draw(renderer);
+		button.draw(renderer);
 	}
 
 	// Render
