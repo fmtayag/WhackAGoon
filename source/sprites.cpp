@@ -140,11 +140,9 @@ Particle::Particle(SDL_Rect rect, SDL_Color color, SDL_Point velocity)
 Particle::~Particle()
 {
     printf("Debug: Particle deleted.\n");
-    m_fdead = true;
 }
 void Particle::update()
 {
-    checkNotVisible();
     m_rect.x += m_velocity.x;
     m_rect.y += m_velocity.y;
 }
@@ -154,13 +152,14 @@ void Particle::draw(SDL_Renderer *renderer)
     SDL_RenderFillRect(renderer, &m_rect);
 }
 
-void Particle::checkNotVisible()
+bool Particle::isVisible()
 {
     if ((m_rect.x < -m_rect.w || m_rect.x > WINDOW_WIDTH + m_rect.w) ||
         (m_rect.y < -m_rect.h || m_rect.y > WINDOW_HEIGHT + m_rect.h))
     {
-        delete this;
+        return false;
     }
+    return true;
 }
 
 //}

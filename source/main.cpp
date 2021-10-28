@@ -35,6 +35,7 @@ SDL_Color BG_COLOR;
 SDL_Texture *bgTexture;
 SDL_Texture *spritesTexture;
 SDL_Texture *btnTexture;
+SDL_Texture *cityTexture;
 
 // Game Context
 SceneContext *gContext;
@@ -194,6 +195,13 @@ bool loadAssets()
         isSuccessful = false;
     }
 
+    cityTexture = loadTextureFromFile(gRenderer, "assets/images/city.png");
+    if (cityTexture == NULL)
+    {
+        printf("Failed to load cityTexture.\n");
+        isSuccessful = false;
+    }
+
     return isSuccessful;
 }
 
@@ -211,6 +219,7 @@ void cleanUp()
     cleanUpTexture(bgTexture);
     cleanUpTexture(spritesTexture);
     cleanUpTexture(btnTexture);
+    cleanUpTexture(cityTexture);
 
     // Destroy window
     SDL_DestroyWindow(gWindow);

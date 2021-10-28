@@ -61,6 +61,9 @@ void SceneContext::changeScene(SceneID scene)
 	case GAMEOVER_SCENE:
 		this->pScene = new GameOverScene(this);
 		break;
+	case DEBUG_SCENE:
+		this->pScene = new DebugScene(this);
+		break;
 	default:
 		this->pScene = NULL;
 		break;
@@ -140,6 +143,14 @@ void MenuScene::handleEvents(SDL_Event *e)
 		{
 			z_mouse.isClicked = false;
 		}
+		else if (e->type == SDL_KEYDOWN)
+		{
+			switch (e->key.keysym.sym)
+			{
+			case SDLK_BACKQUOTE:
+				mContext->changeScene(DEBUG_SCENE);
+			}
+		}
 	}
 
 	// Update mouse position
@@ -199,6 +210,9 @@ PlayScene::~PlayScene()
 		delete hole;
 	}
 	holeSprites.clear();
+
+	//m_particles.clear();
+
 	printf("Deleted play scene.\n");
 }
 
@@ -270,6 +284,8 @@ void PlayScene::update()
 		u_holes();
 		u_activateDur();
 		u_activateHoles();
+		//u_spawnPrt();
+		//u_prt();
 		shake();
 		break;
 	default:
@@ -456,11 +472,61 @@ void PlayScene::u_activateHoles(bool isForced, HoleType forcedType)
 	}
 }
 
+// void PlayScene::u_spawnPrt()
+// {
+// 	int now = SDL_GetTicks();
+// 	bool timesUp = now - tmr_prtspawn > DUR_PRTSPAWN;
+
+// 	if (timesUp)
+// 	{
+// 		tmr_prtspawn = now;
+
+// 		// spawn particle
+// 		if (m_particles.size() < 1)
+// 		{
+// 			SDL_Rect prtRect;
+// 			prtRect.x = rand() % WINDOW_WIDTH + 1;
+// 			prtRect.y = rand() % 132 + 80;
+// 			prtRect.w = PXSCALE;
+// 			prtRect.h = PXSCALE;
+
+// 			printf("X: %d, Y: %d\n", prtRect.x, prtRect.y);
+
+// 			SDL_Color prtCol = {155, 31, 11}; // toxic green
+// 			SDL_Point prtVel = {0, -1};
+
+// 			m_particles.push_back(Particle(prtRect, prtCol, prtVel));
+// 		}
+// 	}
+// }
+
+// void PlayScene::u_prt()
+// {
+// 	printf("m_particles size: %d\n", m_particles.size());
+// 	// update particles
+// 	for (Particle p : m_particles)
+// 	{
+
+// 		if (p.isVisible())
+// 		{
+// 			p.update();
+// 		}
+// 		else
+// 		{
+// 			printf("Deleting particle.\n");
+// 			m_particles.erase(m_particles.begin());
+// 		}
+// 	}
+// }
+
 void PlayScene::draw(SDL_Renderer *renderer)
 {
 	// Colors
 	SDL_Color BLACK = {0, 0, 0, 255};
 	SDL_Color WHITE = {255, 255, 255, 255};
+
+	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, BG_COLOR.a);
+	SDL_RenderClear(renderer);
 
 	SDL_Texture *targetTexture = SDL_CreateTexture(
 		renderer,
@@ -470,10 +536,9 @@ void PlayScene::draw(SDL_Renderer *renderer)
 		targRect.h);
 	SDL_SetRenderTarget(renderer, targetTexture);
 
-	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, BG_COLOR.a);
-	SDL_RenderClear(renderer);
-
 	draw_bg(renderer);
+	//draw_prt(renderer);
+	draw_city(renderer);
 	draw_holes(renderer);
 	draw_texts(renderer);
 	draw_deathTimer(renderer);
@@ -481,6 +546,8 @@ void PlayScene::draw(SDL_Renderer *renderer)
 	SDL_SetRenderTarget(renderer, NULL);
 	SDL_RenderCopy(renderer, targetTexture, NULL, &targRect);
 	SDL_RenderPresent(renderer);
+
+	//printf("SDL_Error: %s\n", SDL_GetError());
 }
 
 void PlayScene::draw_texts(SDL_Renderer *renderer)
@@ -534,6 +601,11 @@ void PlayScene::draw_bg(SDL_Renderer *renderer)
 	SDL_RenderCopy(renderer, bgTexture, NULL, NULL);
 }
 
+void PlayScene::draw_city(SDL_Renderer *renderer)
+{
+	SDL_RenderCopy(renderer, cityTexture, NULL, NULL);
+}
+
 void PlayScene::draw_deathTimer(SDL_Renderer *renderer)
 {
 	if (m_gstate == PS_RUNNING)
@@ -580,6 +652,14 @@ void PlayScene::draw_deathTimer(SDL_Renderer *renderer)
 		}
 	}
 }
+
+// void PlayScene::draw_prt(SDL_Renderer *renderer)
+// {
+// 	for (Particle p : m_particles)
+// 	{
+// 		p.draw(renderer);
+// 	}
+// }
 
 void PlayScene::mk_holes()
 {
@@ -641,6 +721,7 @@ void PlayScene::ch_gstate(PlaySceneState n_state)
 		tmr_activateHole = now;
 		tmr_progression = now;
 		tmr_fspawning = now;
+		tmr_prtspawn = now;
 	}
 	else
 	{
@@ -831,11 +912,6 @@ DebugScene::DebugScene(SceneContext *context)
 }
 DebugScene::~DebugScene()
 {
-	for (Button *btn : buttons)
-	{
-		delete btn;
-		btn = NULL;
-	}
 }
 void DebugScene::handleEvents(SDL_Event *e)
 {
@@ -858,8 +934,11 @@ void DebugScene::handleEvents(SDL_Event *e)
 		{
 			switch (e->key.keysym.sym)
 			{
+			case SDLK_BACKQUOTE:
+				m_context->changeScene(MENU_SCENE);
+				break;
 			case SDLK_1:
-				spawnDecTxt();
+				spawnFadeTxt();
 				break;
 			case SDLK_2:
 				spawnParticle();
@@ -874,83 +953,111 @@ void DebugScene::handleEvents(SDL_Event *e)
 }
 void DebugScene::update()
 {
-	for (DecrementText *dec : decTexts)
+	u_fadeTxts();
+	u_buttons();
+	u_prts();
+}
+void DebugScene::u_fadeTxts()
+{
+	auto iter = m_fadeTexts.begin();
+	for (FadeText &fade : m_fadeTexts)
 	{
-		if (dec->getf_dead() != true)
+		if (fade.isVisible())
 		{
-			dec->update();
+			fade.update();
 		}
 		else
 		{
-			decTexts.erase(decTexts.begin());
-			printf("DEBUG: decText is dead. Removing from vector\n");
+			m_fadeTexts.erase(iter);
 		}
-	}
-
-	for (Button *btn : buttons)
-	{
-		btn->update(&z_mouse);
-	}
-
-	for (Particle *p : particles)
-	{
-		if (p->get_fdead() != true)
-		{
-			p->update();
-		}
-		else
-		{
-			particles.erase(particles.begin());
-		}
+		iter++;
 	}
 }
+
+void DebugScene::u_buttons()
+{
+	for (Button &btn : m_buttons)
+	{
+		btn.update(&z_mouse);
+	}
+}
+
+void DebugScene::u_prts()
+{
+	auto iter = m_particles.begin();
+	for (Particle &p : m_particles)
+	{
+		if (p.isVisible())
+		{
+			p.update();
+		}
+		else
+		{
+			m_particles.erase(iter);
+		}
+		iter++;
+	}
+
+	printf("m_particles size: %d\n", m_particles.size());
+}
+
 void DebugScene::draw(SDL_Renderer *renderer)
 {
 	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, BG_COLOR.a);
 	SDL_RenderClear(renderer);
 
-	for (DecrementText *dec : decTexts)
-	{
-		if (dec->getf_dead() != true)
-		{
-			dec->draw(renderer);
-		}
-	}
-
-	for (Button *btn : buttons)
-	{
-		btn->draw(renderer);
-	}
-
-	for (Particle *p : particles)
-	{
-		p->draw(renderer);
-	}
+	draw_fadeTxts(renderer);
+	draw_buttons(renderer);
+	draw_prts(renderer);
 
 	drawText(renderer, "DEBUG ROOM", gFontL, 0, 0, {255, 255, 255}, false);
-	drawText(renderer, "1 ... SPAWN DECTEXT", gFont, 0, 64, {255, 255, 255}, false);
+	drawText(renderer, "1 ... SPAWN FADETEXT", gFont, 0, 64, {255, 255, 255}, false);
 	drawText(renderer, "2 ... SPAWN PARTICLE", gFont, 0, 96, {255, 255, 255}, false);
 
 	SDL_RenderPresent(renderer);
 }
 
-void DebugScene::spawnDecTxt()
+void DebugScene::draw_fadeTxts(SDL_Renderer *renderer)
 {
-	DecrementText *txt = new DecrementText("DEBUG BRUH", {WINDOW_WIDTH / 2, 0, 0, 0}, {0, 2});
-	decTexts.push_back(txt);
+	for (FadeText &fade : m_fadeTexts)
+	{
+		fade.draw(renderer);
+	}
 }
 
+void DebugScene::draw_prts(SDL_Renderer *renderer)
+{
+	for (Particle &p : m_particles)
+	{
+		p.draw(renderer);
+	}
+}
+
+void DebugScene::draw_buttons(SDL_Renderer *renderer)
+{
+	for (Button &btn : m_buttons)
+	{
+		btn.draw(renderer);
+	}
+}
+
+void DebugScene::spawnFadeTxt()
+{
+	FadeText txt("DEBUG BRUH", {WINDOW_WIDTH / 2, 0, 0, 0}, {0, 2});
+	m_fadeTexts.push_back(txt);
+}
 void DebugScene::createButtons()
 {
-	Button *btn1 = new Button(NULL, "CLICKME", {200, 200, 200, 32});
-	buttons.push_back(btn1);
+	Button btn1(NULL, "CLICKME", {200, 200, 200, 32});
+	m_buttons.push_back(btn1);
 	printf("DEBUG: Spawned button.\n");
 }
-
 void DebugScene::spawnParticle()
 {
-	Particle *p1 = new Particle({300, 50, PXSCALE, PXSCALE}, {255, 255, 255, 255}, {0, -1});
-	particles.push_back(p1);
+	short int xvel = rand() % 19 + (-9);
+	short int yvel = rand() % 19 + (-9);
+	Particle p1({300, 50, PXSCALE, PXSCALE}, {255, 255, 255, 255}, {xvel, yvel});
+	m_particles.push_back(p1);
 }
 
 #pragma endregion DebugScene

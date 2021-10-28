@@ -97,12 +97,16 @@ private:
 	void u_holes();
 	void u_activateDur();
 	void u_activateHoles(bool isForced = false, HoleType forcedType = HT_None);
+	//void u_spawnPrt();
+	//void u_prt();
 
 	// draw() sub-methods
 	void draw_texts(SDL_Renderer *renderer);
 	void draw_holes(SDL_Renderer *renderer);
 	void draw_bg(SDL_Renderer *renderer);
 	void draw_deathTimer(SDL_Renderer *renderer);
+	//void draw_prt(SDL_Renderer *renderer);
+	void draw_city(SDL_Renderer *renderer);
 
 	// helper methods
 	void mk_holes();
@@ -133,7 +137,7 @@ private:
 	bool mMouseClicked = false;
 	SDL_Point mpos;
 
-	// Holes
+	// Sprites
 	std::vector<HoleSprite *> holeSprites;
 
 	// Game state
@@ -167,6 +171,9 @@ private:
 
 	const int DUR_WARMUPTIMER = 3500;
 	int tmr_warmuptimer = SDL_GetTicks();
+
+	const int DUR_PRTSPAWN = 500;
+	int tmr_prtspawn = 0; // init at ch_gstate()
 };
 
 class GameOverScene : public AbstractScene
@@ -202,17 +209,27 @@ public:
 	void update();
 	void draw(SDL_Renderer *renderer);
 
-	void spawnDecTxt();
+	void spawnFadeTxt();
 	void spawnParticle();
 	void createButtons();
+
+	// update() sub-methods
+	void u_fadeTxts();
+	void u_buttons();
+	void u_prts();
+
+	// draw() sub-methods
+	void draw_fadeTxts(SDL_Renderer *renderer);
+	void draw_buttons(SDL_Renderer *renderer);
+	void draw_prts(SDL_Renderer *renderer);
 
 private:
 	SceneContext *m_context;
 	MouseState z_mouse;
 
-	std::vector<DecrementText *> decTexts;
-	std::vector<Button *> buttons;
-	std::vector<Particle *> particles;
+	std::vector<FadeText> m_fadeTexts;
+	std::vector<Button> m_buttons;
+	std::vector<Particle> m_particles;
 };
 
 #endif // SCENES_H

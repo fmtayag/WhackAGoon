@@ -16,5 +16,6 @@ extern SDL_Color BG_COLOR;
 extern SDL_Texture *bgTexture;
 extern SDL_Texture *spritesTexture;
 extern SDL_Texture *btnTexture;
+extern SDL_Texture *cityTexture;
 
 #endif // ASSETS_H

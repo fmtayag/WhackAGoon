@@ -53,31 +53,29 @@ private:
 	void makeCallback();
 };
 
-class DecrementText
+class FadeText
 {
 public:
-	DecrementText(std::string text, SDL_Rect rect, SDL_Point velocity);
-	~DecrementText();
+	FadeText(std::string text, SDL_Rect rect, SDL_Point velocity);
+	~FadeText();
 	void update();
 	void draw(SDL_Renderer *renderer);
 
 	void initTimer();
 	void makeTransparent();
 	void move();
-	void checkVisible();
-	bool getf_dead() { return m_flag_dead; };
+	bool isVisible();
 
 private:
 	std::string m_text;
 	short int m_opacity = 255;
-	const short int OPAC_STEP = -10;
+	static const short int OPAC_STEP = -10;
 	SDL_Rect m_rect;
 	SDL_Point m_velocity;
-	bool m_flag_dead = false;
 
 	// timers
 	int tmr_text = 0;
-	const short int DUR_TEXT = 50;
+	static const short int DUR_TEXT = 50;
 };
 
 #endif // WIDGETS_H

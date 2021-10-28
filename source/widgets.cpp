@@ -135,9 +135,9 @@ void Button::makeCallback()
 //}
 #pragma endregion Button
 
-#pragma region DecrementText
-//{ DecrementText
-DecrementText::DecrementText(std::string text, SDL_Rect rect, SDL_Point velocity)
+#pragma region FadeText
+//{ FadeText
+FadeText::FadeText(std::string text, SDL_Rect rect, SDL_Point velocity)
 {
 	m_text = text;
 	m_rect = rect;
@@ -145,20 +145,12 @@ DecrementText::DecrementText(std::string text, SDL_Rect rect, SDL_Point velocity
 	initTimer();
 }
 
-DecrementText::~DecrementText()
+FadeText::~FadeText()
 {
-	// Just for future reference here:
-	// (10:34pm) Memory leak or some shit here. It crashes some time after the destructor is called.
-	// (10:34pm) Perhaps it's because of the vector iteration calling a NULL object.
-	// (11:11pm )... I checked and I think it's because this destructor is being called twice...
-	// (11:11pm) the object is being freed twice because 'delete this' is being called twice when the
-	// (11:11pm) checkVisible() function is called.
-
-	m_flag_dead = true; // yeah i know, not the tidiest solution out there
-	printf("DEBUG: Deleting DecrementText.\n");
+	printf("Debug: FadeText deleted.\n");
 }
 
-void DecrementText::update()
+void FadeText::update()
 {
 	int now = SDL_GetTicks();
 	if (now - tmr_text > DUR_TEXT)
@@ -166,11 +158,9 @@ void DecrementText::update()
 		makeTransparent();
 		move();
 	}
-
-	checkVisible();
 }
 
-void DecrementText::draw(SDL_Renderer *renderer)
+void FadeText::draw(SDL_Renderer *renderer)
 {
 	// Good idea: turn this drawing routine into a generic one.
 	// Create temp surface
@@ -198,7 +188,7 @@ void DecrementText::draw(SDL_Renderer *renderer)
 	SDL_DestroyTexture(texture);
 }
 
-void DecrementText::initTimer()
+void FadeText::initTimer()
 {
 	if (tmr_text == 0)
 	{
@@ -206,7 +196,7 @@ void DecrementText::initTimer()
 	}
 }
 
-void DecrementText::makeTransparent()
+void FadeText::makeTransparent()
 {
 	m_opacity += OPAC_STEP;
 
@@ -218,20 +208,21 @@ void DecrementText::makeTransparent()
 	printf("m_opacity: %d\n", m_opacity);
 }
 
-void DecrementText::move()
+void FadeText::move()
 {
 	m_rect.x += m_velocity.x;
 	m_rect.y += m_velocity.y;
 }
 
-void DecrementText::checkVisible()
+bool FadeText::isVisible()
 {
 
-	if (m_opacity <= 0 && m_flag_dead != true)
+	if (m_opacity <= 0)
 	{
-		delete this;
+		return false;
 	}
+	return true;
 }
 
 //}
-#pragma endregion DecrementText
+#pragma endregion FadeText

@@ -71,8 +71,7 @@ public:
     void update();
     void draw(SDL_Renderer *renderer);
 
-    void checkNotVisible();
-    bool get_fdead() { return m_fdead; };
+    bool isVisible();
 
 private:
     SDL_Rect m_rect;
