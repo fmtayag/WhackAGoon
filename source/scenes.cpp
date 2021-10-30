@@ -187,9 +187,12 @@ void MenuScene::chs_playGame()
 #pragma region PlayScene
 //{ PlayScene
 PlayScene::PlayScene(SceneContext *context)
+	: scoreIcon(uiTexture, {PXSCALE, PXSCALE, 32, 32}, 400),
+	  opinionIcon(uiTexture, {PXSCALE, PXSCALE * 8, 32, 32}, 500)
 {
 	mContext = context;
 	mk_holes();
+	init_uistuff();
 }
 
 PlayScene::~PlayScene()
@@ -263,13 +266,14 @@ void PlayScene::update()
 		break;
 	case PS_RUNNING:
 		u_checkDeathTimer();
-		u_checklives();
+		u_checkopinion();
 		u_collision();
 		u_holes();
 		u_activateDur();
 		u_activateHoles();
 		u_spawnPrt();
 		u_prt();
+		u_uistuff();
 		shake();
 		break;
 	default:
@@ -310,12 +314,12 @@ void PlayScene::u_checkDeathTimer()
 	}
 }
 
-void PlayScene::u_checklives()
+void PlayScene::u_checkopinion()
 {
-	if (lives <= 0)
+	if (opinion <= 0)
 	{
 		ch_gstate(PS_GAMEOVER);
-		gOverMsg = "NO MORE LIVES!";
+		gOverMsg = "YOU'RE FIRED!";
 	}
 }
 
@@ -375,7 +379,7 @@ void PlayScene::u_collision()
 					break;
 				case HT_Townie:
 					score -= SCOR_PENALTY;
-					lives -= 1;
+					opinion -= 1;
 					genShake();
 					decrDthCdownDur();
 					break;
@@ -503,6 +507,30 @@ void PlayScene::u_prt()
 	}
 }
 
+void PlayScene::u_uistuff()
+{
+	scoreIcon.update();
+
+	// opinion icon stuff
+	opinionIcon.update();
+	opine_clips opin_clips;
+	switch (opinion)
+	{
+	case 3:
+		opinionIcon.set_clip(opin_clips.high);
+		break;
+	case 2:
+		opinionIcon.set_clip(opin_clips.med);
+		break;
+	case 1:
+		opinionIcon.set_clip(opin_clips.low);
+		break;
+	default:
+		opinionIcon.set_clip(opin_clips.low);
+		break;
+	}
+}
+
 void PlayScene::draw(SDL_Renderer *renderer)
 {
 	// Colors
@@ -526,6 +554,7 @@ void PlayScene::draw(SDL_Renderer *renderer)
 	draw_holes(renderer);
 	draw_texts(renderer);
 	draw_deathTimer(renderer);
+	draw_uistuff(renderer);
 
 	SDL_SetRenderTarget(renderer, NULL);
 	SDL_RenderCopy(renderer, targetTexture, NULL, &targRect);
@@ -548,10 +577,9 @@ void PlayScene::draw_texts(SDL_Renderer *renderer)
 
 	if (m_gstate == PS_RUNNING | m_gstate == PS_GAMEOVER)
 	{
-		drawText(renderer, "SCORE", gFont, winCenterW - 64, 42, WHITE, true);
-		drawText(renderer, scoreMessage.c_str(), gFont, winCenterW - 64, 64, WHITE, true);
-		drawText(renderer, "LIVES-2", gFont, winCenterW + 64, 42, WHITE, true);
-		drawText(renderer, std::to_string(lives).c_str(), gFont, winCenterW + 64, 64, WHITE, true);
+		int scormsg_x = (scoreIcon.get_rect().x + scoreIcon.get_rect().w) + 4;
+		int scormsg_y = scoreIcon.get_rect().y + (scoreIcon.get_rect().h / 2);
+		drawText(renderer, scoreMessage.c_str(), gFont, scormsg_x, scormsg_y, WHITE, false, true);
 	}
 
 	if (m_gstate == PS_WARMUP)
@@ -644,6 +672,15 @@ void PlayScene::draw_prt(SDL_Renderer *renderer, SDL_Texture *parentTargTexture)
 	}
 }
 
+void PlayScene::draw_uistuff(SDL_Renderer *renderer)
+{
+	if (m_gstate == PS_RUNNING | m_gstate == PS_GAMEOVER)
+	{
+		scoreIcon.draw(renderer);
+		opinionIcon.draw(renderer);
+	}
+}
+
 void PlayScene::mk_holes()
 {
 	/*** Create the holes ***/
@@ -651,13 +688,16 @@ void PlayScene::mk_holes()
 	// Anchor points, offsets
 	const int centerW = (WINDOW_WIDTH / 2) - (HOLE_WIDTH / 2);
 	const int centerH = (WINDOW_HEIGHT / 2) - (HOLE_HEIGHT / 2);
-	const int offsetW = 48;
-	const int offsetH = 32;
+	const int offsetW = 80;
+	const int offsetH = 80;
 
 	// Column 1
 	holeSprites.push_back(HoleSprite(spritesTexture, centerW - offsetW, centerH - 72 + offsetH));
 	holeSprites.push_back(HoleSprite(spritesTexture, centerW - offsetW - 32, centerH + offsetH));
 	holeSprites.push_back(HoleSprite(spritesTexture, centerW - offsetW, centerH + 72 + offsetH));
+
+	// Center hole
+	holeSprites.push_back(HoleSprite(spritesTexture, centerW, centerH + offsetH));
 
 	// Column 2
 	holeSprites.push_back(HoleSprite(spritesTexture, centerW + offsetW, centerH - 72 + offsetH));
@@ -780,6 +820,13 @@ void PlayScene::initDthCdown()
 		tmr_deathCdown = now;
 	}
 }
+
+void PlayScene::init_uistuff()
+{
+	scoreIcon.set_clip({0, 8, 8, 8});
+	opinionIcon.set_clip({0, 0, 8, 8});
+}
+
 //}
 #pragma endregion PlayScene
 

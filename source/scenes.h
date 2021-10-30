@@ -91,7 +91,7 @@ private:
 	// update() sub-methods
 	void u_initTransitionTimer();
 	void u_checkDeathTimer();
-	void u_checklives();
+	void u_checkopinion();
 	void u_wuTimer();
 	void u_transgameover();
 	void u_collision();
@@ -100,6 +100,7 @@ private:
 	void u_activateHoles(bool isForced = false, HoleType forcedType = HT_None);
 	void u_spawnPrt();
 	void u_prt();
+	void u_uistuff();
 
 	// draw() sub-methods
 	void draw_texts(SDL_Renderer *renderer);
@@ -108,6 +109,7 @@ private:
 	void draw_deathTimer(SDL_Renderer *renderer);
 	void draw_prt(SDL_Renderer *renderer, SDL_Texture *parentTargTexture);
 	void draw_city(SDL_Renderer *renderer);
+	void draw_uistuff(SDL_Renderer *renderer);
 
 	// helper methods
 	void mk_holes();
@@ -116,6 +118,7 @@ private:
 	void delayDeathCdown();
 	void decrDthCdownDur();
 	void initDthCdown();
+	void init_uistuff();
 
 	// For screen shake
 	int tmr_shake;
@@ -138,9 +141,11 @@ private:
 	bool mMouseClicked = false;
 	SDL_Point mpos;
 
-	// Sprite groups
+	// Sprite groups, and sprites
 	std::vector<HoleSprite> holeSprites;
 	std::vector<Particle> m_particles;
+	UI_Icon scoreIcon;
+	UI_Icon opinionIcon;
 
 	// Game state
 	PlaySceneState m_gstate = PS_WARMUP;
@@ -149,7 +154,7 @@ private:
 	const int SCOR_PENALTY = 10;
 	const int MAX_GAME_DURATION = 450000; // 1000 ticks is approx 1 sec
 	int score = 0;
-	int lives = 3;
+	int opinion = 3;
 	const int DECREMENT_DUR_DEATHCDOWN = 500;
 	const int MAX_DUR_DEATHCDOWN = 3250;
 	int dur_deathCdown = MAX_DUR_DEATHCDOWN;

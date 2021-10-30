@@ -82,4 +82,26 @@ private:
     bool m_fdead = false;
 };
 
+class UI_Icon : public ISprite
+{
+public:
+    UI_Icon(SDL_Texture *texture, SDL_Rect rect, int bob_delay);
+    ~UI_Icon();
+
+    void update();
+    void draw(SDL_Renderer *renderer);
+
+    void set_clip(SDL_Rect clip);
+    const SDL_Rect get_rect() { return m_rect; };
+
+private:
+    SDL_Texture *m_texture;
+    SDL_Rect m_rect;
+    SDL_Rect m_clip;
+    int m_origy; // remove the i for a good time...i need to grow up.
+    int m_offsety;
+    int delay_bobbing;
+    int tmr_bobbing;
+};
+
 #endif // SPRITES_H

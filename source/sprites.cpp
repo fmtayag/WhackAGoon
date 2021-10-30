@@ -176,3 +176,40 @@ bool Particle::isVisible()
 
 //}
 #pragma endregion Particle
+
+#pragma region UI_Icon
+//{ UI_Icon
+UI_Icon::UI_Icon(SDL_Texture *texture, SDL_Rect rect, int bob_delay)
+{
+    m_texture = texture;
+    m_rect = rect;
+    delay_bobbing = bob_delay;
+    tmr_bobbing = SDL_GetTicks();
+    m_offsety = 0;
+    m_origy = m_rect.y;
+}
+UI_Icon::~UI_Icon()
+{
+}
+void UI_Icon::update()
+{
+    int now = SDL_GetTicks();
+    if (now - tmr_bobbing > delay_bobbing)
+    {
+        tmr_bobbing = now;
+        m_offsety ^= 1;
+        m_rect.y = m_origy + (2 * m_offsety);
+        printf("m_offsety = %d\n", m_offsety);
+    }
+}
+void UI_Icon::draw(SDL_Renderer *renderer)
+{
+    //printf("Drawing icon.\n");
+    SDL_RenderCopy(renderer, m_texture, &m_clip, &m_rect);
+}
+void UI_Icon::set_clip(SDL_Rect clip)
+{
+    m_clip = clip;
+}
+//}
+#pragma endregion UI_Icon

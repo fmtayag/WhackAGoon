@@ -36,6 +36,7 @@ SDL_Texture *bgTexture;
 SDL_Texture *spritesTexture;
 SDL_Texture *btnTexture;
 SDL_Texture *cityTexture;
+SDL_Texture *uiTexture;
 
 // Game Context
 SceneContext *gContext;
@@ -62,7 +63,7 @@ int main(int argv, char **args)
         SDL_Event e;
 
         // Create game context
-        gContext = new SceneContext(MENU_SCENE);
+        gContext = new SceneContext(PLAY_SCENE);
         if (gContext == NULL)
         {
             printf("Failed to initialize the game context.\n");
@@ -202,6 +203,13 @@ bool loadAssets()
         isSuccessful = false;
     }
 
+    uiTexture = loadTextureFromFile(gRenderer, "assets/images/ui.png");
+    if (uiTexture == NULL)
+    {
+        printf("Failed to load uiTexture.\n");
+        isSuccessful = false;
+    }
+
     return isSuccessful;
 }
 
@@ -220,6 +228,7 @@ void cleanUp()
     cleanUpTexture(spritesTexture);
     cleanUpTexture(btnTexture);
     cleanUpTexture(cityTexture);
+    cleanUpTexture(uiTexture);
 
     // Destroy window
     SDL_DestroyWindow(gWindow);
