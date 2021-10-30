@@ -187,7 +187,7 @@ void MenuScene::chs_playGame()
 #pragma region PlayScene
 //{ PlayScene
 PlayScene::PlayScene(SceneContext *context)
-	: scoreIcon(uiTexture, {PXSCALE, PXSCALE, 32, 32}, 400),
+	: scoreIcon(uiTexture, {PXSCALE, PXSCALE, 32, 32}, 500),
 	  opinionIcon(uiTexture, {PXSCALE, PXSCALE * 8, 32, 32}, 500)
 {
 	mContext = context;
@@ -350,7 +350,7 @@ void PlayScene::u_transgameover()
 
 	if (timesUp)
 	{
-		mContext->setScore(score);
+		mContext->gInfo.score = score;
 
 		// should be placed as last instruction!
 		mContext->changeScene(GAMEOVER_SCENE);
@@ -580,6 +580,8 @@ void PlayScene::draw_texts(SDL_Renderer *renderer)
 		int scormsg_x = (scoreIcon.get_rect().x + scoreIcon.get_rect().w) + 4;
 		int scormsg_y = scoreIcon.get_rect().y + (scoreIcon.get_rect().h / 2);
 		drawText(renderer, scoreMessage.c_str(), gFont, scormsg_x, scormsg_y, WHITE, false, true);
+
+		drawText(renderer, "TIMER", gFont, winCenterW, 32, WHITE, true);
 	}
 
 	if (m_gstate == PS_WARMUP)
@@ -620,33 +622,46 @@ void PlayScene::draw_deathTimer(SDL_Renderer *renderer)
 {
 	if (m_gstate == PS_RUNNING)
 	{
-		int now = SDL_GetTicks();
-		int tmr = tmr_deathCdown;
-		double dur = dur_deathCdown;
 
-		// Normalize time left
-		float valTL = now - tmr;
-		float minTL = 0;
-		float maxTL = dur_deathCdown;
-		float normTL = (valTL - minTL) / (maxTL - minTL);
-
-		// Normalize death countdown duration
-		float valDD = dur_deathCdown;
-		float minDD = 0;
-		float maxDD = MAX_DUR_DEATHCDOWN;
-		float normDD = (valDD - minDD) / (maxDD - minDD);
-
-		// Set bar width
-		float y = 192 * normDD;
-		//printf("y: %f.\n", y);
-		float bar_width = y - (y * normTL);
-		if (bar_width <= 0)
+		if (true)
 		{
-			bar_width = 0;
-		}
+			int now = SDL_GetTicks();
+			int tmr = tmr_deathCdown;
+			double dur = dur_deathCdown;
 
-		if (tmr_deathCdown != 0)
-		{
+			// Normalize time left
+			float valTL = now - tmr;
+			float minTL = 0;
+			float maxTL = dur_deathCdown;
+			float normTL = (valTL - minTL) / (maxTL - minTL);
+
+			// Set bar color
+			gcolors colors;
+			SDL_Color barColor = colors.pure_white;
+			if (normTL >= 0.5)
+				barColor = colors.red;
+
+			// Normalize death countdown duration
+			float valDD = dur_deathCdown;
+			float minDD = 0;
+			float maxDD = MAX_DUR_DEATHCDOWN;
+			float normDD = (valDD - minDD) / (maxDD - minDD);
+
+			// Set bar width
+			float y = 192 * normDD;
+			//printf("y: %f.\n", y);
+			float bar_width = y - (y * normTL);
+			if (bar_width <= 0)
+			{
+				bar_width = 0;
+			}
+
+			if (tmr_deathCdown == 0)
+			{
+				bar_width = y;
+				barColor = colors.pure_white;
+			}
+
 			short int wcW = WINDOW_WIDTH / 2;
 			short int bwc = bar_width / 2;
 			short int x = wcW - bwc;
@@ -657,7 +672,7 @@ void PlayScene::draw_deathTimer(SDL_Renderer *renderer)
 			dtbarRect.w = (int)bar_width;
 			dtbarRect.h = 8;
 
-			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+			SDL_SetRenderDrawColor(renderer, barColor.r, barColor.g, barColor.b, barColor.a);
 			SDL_RenderFillRect(renderer, &dtbarRect);
 		}
 	}
@@ -835,7 +850,7 @@ void PlayScene::init_uistuff()
 GameOverScene::GameOverScene(SceneContext *context)
 {
 	mContext = context;
-	finalScore = mContext->getScore();
+	finalScore = mContext->gInfo.score;
 
 	// Mouse
 	z_mouse.isClicked = false;
@@ -930,7 +945,6 @@ void GameOverScene::chs_menu()
 DebugScene::DebugScene(SceneContext *context)
 {
 	m_context = context;
-
 	createButtons();
 }
 DebugScene::~DebugScene()
@@ -1021,7 +1035,7 @@ void DebugScene::u_prts()
 		iter++;
 	}
 
-	printf("m_particles size: %d\n", m_particles.size());
+	//printf("m_particles size: %d\n", m_particles.size());
 }
 
 void DebugScene::draw(SDL_Renderer *renderer)

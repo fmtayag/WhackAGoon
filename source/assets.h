@@ -27,4 +27,18 @@ struct opine_clips
     SDL_Rect low = {16, 0, 8, 8};
 };
 
+// Colors
+struct gcolors
+{
+    SDL_Color pure_white = {255, 255, 255, 255};
+    SDL_Color red = {180, 32, 42, 255};
+};
+
+// Info between scenes
+struct GameInformation
+{
+    int score = 0;
+    std::string testMsg = "bruh";
+};
+
 #endif // ASSETS_H

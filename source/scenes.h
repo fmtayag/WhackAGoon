@@ -8,6 +8,7 @@
 #include "sprites.h"
 #include "widgets.h"
 #include "metadata.h"
+#include "assets.h"
 
 enum SceneID
 {
@@ -38,6 +39,8 @@ public:
 class SceneContext
 {
 public:
+	GameInformation gInfo;
+
 	SceneContext(SceneID scene = MENU_SCENE);
 	~SceneContext();
 	void changeScene(SceneID scene);
@@ -47,14 +50,10 @@ public:
 	void HandleEvents(SDL_Event *e);
 	void Update();
 	void Draw(SDL_Renderer *renderer);
-
-	void setScore(int val) { score = val; };
-	int getScore() { return score; };
 	void sceneSwitch(SceneID scene);
 
 private:
 	AbstractScene *pScene;
-	int score = 0;
 };
 
 class MenuScene : public AbstractScene
