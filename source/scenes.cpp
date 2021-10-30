@@ -559,6 +559,8 @@ void PlayScene::draw(SDL_Renderer *renderer)
 	SDL_SetRenderTarget(renderer, NULL);
 	SDL_RenderCopy(renderer, targetTexture, NULL, &targRect);
 	SDL_RenderPresent(renderer);
+
+	SDL_DestroyTexture(targetTexture);
 }
 
 void PlayScene::draw_texts(SDL_Renderer *renderer)

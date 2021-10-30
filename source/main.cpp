@@ -71,10 +71,18 @@ int main(int argv, char **args)
 
         while (gContext->get_scene() != NULL && gContext != NULL)
         {
-            SDL_Delay(MAX_FPS);
+
+            //Uint64 start = SDL_GetPerformanceCounter();
+
             gContext->HandleEvents(&e);
             gContext->Update();
             gContext->Draw(gRenderer);
+
+            //Uint64 finish = SDL_GetPerformanceCounter();
+
+            //float elapsed = (finish - start) / (float)SDL_GetPerformanceFrequency() * 1000.0f;
+            //SDL_Delay(floor(16.666f - elapsed));
+            SDL_Delay(MAX_FPS);
         }
     }
 
