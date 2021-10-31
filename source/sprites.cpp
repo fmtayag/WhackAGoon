@@ -63,6 +63,10 @@ bool HoleSprite::whack()
 {
     if (m_AnimState == AS_Awake || m_AnimState == AS_ToAwake)
     {
+        if (m_AnimState == AS_ToAwake && m_CurFrame < 4) // prevents a hole in the first frames of the awakening animation to be whacked
+        {
+            return false;
+        }
         m_AnimState = AS_Whacked;
         m_CurFrame = 0;
         whacked_timer = SDL_GetTicks();
