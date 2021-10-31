@@ -850,6 +850,10 @@ void PlayScene::shake()
 			targRect.x = val;
 		}
 	}
+	else
+	{
+		targRect.x = 0;
+	}
 }
 
 void PlayScene::delayDeathCdown()

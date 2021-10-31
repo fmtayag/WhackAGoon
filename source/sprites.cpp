@@ -140,7 +140,7 @@ Particle::Particle(SDL_Rect rect, SDL_Color color, SDL_Point velocity)
 }
 Particle::~Particle()
 {
-    printf("Debug: Particle deleted.\n");
+    //printf("Debug: Particle deleted.\n");
 }
 void Particle::update()
 {
