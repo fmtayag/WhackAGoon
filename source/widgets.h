@@ -61,15 +61,16 @@ public:
 	void update();
 	void draw(SDL_Renderer *renderer);
 
-	void initTimer();
-	void makeTransparent();
-	void move();
 	bool isVisible();
 
 private:
+	void initTimer();
+	void makeTransparent();
+	void move();
+
 	std::string m_text;
 	short int m_opacity = 255;
-	static const short int OPAC_STEP = -10;
+	static const short int OPAC_STEP = -20;
 	SDL_Rect m_rect;
 	SDL_Point m_velocity;
 

@@ -100,6 +100,7 @@ private:
 	void u_spawnPrt();
 	void u_prt();
 	void u_uistuff();
+	void u_fadetexts();
 
 	// draw() sub-methods
 	void draw_texts(SDL_Renderer *renderer);
@@ -109,6 +110,7 @@ private:
 	void draw_prt(SDL_Renderer *renderer, SDL_Texture *parentTargTexture);
 	void draw_city(SDL_Renderer *renderer);
 	void draw_uistuff(SDL_Renderer *renderer);
+	void draw_fadetexts(SDL_Renderer *renderer);
 
 	// helper methods
 	void mk_holes();
@@ -118,6 +120,7 @@ private:
 	void decrDthCdownDur();
 	void initDthCdown();
 	void init_uistuff();
+	void spawnFadeText();
 
 	// For screen shake
 	int tmr_shake;
@@ -143,6 +146,7 @@ private:
 	// Sprite groups, and sprites
 	std::vector<HoleSprite> holeSprites;
 	std::vector<Particle> m_particles;
+	std::vector<FadeText> m_fadetexts;
 	UI_Icon scoreIcon;
 	UI_Icon opinionIcon;
 

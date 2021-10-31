@@ -188,6 +188,7 @@ void FadeText::draw(SDL_Renderer *renderer)
 
 	// Destroy texture
 	SDL_DestroyTexture(texture);
+	texture = NULL;
 }
 
 void FadeText::initTimer()

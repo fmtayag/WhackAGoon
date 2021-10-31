@@ -240,6 +240,9 @@ void PlayScene::handleEvents(SDL_Event *e)
 			case SDLK_s:
 				genShake();
 				break;
+			case SDLK_f:
+				spawnFadeText();
+				break;
 			default:
 				break;
 			}
@@ -265,6 +268,11 @@ void PlayScene::update()
 	case PS_GAMEOVER:
 		u_initTransitionTimer();
 		u_transgameover();
+		u_fadetexts();
+		u_holes();
+		u_spawnPrt();
+		u_prt();
+		u_uistuff();
 		shake();
 		break;
 	case PS_RUNNING:
@@ -277,6 +285,7 @@ void PlayScene::update()
 		u_spawnPrt();
 		u_prt();
 		u_uistuff();
+		u_fadetexts();
 		shake();
 		break;
 	default:
@@ -383,6 +392,7 @@ void PlayScene::u_collision()
 					opinion -= 1;
 					genShake();
 					decrDthCdownDur();
+					spawnFadeText();
 					break;
 				case HT_Mayor:
 					ch_gstate(PS_GAMEOVER);
@@ -532,6 +542,23 @@ void PlayScene::u_uistuff()
 	}
 }
 
+void PlayScene::u_fadetexts()
+{
+	auto iter = m_fadetexts.begin();
+	for (FadeText &fade : m_fadetexts)
+	{
+		if (fade.isVisible())
+		{
+			fade.update();
+		}
+		else
+		{
+			m_fadetexts.erase(iter);
+		}
+		iter++;
+	}
+}
+
 void PlayScene::draw(SDL_Renderer *renderer)
 {
 	// Colors
@@ -557,6 +584,7 @@ void PlayScene::draw(SDL_Renderer *renderer)
 	draw_texts(renderer);
 	draw_deathTimer(renderer);
 	draw_uistuff(renderer);
+	draw_fadetexts(renderer);
 
 	SDL_SetRenderTarget(renderer, NULL);
 	SDL_RenderCopy(renderer, targetTexture, NULL, &targRect);
@@ -706,6 +734,14 @@ void PlayScene::draw_uistuff(SDL_Renderer *renderer)
 	}
 }
 
+void PlayScene::draw_fadetexts(SDL_Renderer *renderer)
+{
+	for (FadeText &fade : m_fadetexts)
+	{
+		fade.draw(renderer);
+	}
+}
+
 void PlayScene::mk_holes()
 {
 	/*** Create the holes ***/
@@ -852,6 +888,17 @@ void PlayScene::init_uistuff()
 {
 	scoreIcon.set_clip({0, 8, 8, 8});
 	opinionIcon.set_clip({0, 0, 8, 8});
+}
+
+void PlayScene::spawnFadeText()
+{
+	std::string text = "-" + std::to_string(SCOR_PENALTY);
+	int x = scoreIcon.get_rect().x + 36;
+	int y = scoreIcon.get_rect().y;
+
+	// i can just set w and h to 0 here.
+	FadeText ftext(text.c_str(), {x, y, 0, 0}, {0, 4});
+	m_fadetexts.push_back(ftext);
 }
 
 //}
