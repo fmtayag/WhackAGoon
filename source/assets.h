@@ -20,18 +20,19 @@ extern SDL_Texture *cityTexture;
 extern SDL_Texture *uiTexture;
 
 // Clips
-struct opine_clips
+struct Clips_OpinionIcon
 {
-    SDL_Rect high = {0, 0, 8, 8};
-    SDL_Rect med = {8, 0, 8, 8};
-    SDL_Rect low = {16, 0, 8, 8};
+    const SDL_Rect HIGH = {0, 0, 8, 8};
+    const SDL_Rect MED = {8, 0, 8, 8};
+    const SDL_Rect LOW = {16, 0, 8, 8};
 };
 
 // Colors
-struct gcolors
+struct GameColors
 {
-    SDL_Color pure_white = {255, 255, 255, 255};
-    SDL_Color red = {180, 32, 42, 255};
+    const SDL_Color WHITE = {255, 255, 255, 255};
+    const SDL_Color BLACK = {0, 0, 0};
+    const SDL_Color RED = {180, 32, 42, 255};
 };
 
 // Info between scenes

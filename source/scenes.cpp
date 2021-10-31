@@ -258,6 +258,9 @@ void PlayScene::update()
 		break;
 	case PS_WARMUP:
 		u_wuTimer();
+		u_spawnPrt();
+		u_prt();
+		shake();
 		break;
 	case PS_GAMEOVER:
 		u_initTransitionTimer();
@@ -351,9 +354,7 @@ void PlayScene::u_transgameover()
 	if (timesUp)
 	{
 		mContext->gInfo.score = score;
-
-		// should be placed as last instruction!
-		mContext->changeScene(GAMEOVER_SCENE);
+		mContext->changeScene(GAMEOVER_SCENE); // should be placed as last instruction!
 	}
 }
 
@@ -513,20 +514,20 @@ void PlayScene::u_uistuff()
 
 	// opinion icon stuff
 	opinionIcon.update();
-	opine_clips opin_clips;
+	Clips_OpinionIcon opin_clips;
 	switch (opinion)
 	{
 	case 3:
-		opinionIcon.set_clip(opin_clips.high);
+		opinionIcon.set_clip(opin_clips.HIGH);
 		break;
 	case 2:
-		opinionIcon.set_clip(opin_clips.med);
+		opinionIcon.set_clip(opin_clips.MED);
 		break;
 	case 1:
-		opinionIcon.set_clip(opin_clips.low);
+		opinionIcon.set_clip(opin_clips.LOW);
 		break;
 	default:
-		opinionIcon.set_clip(opin_clips.low);
+		opinionIcon.set_clip(opin_clips.LOW);
 		break;
 	}
 }
@@ -546,6 +547,7 @@ void PlayScene::draw(SDL_Renderer *renderer)
 		SDL_TEXTUREACCESS_TARGET,
 		targRect.w,
 		targRect.h);
+
 	SDL_SetRenderTarget(renderer, targetTexture);
 
 	draw_bg(renderer);
@@ -579,10 +581,12 @@ void PlayScene::draw_texts(SDL_Renderer *renderer)
 
 	if (m_gstate == PS_RUNNING | m_gstate == PS_GAMEOVER)
 	{
+		// Draw Score
 		int scormsg_x = (scoreIcon.get_rect().x + scoreIcon.get_rect().w) + 4;
 		int scormsg_y = scoreIcon.get_rect().y + (scoreIcon.get_rect().h / 2);
 		drawText(renderer, scoreMessage.c_str(), gFont, scormsg_x, scormsg_y, WHITE, false, true);
 
+		// Draw Timer Label
 		drawText(renderer, "TIMER", gFont, winCenterW, 32, WHITE, true);
 	}
 
@@ -622,61 +626,65 @@ void PlayScene::draw_city(SDL_Renderer *renderer)
 
 void PlayScene::draw_deathTimer(SDL_Renderer *renderer)
 {
-	if (m_gstate == PS_RUNNING)
+	if (m_gstate == PS_RUNNING || m_gstate == PS_GAMEOVER)
 	{
-
-		if (true)
+		int now;
+		if (m_gstate == PS_RUNNING)
 		{
-			int now = SDL_GetTicks();
-			int tmr = tmr_deathCdown;
-			double dur = dur_deathCdown;
-
-			// Normalize time left
-			float valTL = now - tmr;
-			float minTL = 0;
-			float maxTL = dur_deathCdown;
-			float normTL = (valTL - minTL) / (maxTL - minTL);
-
-			// Set bar color
-			gcolors colors;
-			SDL_Color barColor = colors.pure_white;
-			if (normTL >= 0.5)
-				barColor = colors.red;
-
-			// Normalize death countdown duration
-			float valDD = dur_deathCdown;
-			float minDD = 0;
-			float maxDD = MAX_DUR_DEATHCDOWN;
-			float normDD = (valDD - minDD) / (maxDD - minDD);
-
-			// Set bar width
-			float y = 192 * normDD;
-			//printf("y: %f.\n", y);
-			float bar_width = y - (y * normTL);
-			if (bar_width <= 0)
-			{
-				bar_width = 0;
-			}
-
-			if (tmr_deathCdown == 0)
-			{
-				bar_width = y;
-				barColor = colors.pure_white;
-			}
-
-			short int wcW = WINDOW_WIDTH / 2;
-			short int bwc = bar_width / 2;
-			short int x = wcW - bwc;
-
-			SDL_Rect dtbarRect;
-			dtbarRect.x = x;
-			dtbarRect.y = 16;
-			dtbarRect.w = (int)bar_width;
-			dtbarRect.h = 8;
-
-			SDL_SetRenderDrawColor(renderer, barColor.r, barColor.g, barColor.b, barColor.a);
-			SDL_RenderFillRect(renderer, &dtbarRect);
+			now = SDL_GetTicks();
+			old_frame = now;
 		}
+		else if (m_gstate == PS_GAMEOVER)
+			now = old_frame; // used to stop the bar from shrinking when it's already game over
+
+		int tmr = tmr_deathCdown;
+		double dur = dur_deathCdown;
+
+		// Normalize time left
+		float valTL = now - tmr;
+		float minTL = 0;
+		float maxTL = dur_deathCdown;
+		float normTL = (valTL - minTL) / (maxTL - minTL);
+
+		// Set bar color
+		GameColors colors;
+		SDL_Color barColor = colors.WHITE;
+		if (normTL >= 0.5)
+			barColor = colors.RED;
+
+		// Normalize death countdown duration
+		float valDD = dur_deathCdown;
+		float minDD = 0;
+		float maxDD = MAX_DUR_DEATHCDOWN;
+		float normDD = (valDD - minDD) / (maxDD - minDD);
+
+		// Set bar width
+		float y = 192 * normDD;
+		//printf("y: %f.\n", y);
+		float bar_width = y - (y * normTL);
+		if (bar_width <= 0)
+		{
+			bar_width = 0;
+		}
+
+		if (tmr_deathCdown == 0)
+		{
+			bar_width = y;
+			barColor = colors.WHITE;
+		}
+
+		short int wcW = WINDOW_WIDTH / 2;
+		short int bwc = bar_width / 2;
+		short int x = wcW - bwc;
+
+		SDL_Rect dtbarRect;
+		dtbarRect.x = x;
+		dtbarRect.y = 16;
+		dtbarRect.w = (int)bar_width;
+		dtbarRect.h = 8;
+
+		SDL_SetRenderDrawColor(renderer, barColor.r, barColor.g, barColor.b, barColor.a);
+		SDL_RenderFillRect(renderer, &dtbarRect);
 	}
 }
 
@@ -755,6 +763,8 @@ void PlayScene::ch_gstate(PlaySceneState n_state)
 	if (m_gstate == PS_WARMUP && n_state == PS_RUNNING)
 	{
 		m_gstate = n_state;
+
+		genShake();
 
 		// Init timers
 		int now = SDL_GetTicks();

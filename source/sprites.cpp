@@ -163,6 +163,7 @@ void Particle::draw(SDL_Renderer *renderer)
     SDL_RenderCopy(renderer, targTexture, NULL, &m_rect);
 
     SDL_DestroyTexture(targTexture);
+    targTexture = NULL;
     //printf("SDL_Error: %s\n", SDL_GetError());
 }
 

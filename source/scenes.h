@@ -180,6 +180,8 @@ private:
 
 	const int DUR_PRTSPAWN = 500;
 	int tmr_prtspawn = 0; // init at ch_gstate()
+
+	int old_frame = 0; // used at draw_deathTimer()
 };
 
 class GameOverScene : public AbstractScene

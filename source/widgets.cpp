@@ -104,6 +104,7 @@ void Button::draw(SDL_Renderer *renderer)
 		SDL_RenderCopy(renderer, targTexture, NULL, &m_rect);
 
 		SDL_DestroyTexture(targTexture);
+		targTexture = NULL;
 	}
 
 	// Anchor points
