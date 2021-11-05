@@ -84,6 +84,7 @@ void SceneContext::sceneSwitch(SceneID scene)
 		break;
 	default:
 		this->pScene = NULL;
+		printf("DEBUG: Reached default cause for scene switch.\n");
 		break;
 	}
 }
@@ -99,20 +100,14 @@ MenuScene::MenuScene(SceneContext *context)
 	z_mouse.isClicked = false;
 
 	// Buttons
-	Button *btn1 = new Button(NULL, "TESTING", {100, 100, 96, 32});
-	btn1->bindCallback(std::bind(&MenuScene::chs_playGame, this));
+	Button btn1(btnTexture, {100, 100, 96, 32});
+	btn1.bindCallback(std::bind(&MenuScene::chs_playGame, this));
 	buttons.push_back(btn1);
 }
 
 MenuScene::~MenuScene()
 {
-	for (Button *btn : buttons)
-	{
-		delete btn;
-		btn = NULL;
-	}
-
-	printf("Deleted menu scene.\n");
+	//printf("Deleted menu scene.\n");
 }
 
 void MenuScene::handleEvents(SDL_Event *e)
@@ -149,9 +144,9 @@ void MenuScene::handleEvents(SDL_Event *e)
 void MenuScene::update()
 {
 	//  Update buttons
-	for (Button *btn : buttons)
+	for (Button &btn : buttons)
 	{
-		btn->update(&z_mouse);
+		btn.update(&z_mouse);
 	}
 }
 
@@ -161,16 +156,19 @@ void MenuScene::draw(SDL_Renderer *renderer)
 	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, 255);
 	SDL_RenderClear(renderer);
 
-	drawText(renderer, "MENU SCENE", gFontL, 0, 0, {255, 255, 255});
-	drawText(renderer, "PRESS ENTER TO PLAY", gFontL, 0, 64, {255, 255, 255});
+	std::string txt_menuscene = "MENU SCENE";
+	std::string txt_copyright = "(c) 2021 Zyenapz";
+
+	drawText(renderer, txt_menuscene, gFontL, 0, 0, {255, 255, 255});
+	//drawText(renderer, "PRESS ENTER TO PLAY", gFontL, 0, 64, {255, 255, 255});
 	//drawText(renderer, "Game v1.0", gFontS, WINDOW_WIDTH / 2, (int)(WINDOW_HEIGHT * 0.88), {255, 255, 255}, true);
-	drawText(renderer, "(c) 2021 Zyenapz", gFontS, WINDOW_WIDTH / 2, (int)(WINDOW_HEIGHT * 0.90), {255, 255, 255}, true);
+	drawText(renderer, txt_copyright, gFontS, WINDOW_WIDTH / 2, (int)(WINDOW_HEIGHT * 0.90), {255, 255, 255}, true);
 	//drawText(renderer, "Codelic, GPL-3.0. Artlic CC BY-NC 4.0.", gFontS, WINDOW_WIDTH / 2, (int)(WINDOW_HEIGHT * 0.92), {255, 255, 255}, true);
 
 	// Draw buttons --------------------------
-	for (Button *button : buttons)
+	for (Button &button : buttons)
 	{
-		button->draw(renderer);
+		button.draw(renderer);
 	}
 
 	// Render
@@ -225,6 +223,9 @@ void PlayScene::handleEvents(SDL_Event *e)
 			// FOR DEBUGGING ONLY!!
 			switch (e->key.keysym.sym)
 			{
+			case SDLK_BACKQUOTE:
+				mContext->changeScene(MENU_SCENE);
+				break;
 			case SDLK_ESCAPE:
 				mContext->changeScene(MENU_SCENE);
 				break;
@@ -929,7 +930,6 @@ GameOverScene::GameOverScene(SceneContext *context)
 	// Create button
 	Button btn1(
 		btnTexture,
-		"TESTING",
 		{wcx - bcx, wbtom - 64, btnW, btnH});
 
 	btn1.bindCallback(std::bind(&GameOverScene::chs_menu, this));
@@ -1005,6 +1005,7 @@ void GameOverScene::chs_menu()
 #pragma endregion GameOverScene
 
 #pragma region DebugScene
+// { DebugScene
 DebugScene::DebugScene(SceneContext *context)
 {
 	m_context = context;
@@ -1110,9 +1111,13 @@ void DebugScene::draw(SDL_Renderer *renderer)
 	draw_buttons(renderer);
 	draw_prts(renderer);
 
-	drawText(renderer, "DEBUG ROOM", gFontL, 0, 0, {255, 255, 255}, false);
-	drawText(renderer, "1 ... SPAWN FADETEXT", gFont, 0, 64, {255, 255, 255}, false);
-	drawText(renderer, "2 ... SPAWN PARTICLE", gFont, 0, 96, {255, 255, 255}, false);
+	std::string txt_debugroom("DEBUG ROOM");
+	std::string txt_option1("1 ... SPAWN FADETEXT");
+	std::string txt_option2("2 ... SPAWN PARTICLE");
+
+	drawText(renderer, txt_debugroom, gFontL, 0, 0, {255, 255, 255}, false);
+	drawText(renderer, txt_option1, gFont, 0, 64, {255, 255, 255}, false);
+	drawText(renderer, txt_option2, gFont, 0, 96, {255, 255, 255}, false);
 
 	SDL_RenderPresent(renderer);
 }
@@ -1148,7 +1153,8 @@ void DebugScene::spawnFadeTxt()
 }
 void DebugScene::createButtons()
 {
-	Button btn1(NULL, "CLICKME", {200, 200, 200, 32});
+	Button btn1(btnTexture, {200, 200, 200, 32});
+	btn1.bindCallback(std::bind(&DebugScene::sayHello, this));
 	m_buttons.push_back(btn1);
 	printf("DEBUG: Spawned button.\n");
 }
@@ -1159,5 +1165,9 @@ void DebugScene::spawnParticle()
 	Particle p1({300, 50, PXSCALE, PXSCALE}, {255, 255, 255, 255}, {xvel, yvel});
 	m_particles.push_back(p1);
 }
-
+void DebugScene::sayHello()
+{
+	printf("Hello!\n");
+}
+// }
 #pragma endregion DebugScene

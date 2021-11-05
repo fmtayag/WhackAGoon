@@ -7,14 +7,10 @@
 
 #pragma region Button
 //{ Button
-Button::Button(SDL_Texture *btnTexture, std::string btnText, SDL_Rect rect)
+Button::Button(SDL_Texture *btnTexture, SDL_Rect rect)
 {
-	m_texture = btnTexture; // deprecate later
-	m_text = btnText;
-	m_rect.x = rect.x;
-	m_rect.y = rect.y;
-	m_rect.w = rect.w;
-	m_rect.h = rect.h;
+	m_texture = btnTexture;
+	m_rect = rect;
 	m_state = BST_NORMAL;
 }
 
@@ -55,63 +51,7 @@ void Button::u_state(MouseState *mouse_s)
 
 void Button::draw(SDL_Renderer *renderer)
 {
-	// Color
-	SDL_Color btn_bgColor;
-	SDL_Color btn_fgColor = {100, 100, 100, 255};
-
-	if (m_texture != NULL)
-	{
-		SDL_RenderCopy(renderer, m_texture, NULL, &m_rect);
-	}
-	else
-	{
-
-		switch (m_state)
-		{
-		case BST_DISABLED:
-			btn_bgColor = {50, 50, 50, 255};
-			break;
-		case BST_NORMAL:
-			btn_bgColor = {0, 0, 0, 0};
-			break;
-		case BST_CLICKED:
-			btn_bgColor = {255, 255, 255, 255};
-			break;
-		case BST_HOVERED:
-			btn_bgColor = {255, 255, 255, 255};
-			btn_fgColor = {255, 255, 255, 255};
-			break;
-		}
-		SDL_Texture *targTexture = SDL_CreateTexture(
-			renderer,
-			SDL_PIXELFORMAT_RGBA8888,
-			SDL_TEXTUREACCESS_TARGET,
-			m_rect.w,
-			m_rect.h);
-
-		SDL_SetTextureBlendMode(targTexture, SDL_BLENDMODE_BLEND);
-
-		// Future reference: (1:14pm) problem with the RenderDrawRect 'spilling' over the entire screen.
-		// (1:18pm) well apparently i done goofed up on the DebugScene and accidentally put the
-		// SDL_RenderClear() routine BEFORE the SDL_SetRenderDrawColor routine.
-		// sometimes...problems have a comically simple solution.
-
-		SDL_SetRenderTarget(renderer, targTexture);
-		//SDL_SetRenderDrawColor(renderer, btn_bgColor.r, btn_bgColor.g, btn_bgColor.b, btn_bgColor.a);
-		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-		SDL_RenderClear(renderer);
-		SDL_SetRenderTarget(renderer, NULL);
-		SDL_RenderCopy(renderer, targTexture, NULL, &m_rect);
-
-		SDL_DestroyTexture(targTexture);
-		targTexture = NULL;
-	}
-
-	// Anchor points
-	unsigned int xcent = m_rect.x + (m_rect.w / 2);
-	unsigned int ycent = m_rect.y + (m_rect.h / 2);
-
-	drawText(renderer, m_text.c_str(), gFont, xcent, ycent, btn_fgColor, true, true);
+	SDL_RenderCopy(renderer, m_texture, NULL, &m_rect);
 }
 
 void Button::setState(BtnState state)

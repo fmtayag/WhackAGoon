@@ -3,17 +3,34 @@
 @echo off
 
 SET BUILDDIR=build\
-SET OUTFILE=db_whack.exe
+SET OBJDIR=source\obj\
+SET OUTFILE=whackagoon-vdebug.exe
 SET OUTPATH=%BUILDDIR%%OUTFILE%
 SET INCLUDE=C:\Dev\allSDL_x86\include
 SET LIB=C:\Dev\allSDL_x86\lib
+SET OBJFILE=source\whackagoon.o
 
 for /F "tokens=1,2 delims=#" %%a in ('"prompt #$H#$E# & echo on & for %%b in (1) do     rem"') do (
   set "DEL=%%a"
 )
-@echo on	
+if not exist %OBJDIR% (
+	mkdir %OBJDIR%
+)
 
-g++ source\*.cpp -I%INCLUDE% -L%LIB% -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -o %OUTPATH% 
+@echo on
+:: Compile cpp files
+g++ source\main.cpp -c -o %OBJDIR%main.o -I%INCLUDE% 
+g++ source\sprites.cpp -c -o %OBJDIR%sprites.o -I%INCLUDE%
+g++ source\scenes.cpp -c -o %OBJDIR%scenes.o -I%INCLUDE% 
+g++ source\widgets.cpp -c -o %OBJDIR%widgets.o -I%INCLUDE% 
+g++ source\utils.cpp -c -o %OBJDIR%utils.o -I%INCLUDE% 
+g++ source\frames.cpp -c -o %OBJDIR%frames.o -I%INCLUDE% 
+
+:: Link obj files and other libs
+:: g++ %OBJDIR%*.o -o %OUTPATH% -L%LIB% -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -static-libgcc -static-libstdc++ -lwinpthread
+g++ %OBJDIR%*.o -o %OUTPATH% -L%LIB% -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -static-libgcc -static-libstdc++ -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive
+:: g++ %OBJFILE% -o %OUTPATH% -L%LIB% -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
+:: g++ source\*.cpp -o %OUTPATH% -I%INCLUDE% -L%LIB% -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -static -static-libgcc -static-libstdc++ 
 @echo off
 
 if %errorlevel% == 0 (

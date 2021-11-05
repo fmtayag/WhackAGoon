@@ -69,7 +69,7 @@ public:
 	void chs_playGame();
 
 private:
-	std::vector<Button *> buttons;
+	std::vector<Button> buttons;
 	SceneContext *mContext;
 
 	// Mouse
@@ -234,6 +234,9 @@ public:
 	void draw_fadeTxts(SDL_Renderer *renderer);
 	void draw_buttons(SDL_Renderer *renderer);
 	void draw_prts(SDL_Renderer *renderer);
+
+	// callback test
+	void sayHello();
 
 private:
 	SceneContext *m_context;

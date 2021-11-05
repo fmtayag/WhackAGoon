@@ -39,7 +39,7 @@ struct GameColors
 struct GameInformation
 {
     int score = 0;
-    std::string testMsg = "bruh";
+    std::string testMsg;
 };
 
 #endif // ASSETS_H

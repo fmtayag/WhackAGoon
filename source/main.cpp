@@ -78,10 +78,10 @@ int main(int argv, char **args)
         }
     }
 
+    printf("Program ended without any errors.\n");
+
     // Clean up
     cleanUp();
-
-    getchar();
     return 0;
 }
 
