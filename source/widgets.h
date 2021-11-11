@@ -3,6 +3,7 @@
 #pragma once
 
 #include <functional>
+#include <list>
 #include <SDL2/SDL.h>
 
 enum BtnEvent
@@ -30,7 +31,7 @@ struct MouseState
 class Button
 {
 public:
-	Button(SDL_Texture *btnTexture, SDL_Rect rect);
+	Button(SDL_Texture *btnTexture, SDL_Rect rect, std::map<BtnState, SDL_Rect> clips);
 	~Button();
 	void update(MouseState *mouse_s);
 	void draw(SDL_Renderer *renderer);
@@ -47,6 +48,7 @@ private:
 	SDL_Texture *m_texture;
 	std::string m_text;
 	BtnState m_state;
+	std::map<BtnState, SDL_Rect> m_clips;
 
 	// Callback
 	std::function<void()> m_callback;

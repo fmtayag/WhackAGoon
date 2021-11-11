@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <SDL2/SDL.h>
+#include <map>
 #include "sprites.h"
 #include "widgets.h"
 #include "metadata.h"
@@ -200,6 +201,7 @@ public:
 
 	// Callbacks
 	void chs_menu();
+	void chs_retry();
 
 private:
 	SceneContext *mContext;

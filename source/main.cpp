@@ -39,7 +39,7 @@ SDL_Texture *cityTexture;
 SDL_Texture *uiTexture;
 
 // Game Context
-SceneContext *gContext;
+//SceneContext gContext;
 
 bool initialize();
 bool loadAssets();
@@ -63,17 +63,13 @@ int main(int argv, char **args)
         SDL_Event e;
 
         // Create game context
-        gContext = new SceneContext(MENU_SCENE);
-        if (gContext == NULL)
-        {
-            printf("Failed to initialize the game context.\n");
-        }
+        SceneContext gContext(MENU_SCENE);
 
-        while (gContext->get_scene() != NULL && gContext != NULL)
+        while (gContext.get_scene() != NULL)
         {
-            gContext->HandleEvents(&e);
-            gContext->Update();
-            gContext->Draw(gRenderer);
+            gContext.HandleEvents(&e);
+            gContext.Update();
+            gContext.Draw(gRenderer);
             SDL_Delay(MAX_FPS);
         }
     }
@@ -141,7 +137,7 @@ bool loadAssets()
 {
     bool isSuccessful = true;
 
-    BG_COLOR = {9, 13, 23};
+    BG_COLOR = {50, 50, 50};
 
     // Load frame data
     loadFrameData();
@@ -239,8 +235,8 @@ void cleanUp()
     gRenderer = NULL;
 
     // Clean up game context
-    delete gContext;
-    gContext = NULL;
+    // delete gContext;
+    // gContext = NULL;
 
     // Quit SDL subsystems
     TTF_Quit();

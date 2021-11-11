@@ -1,17 +1,25 @@
 #include <iostream>
 #include <functional>
+#include <map>
 #include <SDL2/SDL.h>
 #include "widgets.h"
 #include "utils.h"
 #include "assets.h"
+#include "metadata.h"
 
 #pragma region Button
 //{ Button
-Button::Button(SDL_Texture *btnTexture, SDL_Rect rect)
+Button::Button(SDL_Texture *btnTexture, SDL_Rect rect, std::map<BtnState, SDL_Rect> clips)
 {
 	m_texture = btnTexture;
 	m_rect = rect;
 	m_state = BST_NORMAL;
+	m_clips = clips;
+
+	if (m_rect.w <= 0)
+		m_rect.w = m_clips[m_state].w * PXSCALE;
+	if (m_rect.h <= 0)
+		m_rect.h = m_clips[m_state].h * PXSCALE;
 }
 
 Button::~Button()
@@ -51,7 +59,7 @@ void Button::u_state(MouseState *mouse_s)
 
 void Button::draw(SDL_Renderer *renderer)
 {
-	SDL_RenderCopy(renderer, m_texture, NULL, &m_rect);
+	SDL_RenderCopy(renderer, m_texture, &m_clips[m_state], &m_rect);
 }
 
 void Button::setState(BtnState state)

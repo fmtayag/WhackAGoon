@@ -33,6 +33,9 @@ struct GameColors
     const SDL_Color WHITE = {255, 255, 255, 255};
     const SDL_Color BLACK = {0, 0, 0};
     const SDL_Color RED = {180, 32, 42, 255};
+    const SDL_Color NAVYBLUE = {38, 48, 64, 255};
+    const SDL_Color ORANGE = {249, 163, 27};
+    const SDL_Color DARKGREEN = {36, 43, 16, 255};
 };
 
 // Info between scenes

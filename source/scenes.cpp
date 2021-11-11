@@ -100,7 +100,11 @@ MenuScene::MenuScene(SceneContext *context)
 	z_mouse.isClicked = false;
 
 	// Buttons
-	Button btn1(btnTexture, {100, 100, 96, 32});
+	std::map<BtnState, SDL_Rect> btnClips;
+	btnClips[BST_NORMAL] = {0, 24, 16, 16};
+	btnClips[BST_HOVERED] = {16, 24, 16, 16};
+
+	Button btn1(uiTexture, {100, 100, 0, 0}, btnClips);
 	btn1.bindCallback(std::bind(&MenuScene::chs_playGame, this));
 	buttons.push_back(btn1);
 }
@@ -132,7 +136,7 @@ void MenuScene::handleEvents(SDL_Event *e)
 			switch (e->key.keysym.sym)
 			{
 			case SDLK_BACKQUOTE:
-				mContext->changeScene(DEBUG_SCENE);
+				mContext->changeScene(GAMEOVER_SCENE);
 			}
 		}
 	}
@@ -197,6 +201,7 @@ PlayScene::~PlayScene()
 {
 	holeSprites.clear();
 	m_particles.clear();
+	m_fadetexts.clear();
 
 	printf("Deleted play scene.\n");
 }
@@ -223,6 +228,9 @@ void PlayScene::handleEvents(SDL_Event *e)
 			// FOR DEBUGGING ONLY!!
 			switch (e->key.keysym.sym)
 			{
+			case SDLK_e:
+				ch_gstate(PS_GAMEOVER);
+				break;
 			case SDLK_BACKQUOTE:
 				mContext->changeScene(MENU_SCENE);
 				break;
@@ -262,8 +270,6 @@ void PlayScene::update()
 		break;
 	case PS_WARMUP:
 		u_wuTimer();
-		u_spawnPrt();
-		u_prt();
 		shake();
 		break;
 	case PS_GAMEOVER:
@@ -608,16 +614,19 @@ void PlayScene::draw_texts(SDL_Renderer *renderer)
 	// Messages
 	std::string scoreMessage = std::to_string(score);
 
-	if (m_gstate == PS_RUNNING | m_gstate == PS_GAMEOVER)
-	{
-		// Draw Score
-		int scormsg_x = (scoreIcon.get_rect().x + scoreIcon.get_rect().w) + 4;
-		int scormsg_y = scoreIcon.get_rect().y + (scoreIcon.get_rect().h / 2);
-		drawText(renderer, scoreMessage.c_str(), gFont, scormsg_x, scormsg_y, WHITE, false, true);
+	// Draw Score
+	int scormsg_x = (scoreIcon.get_rect().x + scoreIcon.get_rect().w) + 4;
+	int scormsg_y = scoreIcon.get_rect().y + (scoreIcon.get_rect().h / 2);
+	drawText(renderer, scoreMessage.c_str(), gFont, scormsg_x, scormsg_y, WHITE, false, true);
 
-		// Draw Timer Label
-		drawText(renderer, "TIMER", gFont, winCenterW, 32, WHITE, true);
-	}
+	// Draw Timer Label
+	SDL_Color timerLblColor;
+	GameColors colorList;
+	if (tmr_deathCdown == 0)
+		timerLblColor = colorList.DARKGREEN;
+	else
+		timerLblColor = colorList.WHITE;
+	drawText(renderer, "TIMER", gFont, winCenterW, 32, timerLblColor, true);
 
 	if (m_gstate == PS_WARMUP)
 	{
@@ -655,66 +664,65 @@ void PlayScene::draw_city(SDL_Renderer *renderer)
 
 void PlayScene::draw_deathTimer(SDL_Renderer *renderer)
 {
-	if (m_gstate == PS_RUNNING || m_gstate == PS_GAMEOVER)
+	int now;
+	if (m_gstate == PS_RUNNING)
 	{
-		int now;
-		if (m_gstate == PS_RUNNING)
-		{
-			now = SDL_GetTicks();
-			old_frame = now;
-		}
-		else if (m_gstate == PS_GAMEOVER)
-			now = old_frame; // used to stop the bar from shrinking when it's already game over
-
-		int tmr = tmr_deathCdown;
-		double dur = dur_deathCdown;
-
-		// Normalize time left
-		float valTL = now - tmr;
-		float minTL = 0;
-		float maxTL = dur_deathCdown;
-		float normTL = (valTL - minTL) / (maxTL - minTL);
-
-		// Set bar color
-		GameColors colors;
-		SDL_Color barColor = colors.WHITE;
-		if (normTL >= 0.5)
-			barColor = colors.RED;
-
-		// Normalize death countdown duration
-		float valDD = dur_deathCdown;
-		float minDD = 0;
-		float maxDD = MAX_DUR_DEATHCDOWN;
-		float normDD = (valDD - minDD) / (maxDD - minDD);
-
-		// Set bar width
-		float y = 192 * normDD;
-		//printf("y: %f.\n", y);
-		float bar_width = y - (y * normTL);
-		if (bar_width <= 0)
-		{
-			bar_width = 0;
-		}
-
-		if (tmr_deathCdown == 0)
-		{
-			bar_width = y;
-			barColor = colors.WHITE;
-		}
-
-		short int wcW = WINDOW_WIDTH / 2;
-		short int bwc = bar_width / 2;
-		short int x = wcW - bwc;
-
-		SDL_Rect dtbarRect;
-		dtbarRect.x = x;
-		dtbarRect.y = 16;
-		dtbarRect.w = (int)bar_width;
-		dtbarRect.h = 8;
-
-		SDL_SetRenderDrawColor(renderer, barColor.r, barColor.g, barColor.b, barColor.a);
-		SDL_RenderFillRect(renderer, &dtbarRect);
+		now = SDL_GetTicks();
+		old_frame = now;
 	}
+	else if (m_gstate == PS_GAMEOVER)
+		now = old_frame; // used to stop the bar from shrinking when it's already game over
+
+	int tmr = tmr_deathCdown;
+	double dur = dur_deathCdown;
+
+	// Normalize time left
+	float valTL = now - tmr;
+	float minTL = 0;
+	float maxTL = dur_deathCdown;
+	float normTL = (valTL - minTL) / (maxTL - minTL);
+
+	// Set bar color
+	GameColors colors;
+	SDL_Color barColor = colors.WHITE;
+	if (normTL >= 0.30)
+		barColor = colors.ORANGE;
+	if (normTL >= 0.60)
+		barColor = colors.RED;
+
+	// Normalize death countdown duration
+	float valDD = dur_deathCdown;
+	float minDD = 0;
+	float maxDD = MAX_DUR_DEATHCDOWN;
+	float normDD = (valDD - minDD) / (maxDD - minDD);
+
+	// Set bar width
+	float y = 192 * normDD;
+	//printf("y: %f.\n", y);
+	float bar_width = y - (y * normTL);
+	if (bar_width <= 0)
+	{
+		bar_width = 0;
+	}
+
+	if (tmr_deathCdown == 0)
+	{
+		bar_width = y;
+		barColor = colors.DARKGREEN;
+	}
+
+	short int wcW = WINDOW_WIDTH / 2;
+	short int bwc = bar_width / 2;
+	short int x = wcW - bwc;
+
+	SDL_Rect dtbarRect;
+	dtbarRect.x = x;
+	dtbarRect.y = 16;
+	dtbarRect.w = (int)bar_width;
+	dtbarRect.h = 8;
+
+	SDL_SetRenderDrawColor(renderer, barColor.r, barColor.g, barColor.b, barColor.a);
+	SDL_RenderFillRect(renderer, &dtbarRect);
 }
 
 void PlayScene::draw_prt(SDL_Renderer *renderer, SDL_Texture *parentTargTexture)
@@ -728,11 +736,8 @@ void PlayScene::draw_prt(SDL_Renderer *renderer, SDL_Texture *parentTargTexture)
 
 void PlayScene::draw_uistuff(SDL_Renderer *renderer)
 {
-	if (m_gstate == PS_RUNNING | m_gstate == PS_GAMEOVER)
-	{
-		scoreIcon.draw(renderer);
-		opinionIcon.draw(renderer);
-	}
+	scoreIcon.draw(renderer);
+	opinionIcon.draw(renderer);
 }
 
 void PlayScene::draw_fadetexts(SDL_Renderer *renderer)
@@ -923,21 +928,35 @@ GameOverScene::GameOverScene(SceneContext *context)
 	const int wcx = WINDOW_WIDTH / 2;
 	const int wcy = WINDOW_HEIGHT / 2;
 	const int wbtom = WINDOW_HEIGHT;
-	const int btnW = 96;
-	const int btnH = 32;
+	const int btnW = 16;
+	const int btnH = 16;
 	const int bcx = btnW / 2;
 
-	// Create button
-	Button btn1(
-		btnTexture,
-		{wcx - bcx, wbtom - 64, btnW, btnH});
+	printf("hello1\n");
 
-	btn1.bindCallback(std::bind(&GameOverScene::chs_menu, this));
-	buttons.push_back(btn1);
+	// Create button
+	std::map<BtnState, SDL_Rect> btnMenu_clips;
+	btnMenu_clips[BST_NORMAL] = {32, 24, btnW, btnH};
+	btnMenu_clips[BST_HOVERED] = {48, 24, btnW, btnH};
+
+	Button btnMenu(uiTexture, {(wcx - bcx) - 64, wbtom - 128, 0, 0}, btnMenu_clips);
+	btnMenu.bindCallback(std::bind(&GameOverScene::chs_menu, this));
+	buttons.push_back(btnMenu);
+
+	std::map<BtnState, SDL_Rect> btnRetry_clips;
+	btnRetry_clips[BST_NORMAL] = {0, 40, btnW, btnH};
+	btnRetry_clips[BST_HOVERED] = {16, 40, btnW, btnH};
+
+	Button btnRetry(uiTexture, {(wcx - bcx) + 16, wbtom - 128, 0, 0}, btnRetry_clips);
+	btnRetry.bindCallback(std::bind(&GameOverScene::chs_retry, this));
+	buttons.push_back(btnRetry);
+
+	printf("hello2\n");
 }
 
 GameOverScene::~GameOverScene()
 {
+	buttons.clear();
 }
 
 void GameOverScene::handleEvents(SDL_Event *e)
@@ -965,8 +984,8 @@ void GameOverScene::handleEvents(SDL_Event *e)
 
 void GameOverScene::update()
 {
-	//  Update buttons
-	for (Button btn : buttons)
+	// Update buttons
+	for (Button &btn : buttons)
 	{
 		btn.update(&z_mouse);
 	}
@@ -988,7 +1007,7 @@ void GameOverScene::draw(SDL_Renderer *renderer)
 	drawText(renderer, scoreMsg.c_str(), gFont, wcx, 96, {255, 255, 255}, true);
 
 	// Draw buttons --------------------------
-	for (Button button : buttons)
+	for (Button &button : buttons)
 	{
 		button.draw(renderer);
 	}
@@ -1000,6 +1019,11 @@ void GameOverScene::draw(SDL_Renderer *renderer)
 void GameOverScene::chs_menu()
 {
 	mContext->changeScene(MENU_SCENE);
+}
+
+void GameOverScene::chs_retry()
+{
+	mContext->changeScene(PLAY_SCENE);
 }
 //}
 #pragma endregion GameOverScene
@@ -1153,10 +1177,10 @@ void DebugScene::spawnFadeTxt()
 }
 void DebugScene::createButtons()
 {
-	Button btn1(btnTexture, {200, 200, 200, 32});
-	btn1.bindCallback(std::bind(&DebugScene::sayHello, this));
-	m_buttons.push_back(btn1);
-	printf("DEBUG: Spawned button.\n");
+	//Button btn1(btnTexture, {200, 200, 200, 32});
+	//btn1.bindCallback(std::bind(&DebugScene::sayHello, this));
+	//m_buttons.push_back(btn1);
+	//printf("DEBUG: Spawned button.\n");
 }
 void DebugScene::spawnParticle()
 {
