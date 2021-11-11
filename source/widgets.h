@@ -31,6 +31,7 @@ struct MouseState
 class Button
 {
 public:
+	Button() = default;
 	Button(SDL_Texture *btnTexture, SDL_Rect rect, std::map<BtnState, SDL_Rect> clips);
 	~Button();
 	void update(MouseState *mouse_s);

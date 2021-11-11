@@ -111,7 +111,7 @@ MenuScene::MenuScene(SceneContext *context)
 
 MenuScene::~MenuScene()
 {
-	//printf("Deleted menu scene.\n");
+	buttons.clear();
 }
 
 void MenuScene::handleEvents(SDL_Event *e)
@@ -916,7 +916,7 @@ void PlayScene::spawnFadeText()
 
 #pragma region GameOverScene
 //{ GameOverScene
-GameOverScene::GameOverScene(SceneContext *context)
+GameOverScene::GameOverScene(SceneContext *context) : buttons(10)
 {
 	mContext = context;
 	finalScore = mContext->gInfo.score;

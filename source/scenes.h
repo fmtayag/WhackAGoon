@@ -71,6 +71,7 @@ public:
 
 private:
 	std::vector<Button> buttons;
+
 	SceneContext *mContext;
 
 	// Mouse
