@@ -188,12 +188,13 @@ void MenuScene::chs_playGame()
 
 #pragma region PlayScene
 //{ PlayScene
-PlayScene::PlayScene(SceneContext *context)
-	: scoreIcon(uiTexture, {PXSCALE, PXSCALE, 32, 32}, 500),
-	  opinionIcon(uiTexture, {PXSCALE, PXSCALE * 8, 32, 32}, 500)
+PlayScene::PlayScene(SceneContext *context) : scoreIcon(uiTexture, {PXSCALE, PXSCALE, 32, 32}, 500),
+											  opinionIcon(uiTexture, {PXSCALE, PXSCALE * 8, 32, 32}, 500),
+											  m_buttons(BTN_MAX)
 {
 	mContext = context;
 	mk_holes();
+	mk_buttons();
 	init_uistuff();
 }
 
@@ -217,11 +218,11 @@ void PlayScene::handleEvents(SDL_Event *e)
 		}
 		else if (e->type == SDL_MOUSEBUTTONDOWN)
 		{
-			mMouseClicked = true;
+			z_mouse.isClicked = true;
 		}
 		else if (e->type == SDL_MOUSEBUTTONUP)
 		{
-			mMouseClicked = false;
+			z_mouse.isClicked = false;
 		}
 		else if (e->type == SDL_KEYDOWN)
 		{
@@ -259,7 +260,7 @@ void PlayScene::handleEvents(SDL_Event *e)
 	}
 
 	// Update mouse position
-	SDL_GetMouseState(&mpos.x, &mpos.y);
+	SDL_GetMouseState(&z_mouse.pos.x, &z_mouse.pos.y);
 }
 
 void PlayScene::update()
@@ -270,16 +271,17 @@ void PlayScene::update()
 		break;
 	case PS_WARMUP:
 		u_wuTimer();
+		u_buttons();
 		shake();
 		break;
 	case PS_GAMEOVER:
 		u_initTransitionTimer();
 		u_transgameover();
 		u_fadetexts();
-		u_holes();
-		u_spawnPrt();
-		u_prt();
-		u_uistuff();
+		//u_holes();
+		//u_spawnPrt();
+		//u_prt();
+		//u_uistuff();
 		shake();
 		break;
 	case PS_RUNNING:
@@ -293,6 +295,7 @@ void PlayScene::update()
 		u_prt();
 		u_uistuff();
 		u_fadetexts();
+		u_buttons();
 		shake();
 		break;
 	default:
@@ -379,11 +382,11 @@ void PlayScene::u_collision()
 
 	for (HoleSprite &hole : holeSprites)
 	{
-		bool collided = isPointCollide(mpos, hole.getRect());
-		if (collided && mMouseClicked)
+		bool collided = isPointCollide(z_mouse.pos, hole.getRect());
+		if (collided && z_mouse.isClicked)
 		{
 			bool isWhacked = hole.whack();
-			mMouseClicked = false;
+			z_mouse.isClicked = false;
 
 			if (isWhacked)
 			{
@@ -498,7 +501,8 @@ void PlayScene::u_spawnPrt()
 
 			printf("X: %d, Y: %d\n", prtRect.x, prtRect.y);
 
-			SDL_Color prtCol = {23, 31, 11}; // toxic green
+			GameColors gColors;
+			SDL_Color prtCol = gColors.DARKGREEN; // toxic green
 			SDL_Point prtVel = {0, -1};
 
 			m_particles.push_back(Particle(prtRect, prtCol, prtVel));
@@ -566,6 +570,14 @@ void PlayScene::u_fadetexts()
 	}
 }
 
+void PlayScene::u_buttons()
+{
+	for (Button &btn : m_buttons)
+	{
+		btn.update(&z_mouse);
+	}
+}
+
 void PlayScene::draw(SDL_Renderer *renderer)
 {
 	// Colors
@@ -592,6 +604,7 @@ void PlayScene::draw(SDL_Renderer *renderer)
 	draw_deathTimer(renderer);
 	draw_uistuff(renderer);
 	draw_fadetexts(renderer);
+	draw_buttons(renderer);
 
 	SDL_SetRenderTarget(renderer, NULL);
 	SDL_RenderCopy(renderer, targetTexture, NULL, &targRect);
@@ -745,6 +758,14 @@ void PlayScene::draw_fadetexts(SDL_Renderer *renderer)
 	for (FadeText &fade : m_fadetexts)
 	{
 		fade.draw(renderer);
+	}
+}
+
+void PlayScene::draw_buttons(SDL_Renderer *renderer)
+{
+	for (Button &btn : m_buttons)
+	{
+		btn.draw(renderer);
 	}
 }
 
@@ -911,6 +932,21 @@ void PlayScene::spawnFadeText()
 	m_fadetexts.push_back(ftext);
 }
 
+void PlayScene::mk_buttons()
+{
+	std::map<BtnState, SDL_Rect> btnBack_clips;
+	btnBack_clips[BST_NORMAL] = {0, 16, 8, 8};
+	btnBack_clips[BST_HOVERED] = {8, 16, 8, 8};
+	Button btnBack(uiTexture, {364, 4, 0, 0}, btnBack_clips);
+	btnBack.bindCallback(std::bind(&PlayScene::goback, this));
+	m_buttons.push_back(btnBack);
+}
+
+void PlayScene::goback()
+{
+	mContext->changeScene(MENU_SCENE);
+}
+
 //}
 #pragma endregion PlayScene
 
@@ -936,8 +972,8 @@ GameOverScene::GameOverScene(SceneContext *context) : m_buttons(BTN_MAX)
 
 	// Create button
 	std::map<BtnState, SDL_Rect> btnMenu_clips;
-	btnMenu_clips[BST_NORMAL] = {32, 24, btnW, btnH};
-	btnMenu_clips[BST_HOVERED] = {48, 24, btnW, btnH};
+	btnMenu_clips[BST_NORMAL] = {32, 40, btnW, btnH};
+	btnMenu_clips[BST_HOVERED] = {48, 40, btnW, btnH};
 
 	Button btnMenu(uiTexture, {(wcx - bcx) - 64, wbtom - 128, 0, 0}, btnMenu_clips);
 	btnMenu.bindCallback(std::bind(&GameOverScene::chs_menu, this));

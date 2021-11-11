@@ -104,6 +104,7 @@ private:
 	void u_prt();
 	void u_uistuff();
 	void u_fadetexts();
+	void u_buttons();
 
 	// draw() sub-methods
 	void draw_texts(SDL_Renderer *renderer);
@@ -114,6 +115,7 @@ private:
 	void draw_city(SDL_Renderer *renderer);
 	void draw_uistuff(SDL_Renderer *renderer);
 	void draw_fadetexts(SDL_Renderer *renderer);
+	void draw_buttons(SDL_Renderer *renderer);
 
 	// helper methods
 	void mk_holes();
@@ -124,6 +126,8 @@ private:
 	void initDthCdown();
 	void init_uistuff();
 	void spawnFadeText();
+	void mk_buttons();
+	void goback(); // callback for the button
 
 	// For screen shake
 	int tmr_shake;
@@ -143,13 +147,16 @@ private:
 	std::string gOverMsg = "DEBUG";
 
 	// Mouse
-	bool mMouseClicked = false;
-	SDL_Point mpos;
+	//bool mMouseClicked = false;
+	//SDL_Point mpos;
+	MouseState z_mouse;
 
 	// Sprite groups, and sprites
 	std::vector<HoleSprite> holeSprites;
 	std::vector<Particle> m_particles;
 	std::vector<FadeText> m_fadetexts;
+	std::vector<Button> m_buttons;
+	const int BTN_MAX = 1;
 	UI_Icon scoreIcon;
 	UI_Icon opinionIcon;
 
