@@ -70,7 +70,8 @@ public:
 	void chs_playGame();
 
 private:
-	std::vector<Button> buttons;
+	std::vector<Button> m_buttons;
+	const int BTN_MAX = 3;
 
 	SceneContext *mContext;
 
@@ -206,7 +207,8 @@ public:
 
 private:
 	SceneContext *mContext;
-	std::vector<Button> buttons;
+	std::vector<Button> m_buttons;
+	const int BTN_MAX = 2;
 
 	// Mouse
 	MouseState z_mouse;
@@ -247,6 +249,7 @@ private:
 
 	std::vector<FadeText> m_fadeTexts;
 	std::vector<Button> m_buttons;
+	const int BTN_MAX = 1;
 	std::vector<Particle> m_particles;
 };
 

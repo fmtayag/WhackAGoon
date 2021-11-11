@@ -94,7 +94,7 @@ void SceneContext::sceneSwitch(SceneID scene)
 
 #pragma region MenuScene
 //{ MenuScene
-MenuScene::MenuScene(SceneContext *context)
+MenuScene::MenuScene(SceneContext *context) : m_buttons(BTN_MAX)
 {
 	mContext = context;
 	z_mouse.isClicked = false;
@@ -106,12 +106,12 @@ MenuScene::MenuScene(SceneContext *context)
 
 	Button btn1(uiTexture, {100, 100, 0, 0}, btnClips);
 	btn1.bindCallback(std::bind(&MenuScene::chs_playGame, this));
-	buttons.push_back(btn1);
+	m_buttons.push_back(btn1);
 }
 
 MenuScene::~MenuScene()
 {
-	buttons.clear();
+	m_buttons.clear();
 }
 
 void MenuScene::handleEvents(SDL_Event *e)
@@ -136,7 +136,7 @@ void MenuScene::handleEvents(SDL_Event *e)
 			switch (e->key.keysym.sym)
 			{
 			case SDLK_BACKQUOTE:
-				mContext->changeScene(GAMEOVER_SCENE);
+				mContext->changeScene(DEBUG_SCENE);
 			}
 		}
 	}
@@ -148,7 +148,7 @@ void MenuScene::handleEvents(SDL_Event *e)
 void MenuScene::update()
 {
 	//  Update buttons
-	for (Button &btn : buttons)
+	for (Button &btn : m_buttons)
 	{
 		btn.update(&z_mouse);
 	}
@@ -170,7 +170,7 @@ void MenuScene::draw(SDL_Renderer *renderer)
 	//drawText(renderer, "Codelic, GPL-3.0. Artlic CC BY-NC 4.0.", gFontS, WINDOW_WIDTH / 2, (int)(WINDOW_HEIGHT * 0.92), {255, 255, 255}, true);
 
 	// Draw buttons --------------------------
-	for (Button &button : buttons)
+	for (Button &button : m_buttons)
 	{
 		button.draw(renderer);
 	}
@@ -916,7 +916,7 @@ void PlayScene::spawnFadeText()
 
 #pragma region GameOverScene
 //{ GameOverScene
-GameOverScene::GameOverScene(SceneContext *context) : buttons(10)
+GameOverScene::GameOverScene(SceneContext *context) : m_buttons(BTN_MAX)
 {
 	mContext = context;
 	finalScore = mContext->gInfo.score;
@@ -941,7 +941,7 @@ GameOverScene::GameOverScene(SceneContext *context) : buttons(10)
 
 	Button btnMenu(uiTexture, {(wcx - bcx) - 64, wbtom - 128, 0, 0}, btnMenu_clips);
 	btnMenu.bindCallback(std::bind(&GameOverScene::chs_menu, this));
-	buttons.push_back(btnMenu);
+	m_buttons.push_back(btnMenu);
 
 	std::map<BtnState, SDL_Rect> btnRetry_clips;
 	btnRetry_clips[BST_NORMAL] = {0, 40, btnW, btnH};
@@ -949,14 +949,14 @@ GameOverScene::GameOverScene(SceneContext *context) : buttons(10)
 
 	Button btnRetry(uiTexture, {(wcx - bcx) + 16, wbtom - 128, 0, 0}, btnRetry_clips);
 	btnRetry.bindCallback(std::bind(&GameOverScene::chs_retry, this));
-	buttons.push_back(btnRetry);
+	m_buttons.push_back(btnRetry);
 
 	printf("hello2\n");
 }
 
 GameOverScene::~GameOverScene()
 {
-	buttons.clear();
+	m_buttons.clear();
 }
 
 void GameOverScene::handleEvents(SDL_Event *e)
@@ -985,7 +985,7 @@ void GameOverScene::handleEvents(SDL_Event *e)
 void GameOverScene::update()
 {
 	// Update buttons
-	for (Button &btn : buttons)
+	for (Button &btn : m_buttons)
 	{
 		btn.update(&z_mouse);
 	}
@@ -1007,7 +1007,7 @@ void GameOverScene::draw(SDL_Renderer *renderer)
 	drawText(renderer, scoreMsg.c_str(), gFont, wcx, 96, {255, 255, 255}, true);
 
 	// Draw buttons --------------------------
-	for (Button &button : buttons)
+	for (Button &button : m_buttons)
 	{
 		button.draw(renderer);
 	}
@@ -1030,7 +1030,7 @@ void GameOverScene::chs_retry()
 
 #pragma region DebugScene
 // { DebugScene
-DebugScene::DebugScene(SceneContext *context)
+DebugScene::DebugScene(SceneContext *context) : m_buttons(BTN_MAX)
 {
 	m_context = context;
 	createButtons();
