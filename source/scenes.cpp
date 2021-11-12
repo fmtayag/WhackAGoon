@@ -94,19 +94,12 @@ void SceneContext::sceneSwitch(SceneID scene)
 
 #pragma region MenuScene
 //{ MenuScene
-MenuScene::MenuScene(SceneContext *context) : m_buttons(BTN_MAX)
+MenuScene::MenuScene(SceneContext *context) : m_buttons(10)
 {
 	mContext = context;
 	z_mouse.isClicked = false;
 
-	// Buttons
-	std::map<BtnState, SDL_Rect> btnClips;
-	btnClips[BST_NORMAL] = {0, 24, 16, 16};
-	btnClips[BST_HOVERED] = {16, 24, 16, 16};
-
-	Button btn1(uiTexture, {100, 100, 0, 0}, btnClips);
-	btn1.bindCallback(std::bind(&MenuScene::chs_playGame, this));
-	m_buttons.push_back(btn1);
+	createButtons();
 }
 
 MenuScene::~MenuScene()
@@ -162,8 +155,13 @@ void MenuScene::draw(SDL_Renderer *renderer)
 
 	std::string txt_menuscene = "MENU SCENE";
 	std::string txt_copyright = "(c) 2021 Zyenapz";
+	const int logoWidth = 80 * PXSCALE;
+	const int logoHeight = 50 * PXSCALE;
+	SDL_Rect logoRect = {(WINDOW_WIDTH / 2) - (logoWidth / 2), 0, logoWidth, logoHeight};
 
-	drawText(renderer, txt_menuscene, gFontL, 0, 0, {255, 255, 255});
+	SDL_RenderCopy(renderer, logoTexture, NULL, &logoRect);
+
+	//drawText(renderer, txt_menuscene, gFontL, 0, 0, {255, 255, 255});
 	//drawText(renderer, "PRESS ENTER TO PLAY", gFontL, 0, 64, {255, 255, 255});
 	//drawText(renderer, "Game v1.0", gFontS, WINDOW_WIDTH / 2, (int)(WINDOW_HEIGHT * 0.88), {255, 255, 255}, true);
 	drawText(renderer, txt_copyright, gFontS, WINDOW_WIDTH / 2, (int)(WINDOW_HEIGHT * 0.90), {255, 255, 255}, true);
@@ -179,10 +177,61 @@ void MenuScene::draw(SDL_Renderer *renderer)
 	SDL_RenderPresent(renderer);
 }
 
-void MenuScene::chs_playGame()
+void MenuScene::cb_playGame()
 {
 	mContext->changeScene(PLAY_SCENE);
 }
+
+void MenuScene::cb_help()
+{
+}
+
+void MenuScene::cb_info()
+{
+}
+
+void MenuScene::createButtons()
+{
+	// Anchor points
+	const int wcx = WINDOW_WIDTH / 2;
+	const int wcy = WINDOW_HEIGHT / 2;
+	const int wbtom = WINDOW_HEIGHT;
+	const int btnW = 16;
+	const int btnH = 16;
+	const int bcx = btnW / 2;
+	const int x_offset = 25;
+
+	// btnPlay
+	std::map<BtnState, SDL_Rect> btnPlay_clips;
+	btnPlay_clips[BST_NORMAL] = {0, 24, btnW, btnH};
+	btnPlay_clips[BST_HOVERED] = {16, 24, btnW, btnH};
+
+	Button btnPlay(uiTexture, {wcx - bcx - x_offset, 256, 0, 0}, btnPlay_clips);
+	btnPlay.bindCallback(std::bind(&MenuScene::cb_playGame, this));
+	m_buttons[0] = btnPlay;
+
+	// btnHelp
+	std::map<BtnState, SDL_Rect> btnHelp_clips;
+	btnHelp_clips[BST_NORMAL] = {32, 24, btnW, btnH};
+	btnHelp_clips[BST_HOVERED] = {48, 24, btnW, btnH};
+
+	Button btnHelp(uiTexture, {(wcx - bcx - x_offset) - 80, 256, 0, 0}, btnHelp_clips);
+	//btnHelp_clips.bindCallback(std::bind(&MenuScene::chs_playGame, this));
+	m_buttons[1] = btnHelp;
+
+	// btnInfo
+	std::map<BtnState, SDL_Rect> btnInfo_clips;
+	btnInfo_clips[BST_NORMAL] = {0, 56, btnW, btnH};
+	btnInfo_clips[BST_HOVERED] = {16, 56, btnW, btnH};
+
+	Button btnInfo(uiTexture, {(wcx - bcx - x_offset) + 80, 256, 0, 0}, btnInfo_clips);
+	//btnHelp_clips.bindCallback(std::bind(&MenuScene::chs_playGame, this));
+	m_buttons[2] = btnInfo;
+
+	printf("m_buttons size: %d\n", m_buttons.size());
+	printf("m_buttons capacity: %d\n", m_buttons.capacity());
+}
+
 //}
 #pragma endregion MenuScene
 
@@ -190,7 +239,7 @@ void MenuScene::chs_playGame()
 //{ PlayScene
 PlayScene::PlayScene(SceneContext *context) : scoreIcon(uiTexture, {PXSCALE, PXSCALE, 32, 32}, 500),
 											  opinionIcon(uiTexture, {PXSCALE, PXSCALE * 8, 32, 32}, 500),
-											  m_buttons(BTN_MAX)
+											  m_buttons(10)
 {
 	mContext = context;
 	mk_holes();
@@ -203,6 +252,7 @@ PlayScene::~PlayScene()
 	holeSprites.clear();
 	m_particles.clear();
 	m_fadetexts.clear();
+	m_buttons.clear();
 
 	printf("Deleted play scene.\n");
 }
@@ -934,12 +984,16 @@ void PlayScene::spawnFadeText()
 
 void PlayScene::mk_buttons()
 {
+	printf("m_button's size: %d\n", m_buttons.size());
+	printf("m_button's capacity: %d\n", m_buttons.capacity());
+	printf("m_button's maxsize: %zu\n", m_buttons.max_size());
+
 	std::map<BtnState, SDL_Rect> btnBack_clips;
 	btnBack_clips[BST_NORMAL] = {0, 16, 8, 8};
 	btnBack_clips[BST_HOVERED] = {8, 16, 8, 8};
 	Button btnBack(uiTexture, {364, 4, 0, 0}, btnBack_clips);
 	btnBack.bindCallback(std::bind(&PlayScene::goback, this));
-	m_buttons.push_back(btnBack);
+	m_buttons[0] = btnBack;
 }
 
 void PlayScene::goback()
@@ -952,7 +1006,7 @@ void PlayScene::goback()
 
 #pragma region GameOverScene
 //{ GameOverScene
-GameOverScene::GameOverScene(SceneContext *context) : m_buttons(BTN_MAX)
+GameOverScene::GameOverScene(SceneContext *context) : m_buttons(5)
 {
 	mContext = context;
 	finalScore = mContext->gInfo.score;
@@ -968,8 +1022,6 @@ GameOverScene::GameOverScene(SceneContext *context) : m_buttons(BTN_MAX)
 	const int btnH = 16;
 	const int bcx = btnW / 2;
 
-	printf("hello1\n");
-
 	// Create button
 	std::map<BtnState, SDL_Rect> btnMenu_clips;
 	btnMenu_clips[BST_NORMAL] = {32, 40, btnW, btnH};
@@ -977,7 +1029,7 @@ GameOverScene::GameOverScene(SceneContext *context) : m_buttons(BTN_MAX)
 
 	Button btnMenu(uiTexture, {(wcx - bcx) - 64, wbtom - 128, 0, 0}, btnMenu_clips);
 	btnMenu.bindCallback(std::bind(&GameOverScene::chs_menu, this));
-	m_buttons.push_back(btnMenu);
+	m_buttons[0] = btnMenu;
 
 	std::map<BtnState, SDL_Rect> btnRetry_clips;
 	btnRetry_clips[BST_NORMAL] = {0, 40, btnW, btnH};
@@ -985,9 +1037,7 @@ GameOverScene::GameOverScene(SceneContext *context) : m_buttons(BTN_MAX)
 
 	Button btnRetry(uiTexture, {(wcx - bcx) + 16, wbtom - 128, 0, 0}, btnRetry_clips);
 	btnRetry.bindCallback(std::bind(&GameOverScene::chs_retry, this));
-	m_buttons.push_back(btnRetry);
-
-	printf("hello2\n");
+	m_buttons[1] = btnRetry;
 }
 
 GameOverScene::~GameOverScene()
@@ -1066,7 +1116,7 @@ void GameOverScene::chs_retry()
 
 #pragma region DebugScene
 // { DebugScene
-DebugScene::DebugScene(SceneContext *context) : m_buttons(BTN_MAX)
+DebugScene::DebugScene(SceneContext *context) : m_buttons(10)
 {
 	m_context = context;
 	createButtons();

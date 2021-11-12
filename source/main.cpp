@@ -37,6 +37,7 @@ SDL_Texture *spritesTexture;
 SDL_Texture *btnTexture;
 SDL_Texture *cityTexture;
 SDL_Texture *uiTexture;
+SDL_Texture *logoTexture;
 
 // Game Context
 SceneContext *gContext;
@@ -210,6 +211,13 @@ bool loadAssets()
         isSuccessful = false;
     }
 
+    logoTexture = loadTextureFromFile(gRenderer, "assets/images/logo.png");
+    if (logoTexture == NULL)
+    {
+        printf("Failed to load logoTexture.\n");
+        isSuccessful = false;
+    }
+
     return isSuccessful;
 }
 
@@ -229,6 +237,7 @@ void cleanUp()
     cleanUpTexture(btnTexture);
     cleanUpTexture(cityTexture);
     cleanUpTexture(uiTexture);
+    cleanUpTexture(logoTexture);
 
     // Destroy window
     SDL_DestroyWindow(gWindow);

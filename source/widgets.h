@@ -73,13 +73,13 @@ private:
 
 	std::string m_text;
 	short int m_opacity = 255;
-	static const short int OPAC_STEP = -20;
+	short int OPAC_STEP = -20;
 	SDL_Rect m_rect;
 	SDL_Point m_velocity;
 
 	// timers
 	int tmr_text = 0;
-	static const short int DUR_TEXT = 50;
+	short int DUR_TEXT = 50;
 };
 
 #endif // WIDGETS_H

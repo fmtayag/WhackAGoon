@@ -67,12 +67,17 @@ public:
 	void update();
 	void draw(SDL_Renderer *renderer);
 
-	void chs_playGame();
+	void cb_playGame();
+	void cb_help();
+	void cb_info();
 
 private:
-	std::vector<Button> m_buttons;
-	const int BTN_MAX = 3;
+	void createButtons();
 
+	// Buttons
+	std::vector<Button> m_buttons;
+
+	// Context
 	SceneContext *mContext;
 
 	// Mouse
@@ -156,7 +161,6 @@ private:
 	std::vector<Particle> m_particles;
 	std::vector<FadeText> m_fadetexts;
 	std::vector<Button> m_buttons;
-	const int BTN_MAX = 1;
 	UI_Icon scoreIcon;
 	UI_Icon opinionIcon;
 
@@ -215,7 +219,6 @@ public:
 private:
 	SceneContext *mContext;
 	std::vector<Button> m_buttons;
-	const int BTN_MAX = 2;
 
 	// Mouse
 	MouseState z_mouse;
@@ -256,7 +259,6 @@ private:
 
 	std::vector<FadeText> m_fadeTexts;
 	std::vector<Button> m_buttons;
-	const int BTN_MAX = 1;
 	std::vector<Particle> m_particles;
 };
 
