@@ -32,11 +32,13 @@ class SceneContext;
 
 class AbstractScene
 {
-protected:
-	SceneContext *m_context;
-
 public:
 	virtual ~AbstractScene() = default;
+
+	void setContext(SceneContext *context)
+	{
+		m_context = context;
+	}
 
 	virtual void initialize() = 0;
 	virtual void destroy() = 0;
@@ -44,6 +46,9 @@ public:
 	virtual void handleEvents(SDL_Event *e) = 0;
 	virtual void update() = 0;
 	virtual void draw(SDL_Renderer *renderer) = 0;
+
+protected:
+	SceneContext *m_context;
 };
 
 class SceneContext
@@ -72,19 +77,21 @@ public:
 	MenuScene(SceneContext *context);
 	~MenuScene();
 
-	void initialize();
-	void destroy();
-
 	void handleEvents(SDL_Event *e);
 	void update();
 	void draw(SDL_Renderer *renderer);
 
+private:
+	void initialize();
+	void destroy();
+
 	void cb_playGame();
 	void cb_help();
 	void cb_info();
-
-private:
 	void createButtons();
+
+	struct SceneAssets;
+	SceneAssets sceneAssets();
 
 	// Buttons
 	std::vector<Button *> m_buttons;

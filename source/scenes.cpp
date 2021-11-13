@@ -20,6 +20,7 @@
 SceneContext::SceneContext(SceneID scene)
 {
 	sceneSwitch(scene);
+	this->pScene->setContext(this);
 }
 
 SceneContext::~SceneContext()
@@ -74,12 +75,12 @@ void SceneContext::sceneSwitch(SceneID scene)
 	case MENU_SCENE:
 		this->pScene = new MenuScene(this);
 		break;
-	case PLAY_SCENE:
-		this->pScene = new PlayScene(this);
-		break;
-	case GAMEOVER_SCENE:
-		this->pScene = new GameOverScene(this);
-		break;
+	// case PLAY_SCENE:
+	// 	this->pScene = new PlayScene(this);
+	// 	break;
+	// case GAMEOVER_SCENE:
+	// 	this->pScene = new GameOverScene(this);
+	// 	break;
 	default:
 		this->pScene = NULL;
 		printf("DEBUG: Reached default cause for scene switch.\n");
@@ -94,9 +95,7 @@ void SceneContext::sceneSwitch(SceneID scene)
 //{ MenuScene
 MenuScene::MenuScene(SceneContext *context)
 {
-	z_mouse.isClicked = false;
-
-	createButtons();
+	initialize();
 }
 
 MenuScene::~MenuScene()
@@ -106,6 +105,7 @@ MenuScene::~MenuScene()
 
 void MenuScene::initialize()
 {
+	createButtons();
 }
 
 void MenuScene::destroy()
@@ -1023,114 +1023,114 @@ void MenuScene::createButtons()
 // //}
 // #pragma endregion PlayScene
 
-// #pragma region GameOverScene
-//{ GameOverScene
-GameOverScene::GameOverScene(SceneContext *context)
-{
-	m_context = context;
-	finalScore = m_context->gInfo.score;
+// // #pragma region GameOverScene
+// //{ GameOverScene
+// GameOverScene::GameOverScene(SceneContext *context)
+// {
+// 	m_context = context;
+// 	finalScore = m_context->gInfo.score;
 
-	// Mouse
-	z_mouse.isClicked = false;
+// 	// Mouse
+// 	z_mouse.isClicked = false;
 
-	// Anchor points
-	const int wcx = WINDOW_WIDTH / 2;
-	const int wcy = WINDOW_HEIGHT / 2;
-	const int wbtom = WINDOW_HEIGHT;
-	const int btnW = 16;
-	const int btnH = 16;
-	const int bcx = btnW / 2;
+// 	// Anchor points
+// 	const int wcx = WINDOW_WIDTH / 2;
+// 	const int wcy = WINDOW_HEIGHT / 2;
+// 	const int wbtom = WINDOW_HEIGHT;
+// 	const int btnW = 16;
+// 	const int btnH = 16;
+// 	const int bcx = btnW / 2;
 
-	// Create button
-	std::map<BtnState, SDL_Rect> btnMenu_clips;
-	btnMenu_clips[BST_NORMAL] = {32, 40, btnW, btnH};
-	btnMenu_clips[BST_HOVERED] = {48, 40, btnW, btnH};
+// 	// Create button
+// 	std::map<BtnState, SDL_Rect> btnMenu_clips;
+// 	btnMenu_clips[BST_NORMAL] = {32, 40, btnW, btnH};
+// 	btnMenu_clips[BST_HOVERED] = {48, 40, btnW, btnH};
 
-	Button *btnMenu = new Button(uiTexture, {(wcx - bcx) - 64, wbtom - 128, 0, 0}, btnMenu_clips);
-	btnMenu->bindCallback(std::bind(&GameOverScene::chs_menu, this));
-	m_buttons.push_back(btnMenu);
+// 	Button *btnMenu = new Button(uiTexture, {(wcx - bcx) - 64, wbtom - 128, 0, 0}, btnMenu_clips);
+// 	btnMenu->bindCallback(std::bind(&GameOverScene::chs_menu, this));
+// 	m_buttons.push_back(btnMenu);
 
-	std::map<BtnState, SDL_Rect> btnRetry_clips;
-	btnRetry_clips[BST_NORMAL] = {0, 40, btnW, btnH};
-	btnRetry_clips[BST_HOVERED] = {16, 40, btnW, btnH};
+// 	std::map<BtnState, SDL_Rect> btnRetry_clips;
+// 	btnRetry_clips[BST_NORMAL] = {0, 40, btnW, btnH};
+// 	btnRetry_clips[BST_HOVERED] = {16, 40, btnW, btnH};
 
-	Button *btnRetry = new Button(uiTexture, {(wcx - bcx) + 16, wbtom - 128, 0, 0}, btnRetry_clips);
-	btnRetry->bindCallback(std::bind(&GameOverScene::chs_retry, this));
-	m_buttons.push_back(btnRetry);
-}
+// 	Button *btnRetry = new Button(uiTexture, {(wcx - bcx) + 16, wbtom - 128, 0, 0}, btnRetry_clips);
+// 	btnRetry->bindCallback(std::bind(&GameOverScene::chs_retry, this));
+// 	m_buttons.push_back(btnRetry);
+// }
 
-GameOverScene::~GameOverScene()
-{
-	for (auto btn : m_buttons)
-		delete btn;
-	m_buttons.clear();
-}
+// GameOverScene::~GameOverScene()
+// {
+// 	for (auto btn : m_buttons)
+// 		delete btn;
+// 	m_buttons.clear();
+// }
 
-void GameOverScene::handleEvents(SDL_Event *e)
-{
-	// Handle events --------------------------------------
-	while (SDL_PollEvent(e))
-	{
-		if (e->type == SDL_QUIT)
-		{
-			m_context->quit();
-		}
-		else if (e->type == SDL_MOUSEBUTTONDOWN)
-		{
-			z_mouse.isClicked = true;
-		}
-		else if (e->type == SDL_MOUSEBUTTONUP)
-		{
-			z_mouse.isClicked = false;
-		}
-	}
+// void GameOverScene::handleEvents(SDL_Event *e)
+// {
+// 	// Handle events --------------------------------------
+// 	while (SDL_PollEvent(e))
+// 	{
+// 		if (e->type == SDL_QUIT)
+// 		{
+// 			m_context->quit();
+// 		}
+// 		else if (e->type == SDL_MOUSEBUTTONDOWN)
+// 		{
+// 			z_mouse.isClicked = true;
+// 		}
+// 		else if (e->type == SDL_MOUSEBUTTONUP)
+// 		{
+// 			z_mouse.isClicked = false;
+// 		}
+// 	}
 
-	// Update mouse position
-	SDL_GetMouseState(&z_mouse.pos.x, &z_mouse.pos.y);
-}
+// 	// Update mouse position
+// 	SDL_GetMouseState(&z_mouse.pos.x, &z_mouse.pos.y);
+// }
 
-void GameOverScene::update()
-{
-	// Update buttons
-	for (Button(*btn) : m_buttons)
-	{
-		btn->update(&z_mouse);
-	}
-}
+// void GameOverScene::update()
+// {
+// 	// Update buttons
+// 	for (Button(*btn) : m_buttons)
+// 	{
+// 		btn->update(&z_mouse);
+// 	}
+// }
 
-void GameOverScene::draw(SDL_Renderer *renderer)
-{
-	// Anchor points
-	const int wcx = WINDOW_WIDTH / 2;
-	const int wcy = WINDOW_HEIGHT / 2;
+// void GameOverScene::draw(SDL_Renderer *renderer)
+// {
+// 	// Anchor points
+// 	const int wcx = WINDOW_WIDTH / 2;
+// 	const int wcy = WINDOW_HEIGHT / 2;
 
-	// Set render draw color, and clear renderer ----------
-	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, 255);
-	SDL_RenderClear(renderer);
+// 	// Set render draw color, and clear renderer ----------
+// 	SDL_SetRenderDrawColor(renderer, BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, 255);
+// 	SDL_RenderClear(renderer);
 
-	std::string scoreMsg = "YOU SCORED " + std::to_string(finalScore) + " PTS!";
+// 	std::string scoreMsg = "YOU SCORED " + std::to_string(finalScore) + " PTS!";
 
-	drawText(renderer, "GAME OVER", gFontL, wcx, 16, {255, 255, 255}, true);
-	drawText(renderer, scoreMsg.c_str(), gFont, wcx, 96, {255, 255, 255}, true);
+// 	drawText(renderer, "GAME OVER", gFontL, wcx, 16, {255, 255, 255}, true);
+// 	drawText(renderer, scoreMsg.c_str(), gFont, wcx, 96, {255, 255, 255}, true);
 
-	// Draw buttons --------------------------
-	for (Button(*button) : m_buttons)
-	{
-		button->draw(renderer);
-	}
+// 	// Draw buttons --------------------------
+// 	for (Button(*button) : m_buttons)
+// 	{
+// 		button->draw(renderer);
+// 	}
 
-	// Render
-	SDL_RenderPresent(renderer);
-}
+// 	// Render
+// 	SDL_RenderPresent(renderer);
+// }
 
-void GameOverScene::chs_menu()
-{
-	m_context->changeScene(MENU_SCENE);
-}
+// void GameOverScene::chs_menu()
+// {
+// 	m_context->changeScene(MENU_SCENE);
+// }
 
-void GameOverScene::chs_retry()
-{
-	m_context->changeScene(PLAY_SCENE);
-}
-//}
+// void GameOverScene::chs_retry()
+// {
+// 	m_context->changeScene(PLAY_SCENE);
+// }
+// //}
 #pragma endregion GameOverScene

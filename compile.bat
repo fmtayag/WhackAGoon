@@ -13,9 +13,9 @@ SET OBJFILE=source\whackagoon.o
 for /F "tokens=1,2 delims=#" %%a in ('"prompt #$H#$E# & echo on & for %%b in (1) do     rem"') do (
   set "DEL=%%a"
 )
-if not exist %OBJDIR% (
-	mkdir %OBJDIR%
-)
+	if not exist %OBJDIR% (
+		mkdir %OBJDIR%
+	)
 
 @echo on
 :: Compile cpp files
