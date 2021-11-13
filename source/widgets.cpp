@@ -12,8 +12,11 @@
 Button::Button(SDL_Texture *btnTexture, SDL_Rect rect, std::map<BtnState, SDL_Rect> clips)
 {
 	m_texture = btnTexture;
-	m_rect = rect;
-	m_state = BST_NORMAL;
+	m_rect.x = rect.x;
+	m_rect.y = rect.y;
+	m_rect.w = rect.w;
+	m_rect.h = rect.h;
+	//m_state = BST_NORMAL; // set at header instead
 	m_clips = clips;
 
 	if (m_rect.w <= 0)
@@ -24,6 +27,7 @@ Button::Button(SDL_Texture *btnTexture, SDL_Rect rect, std::map<BtnState, SDL_Re
 
 Button::~Button()
 {
+	printf("Button deleted.\n");
 }
 
 void Button::update(MouseState *mouse_s)

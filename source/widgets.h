@@ -48,7 +48,7 @@ private:
 	SDL_Rect m_rect;
 	SDL_Texture *m_texture;
 	std::string m_text;
-	BtnState m_state;
+	BtnState m_state = BST_NORMAL;
 	std::map<BtnState, SDL_Rect> m_clips;
 
 	// Callback

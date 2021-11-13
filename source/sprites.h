@@ -34,7 +34,7 @@ class HoleSprite : public ISprite
 {
 public:
     HoleSprite(SDL_Texture *spritesheet, int x, int y);
-    ~HoleSprite(){};
+    ~HoleSprite();
     void update();
     void draw(SDL_Renderer *renderer);
 

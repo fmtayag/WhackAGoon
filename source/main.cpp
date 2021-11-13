@@ -38,6 +38,7 @@ SDL_Texture *btnTexture;
 SDL_Texture *cityTexture;
 SDL_Texture *uiTexture;
 SDL_Texture *logoTexture;
+SDL_Texture *menuBgTexture;
 
 // Game Context
 SceneContext *gContext;
@@ -142,7 +143,8 @@ bool loadAssets()
 {
     bool isSuccessful = true;
 
-    BG_COLOR = {50, 50, 50};
+    GameColors gColors;
+    BG_COLOR = gColors.DARKGREEN;
 
     // Load frame data
     loadFrameData();
@@ -215,6 +217,13 @@ bool loadAssets()
     if (logoTexture == NULL)
     {
         printf("Failed to load logoTexture.\n");
+        isSuccessful = false;
+    }
+
+    menuBgTexture = loadTextureFromFile(gRenderer, "assets/images/menu_bg.png");
+    if (menuBgTexture == NULL)
+    {
+        printf("Failed to load menuBgTexture.\n");
         isSuccessful = false;
     }
 

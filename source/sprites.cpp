@@ -25,6 +25,11 @@ HoleSprite::HoleSprite(SDL_Texture *spritesheet, int x, int y)
     anim_timer = SDL_GetTicks();
 }
 
+HoleSprite::~HoleSprite()
+{
+    printf("Deleted holeSprite.\n");
+}
+
 void HoleSprite::update()
 {
     if (m_AnimState != AS_Resting)

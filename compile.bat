@@ -28,9 +28,11 @@ g++ source\frames.cpp -c -o %OBJDIR%frames.o -I%INCLUDE%
 
 :: Link obj files and other libs
 :: g++ %OBJDIR%*.o -o %OUTPATH% -L%LIB% -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -static-libgcc -static-libstdc++ -lwinpthread
-g++ %OBJDIR%*.o -o %OUTPATH% -L%LIB% -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -static-libgcc -static-libstdc++ -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive
 :: g++ %OBJFILE% -o %OUTPATH% -L%LIB% -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
 :: g++ source\*.cpp -o %OUTPATH% -I%INCLUDE% -L%LIB% -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -static -static-libgcc -static-libstdc++ 
+
+g++ %OBJDIR%*.o -o %OUTPATH% -L%LIB% -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -static-libgcc -static-libstdc++ -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive
+
 @echo off
 
 if %errorlevel% == 0 (

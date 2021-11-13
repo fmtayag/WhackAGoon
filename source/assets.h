@@ -19,6 +19,7 @@ extern SDL_Texture *btnTexture;
 extern SDL_Texture *cityTexture;
 extern SDL_Texture *uiTexture;
 extern SDL_Texture *logoTexture;
+extern SDL_Texture *menuBgTexture;
 
 // Clips
 struct Clips_OpinionIcon
