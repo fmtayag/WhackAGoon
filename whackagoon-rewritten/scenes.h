@@ -2,22 +2,25 @@
 #define SCENES_H
 #pragma once
 
+#include <iostream>
 #include <SDL2/SDL.h>
 #include "g_data.h"
 #include "widgets.h"
+#include "sprites.h"
 
 class SceneContext;
 class Scene
 {
 protected:
     SceneContext *m_context;
+    GameMouse m_gMouse;
 
 public:
     virtual ~Scene() = default;
 
     virtual void handleEvents(SDL_Event *e) = 0;
     virtual void update() = 0;
-    virtual void draw(SDL_Renderer *renderer) = 0;
+    virtual void draw() = 0;
 
     void setContext(SceneContext *context)
     {
@@ -36,14 +39,19 @@ public:
     // Ctor & Dtor
     SceneContext(Scene *scene) : m_scene(nullptr)
     {
+        m_gameAssets = new GameAssets;
         this->transitionTo(scene);
     }
-    ~SceneContext() { delete m_scene; }
+    ~SceneContext()
+    {
+        delete m_scene;
+        delete m_gameAssets;
+    }
 
     // Scene transition
     void transitionTo(Scene *scene)
     {
-        std::cout << "Context: Transition to " << typeid(*scene).name() << ".\n";
+        printf("Context: Transition to %s.\n", typeid(*scene).name());
         if (this->m_scene != nullptr)
             delete this->m_scene;
         this->m_scene = scene;
@@ -51,7 +59,7 @@ public:
     }
 
     // Game assets
-    void bindGameAssets(GameAssets *gameAssets) { m_gameAssets = gameAssets; }
+    void bindGameAssets(GameAssets &gameAssets) { *m_gameAssets = gameAssets; }
     GameAssets *fetchGameAssets() { return m_gameAssets; }
 
     // Flags
@@ -69,16 +77,27 @@ public:
         this->m_scene->update();
     }
 
-    void draw(SDL_Renderer *renderer)
+    void draw()
     {
-        this->m_scene->draw(renderer);
+        this->m_scene->draw();
     }
 };
 
 class MenuScene : public Scene
 {
 private:
-    GTimer tmr1;
+    // Buttons
+    GButton *btnPlay;
+
+    // Textures
+    GTexture *btnPlayTexture;
+
+    // Callbacks
+    void cbPlay();
+
+    // Initializer functions
+    void loadAssets();
+    void createButtons();
 
 public:
     MenuScene();
@@ -86,18 +105,7 @@ public:
 
     void handleEvents(SDL_Event *e);
     void update();
-    void draw(SDL_Renderer *renderer);
-};
-
-class PlayScene : public Scene
-{
-public:
-    PlayScene();
-    ~PlayScene();
-
-    void handleEvents(SDL_Event *e);
-    void update();
-    void draw(SDL_Renderer *renderer);
+    void draw();
 };
 
 #endif // SCENES_H

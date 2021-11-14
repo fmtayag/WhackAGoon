@@ -1,14 +1,21 @@
 #include <iostream>
+#include <functional>
+#include <cassert>
 #include <SDL2/SDL.h>
 #include "scenes.h"
+#include "g_texture.h"
+#include "g_data.h"
 
 #pragma region MenuScene
-MenuScene::MenuScene() : tmr1()
+MenuScene::MenuScene()
 {
-    tmr1.start();
+    loadAssets();
+    createButtons();
 }
 MenuScene::~MenuScene()
 {
+    delete btnPlayTexture;
+    delete btnPlay;
 }
 void MenuScene::handleEvents(SDL_Event *e)
 {
@@ -18,73 +25,62 @@ void MenuScene::handleEvents(SDL_Event *e)
         {
             m_context->setQuitFlag(true);
         }
-        if (e->type == SDL_KEYDOWN)
+        if (e->type == SDL_MOUSEBUTTONDOWN)
         {
-            switch (e->key.keysym.sym)
-            {
-            case SDLK_s:
-                m_context->transitionTo(new PlayScene());
-                break;
-            case SDLK_p:
-                tmr1.pause();
-                break;
-            case SDLK_u:
-                tmr1.unpause();
-                break;
-            case SDLK_t:
-                tmr1.stop();
-                break;
-            }
+            m_gMouse.isClicked = true;
         }
-    }
-}
-void MenuScene::update()
-{
-}
-void MenuScene::draw(SDL_Renderer *renderer)
-{
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, m_context->fetchGameAssets()->brickBGTexture, NULL, NULL);
-    SDL_RenderPresent(renderer);
-    printf("tmr1 ticks: %zu\n", tmr1.getTicks());
-    //printf("SDL_Error: %s.\n", SDL_GetError());
-};
-#pragma endregion MenuScene
-
-#pragma region PlayScene
-PlayScene::PlayScene()
-{
-}
-PlayScene::~PlayScene()
-{
-}
-void PlayScene::handleEvents(SDL_Event *e)
-{
-    while (SDL_PollEvent(e))
-    {
-        if (e->type == SDL_QUIT)
+        if (e->type == SDL_MOUSEBUTTONUP)
         {
-            m_context->setQuitFlag(true);
+            m_gMouse.isClicked = false;
         }
         if (e->type == SDL_KEYDOWN)
         {
             switch (e->key.keysym.sym)
             {
-            case SDLK_s:
+            case SDLK_F1:
                 m_context->transitionTo(new MenuScene());
                 break;
             }
         }
     }
+
+    SDL_GetMouseState(&m_gMouse.position.x, &m_gMouse.position.y);
 }
-void PlayScene::update()
+void MenuScene::update()
 {
+    btnPlay->update(&m_gMouse);
 }
-void PlayScene::draw(SDL_Renderer *renderer)
+void MenuScene::draw()
 {
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, m_context->fetchGameAssets()->cityBGTexture, NULL, NULL);
-    SDL_RenderPresent(renderer);
-    printf("SDL_Error: %s.\n", SDL_GetError());
+    SDL_SetRenderDrawColor(gameRenderer, 0, 0, 0, 255);
+    SDL_RenderClear(gameRenderer);
+
+    btnPlay->draw();
+
+    SDL_RenderPresent(gameRenderer);
 };
-#pragma endregion PlayScene
+void MenuScene::cbPlay()
+{
+    printf("MenuScene::cbPlay() | TODO.\n");
+}
+void MenuScene::loadAssets()
+{
+    // Images
+    btnPlayTexture = new GTexture();
+    btnPlayTexture->loadFromFile("assets/images/ui_elements.png");
+
+    // Sounds
+    // --- TODO ---
+}
+void MenuScene::createButtons()
+{
+    WindowMetadata winData;
+
+    SDL_Rect btnPlay_rect = {50, 50, 16 * winData.PXSCALE, 16 * winData.PXSCALE};
+    std::map<BtnState, SDL_Rect> btnPlay_clips;
+    btnPlay_clips[BST_NORMAL] = {0, 24, 16, 16};
+    btnPlay_clips[BST_HOVERED] = {16, 24, 16, 16};
+    btnPlay = new GButton(btnPlayTexture, btnPlay_rect, btnPlay_clips);
+    btnPlay->bindCallback(std::bind(&MenuScene::cbPlay, this));
+}
+#pragma endregion MenuScene
