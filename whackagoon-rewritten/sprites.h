@@ -7,7 +7,7 @@
 #include <map>
 #include <SDL2/SDL.h>
 #include "g_data.h"
-#include "g_texture.h"
+#include "widgets.h"
 
 enum BtnState
 {

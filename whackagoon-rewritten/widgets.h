@@ -26,4 +26,20 @@ public:
     Uint32 getTicks();
 };
 
+class GTexture
+{
+private:
+    SDL_Texture *m_texture;
+
+public:
+    GTexture();
+    ~GTexture();
+
+    void loadFromFile(std::string path);
+    void free();
+    void draw(SDL_Rect *clip = NULL, SDL_Rect *dst = NULL);
+    int fetchWidth();
+    int fetchHeight();
+};
+
 #endif // WIDGETS_H

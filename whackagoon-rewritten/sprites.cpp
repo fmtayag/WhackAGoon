@@ -6,7 +6,6 @@
 #include "sprites.h"
 #include "g_data.h"
 #include "helpers.h"
-#include "g_texture.h"
 
 #pragma region GButton
 //{ GButton
@@ -31,7 +30,7 @@ GButton::GButton(GTexture *texture, SDL_Rect rect, std::map<BtnState, SDL_Rect> 
 }
 GButton::~GButton()
 {
-    delete m_texture;
+    //delete m_texture;
     printf("GButton::~GButton() | GButton deleted.\n");
 }
 void GButton::update(GameMouse *mouse_s)

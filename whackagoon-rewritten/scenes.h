@@ -3,6 +3,7 @@
 #pragma once
 
 #include <iostream>
+#include <memory>
 #include <SDL2/SDL.h>
 #include "g_data.h"
 #include "widgets.h"
@@ -87,13 +88,18 @@ class MenuScene : public Scene
 {
 private:
     // Buttons
-    GButton *btnPlay;
-    GButton *btnHelp;
-    GButton *btnInfo;
+    std::unique_ptr<GButton> btnPlay;
+    std::unique_ptr<GButton> btnHelp;
+    std::unique_ptr<GButton> btnInfo;
 
     // Textures
-    GTexture *uiElementsTexture;
-    GTexture *brickBGTexture;
+    std::unique_ptr<GTexture> uiElementsTexture;
+    std::unique_ptr<GTexture> brickBGTexture;
+
+    // Flags
+    bool m_flagToPlay = false;
+    bool m_flagToHelp = false;
+    bool m_flagToInfo = false;
 
     // Callbacks
     void cbPlay();
@@ -107,6 +113,35 @@ private:
 public:
     MenuScene();
     ~MenuScene();
+
+    void handleEvents(SDL_Event *e);
+    void update();
+    void draw();
+};
+
+class PlayScene : public Scene
+{
+private:
+    // Buttons
+    std::unique_ptr<GButton> btnToMenu;
+
+    // Textures
+    std::unique_ptr<GTexture> uiElementsTexture;
+    std::unique_ptr<GTexture> cityBGTexture;
+
+    // Flags
+    bool m_flagToMenu = false;
+
+    // Callbacks
+    void cbToMenu();
+
+    // Initializer functions
+    void loadAssets();
+    void createButtons();
+
+public:
+    PlayScene();
+    ~PlayScene();
 
     void handleEvents(SDL_Event *e);
     void update();

@@ -7,6 +7,10 @@ SET OUTFILE=whackagoon-rew.exe
 SET BUILDDIR=build/
 SET OUTPATH=%BUILDDIR%%OUTFILE%
 
+for /F "tokens=1,2 delims=#" %%a in ('"prompt #$H#$E# & echo on & for %%b in (1) do     rem"') do (
+  set "DEL=%%a"
+)
+
 if not exist %OBJDIR% (
 	mkdir %OBJDIR%
 )
@@ -22,7 +26,6 @@ g++ scenes.cpp -c -o %OBJDIR%scenes.o -I%INCLUDE%
 g++ widgets.cpp -c -o %OBJDIR%widgets.o -I%INCLUDE%
 g++ sprites.cpp -c -o %OBJDIR%sprites.o -I%INCLUDE%
 g++ helpers.cpp -c -o %OBJDIR%helpers.o -I%INCLUDE%
-g++ g_texture.cpp -c -o %OBJDIR%g_texture.o -I%INCLUDE%
 
 :: Compile
 g++ %OBJDIR%*.o -o %OUTPATH% -L%LIB% -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf

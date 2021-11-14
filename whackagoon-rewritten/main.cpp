@@ -15,7 +15,6 @@
 #include "g_data.h"
 #include "scenes.h"
 #include "helpers.h"
-#include "g_texture.h"
 
 SDL_Window *gameWindow;
 SDL_Renderer *gameRenderer;

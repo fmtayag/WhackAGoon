@@ -4,7 +4,7 @@
 
 #include <string>
 #include <SDL2/SDL.h>
-#include "g_texture.h"
+#include "widgets.h"
 
 extern SDL_Window *gameWindow;
 extern SDL_Renderer *gameRenderer;
