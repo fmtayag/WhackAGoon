@@ -88,12 +88,17 @@ class MenuScene : public Scene
 private:
     // Buttons
     GButton *btnPlay;
+    GButton *btnHelp;
+    GButton *btnInfo;
 
     // Textures
-    GTexture *btnPlayTexture;
+    GTexture *uiElementsTexture;
+    GTexture *brickBGTexture;
 
     // Callbacks
     void cbPlay();
+    void cbHelp();
+    void cbInfo();
 
     // Initializer functions
     void loadAssets();

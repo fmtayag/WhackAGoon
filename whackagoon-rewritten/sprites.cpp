@@ -64,7 +64,7 @@ void GButton::u_state(GameMouse *mouse_s)
 }
 void GButton::draw()
 {
-    printf("m_clips rect: (%d, %d, %d, %d) (xywh).\n", m_clips[m_state].x, m_clips[m_state].y, m_clips[m_state].w, m_clips[m_state].h);
+    //printf("m_clips rect: (%d, %d, %d, %d) (xywh).\n", m_clips[m_state].x, m_clips[m_state].y, m_clips[m_state].w, m_clips[m_state].h);
     m_texture->draw(&m_clips[m_state], &m_rect);
 }
 void GButton::setState(BtnState state)
