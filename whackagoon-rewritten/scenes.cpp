@@ -103,6 +103,7 @@ void MenuScene::createButtons()
     // --- btnPlay --
     SDL_Rect btnPlay_rect = {50, 50, 16 * winData.PXSCALE, 16 * winData.PXSCALE};
     std::map<BtnState, SDL_Rect> btnPlay_clips;
+
     btnPlay_clips[BST_NORMAL] = {0, 24, 16, 16};
     btnPlay_clips[BST_HOVERED] = {16, 24, 16, 16};
     btnPlay = std::unique_ptr<GButton>(new GButton(uiElementsTexture.get(), btnPlay_rect, btnPlay_clips));
@@ -200,7 +201,6 @@ void PlayScene::draw()
 }
 void PlayScene::loadAssets()
 {
-    //cityBGTexture = std::unique_ptr<GTexture>(new GTexture());
     cityBGTexture = std::unique_ptr<GTexture>(new GTexture());
     cityBGTexture->loadFromFile("assets/images/city_bg.png");
 

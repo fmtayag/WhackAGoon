@@ -13,12 +13,17 @@ GButton::GButton(GTexture *texture, SDL_Rect rect, std::map<BtnState, SDL_Rect> 
 {
     // m_texture = new GTexture();
     // m_texture->loadFromFile(imgpath);
+
+    // Reminder: don't bother deep copying this...
+    // You can deep copy the GTexture object but not the SDL_Texture inside it
+    // Incomplete types like SDL_Texture can't be deep copied, it seems.
     m_texture = texture;
+
     m_rect.x = rect.x;
     m_rect.y = rect.y;
     m_rect.w = rect.w;
     m_rect.h = rect.h;
-    //m_state = BST_NORMAL; // set at header instead
+    m_state = BST_NORMAL;
     m_clips = clips;
 
     WindowMetadata winDat;
@@ -30,7 +35,7 @@ GButton::GButton(GTexture *texture, SDL_Rect rect, std::map<BtnState, SDL_Rect> 
 }
 GButton::~GButton()
 {
-    //delete m_texture;
+    m_texture = NULL;
     printf("GButton::~GButton() | GButton deleted.\n");
 }
 void GButton::update(GameMouse *mouse_s)

@@ -28,7 +28,7 @@ g++ sprites.cpp -c -o %OBJDIR%sprites.o -I%INCLUDE%
 g++ helpers.cpp -c -o %OBJDIR%helpers.o -I%INCLUDE%
 
 :: Compile
-g++ %OBJDIR%*.o -o %OUTPATH% -L%LIB% -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
+g++ %OBJDIR%*.o -o %OUTPATH% -L%LIB% -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -Wall -Wextra -pedantic
 
 @echo off
 

@@ -19,10 +19,11 @@ enum BtnState
 
 class GButton
 {
+protected:
 private:
     SDL_Rect m_rect;
     GTexture *m_texture;
-    BtnState m_state = BST_NORMAL;
+    BtnState m_state;
     std::map<BtnState, SDL_Rect> m_clips;
     std::function<void()> m_callback;
 
