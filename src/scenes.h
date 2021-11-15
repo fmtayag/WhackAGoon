@@ -16,6 +16,8 @@ protected:
     SceneContext *m_context;
     GameMouse m_gMouse;
 
+    void resetMouseState() { SDL_GetMouseState(&m_gMouse.position.x, &m_gMouse.position.y); };
+
 public:
     virtual ~Scene() = default;
 
@@ -95,6 +97,7 @@ private:
     // Textures
     std::unique_ptr<GTexture> uiElementsTexture;
     std::unique_ptr<GTexture> brickBGTexture;
+    std::unique_ptr<GTexture> logoTexture;
 
     // Flags
     bool m_flagToPlay = false;

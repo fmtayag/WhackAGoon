@@ -72,8 +72,6 @@ void GTexture::loadFromFile(std::string path)
 void GTexture::draw(SDL_Rect *clip, SDL_Rect *dst)
 {
     SDL_RenderCopy(gameRenderer, m_texture, clip, dst);
-    // printf("GTexture::draw() | SDL_Error: %s\n", SDL_GetError());
-    // printf("GTexture::draw() | IMG_Error: %s\n", IMG_GetError());
 }
 void GTexture::free()
 {

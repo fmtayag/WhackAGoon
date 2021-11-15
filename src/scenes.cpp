@@ -10,6 +10,7 @@
 #pragma region MenuScene
 MenuScene::MenuScene()
 {
+    resetMouseState();
     loadAssets();
     createButtons();
 }
@@ -74,10 +75,15 @@ void MenuScene::update()
 }
 void MenuScene::draw()
 {
+    // Rects
+    WindowMetadata winData;
+    SDL_Rect logoRect = {50, 50, 80 * winData.PXSCALE, 50 * winData.PXSCALE};
+
     SDL_SetRenderDrawColor(gameRenderer, 0, 0, 0, 255);
     SDL_RenderClear(gameRenderer);
 
     brickBGTexture->draw();
+    logoTexture->draw(NULL, &logoRect);
     btnPlay->draw();
     btnHelp->draw();
     btnInfo->draw();
@@ -93,6 +99,9 @@ void MenuScene::loadAssets()
     brickBGTexture = std::unique_ptr<GTexture>(new GTexture());
     brickBGTexture->loadFromFile("assets/images/brick_bg.png");
 
+    logoTexture = std::unique_ptr<GTexture>(new GTexture());
+    logoTexture->loadFromFile("assets/images/logo.png");
+
     // Sounds
     // --- TODO ---
 }
@@ -100,29 +109,34 @@ void MenuScene::createButtons()
 {
     WindowMetadata winData;
 
+    // Anchor points
+    int btnW = 16 * winData.PXSCALE;
+    int btnH = 16 * winData.PXSCALE;
+    int cx = (winData.WINDOW_WIDTH / 2) - (btnW / 2);
+
     // --- btnPlay --
-    SDL_Rect btnPlay_rect = {50, 50, 16 * winData.PXSCALE, 16 * winData.PXSCALE};
+    SDL_Rect btnPlay_rect = {cx, (int)(winData.WINDOW_HEIGHT * 0.70), btnW, btnH};
     std::map<BtnState, SDL_Rect> btnPlay_clips;
 
     btnPlay_clips[BST_NORMAL] = {0, 24, 16, 16};
     btnPlay_clips[BST_HOVERED] = {16, 24, 16, 16};
-    btnPlay = std::unique_ptr<GButton>(new GButton(uiElementsTexture.get(), btnPlay_rect, btnPlay_clips));
+    btnPlay = std::make_unique<GButton>(GButton(uiElementsTexture.get(), btnPlay_rect, btnPlay_clips));
     btnPlay->bindCallback(std::bind(&MenuScene::cbPlay, this));
 
     // --- btnHelp ---
-    SDL_Rect btnHelp_rect = {150, 50, 16 * winData.PXSCALE, 16 * winData.PXSCALE};
+    SDL_Rect btnHelp_rect = {(int)(cx - (btnW * 1.5)), (int)(winData.WINDOW_HEIGHT * 0.75), btnW, btnH};
     std::map<BtnState, SDL_Rect> btnHelp_clips;
     btnHelp_clips[BST_NORMAL] = {32, 24, 16, 16};
     btnHelp_clips[BST_HOVERED] = {48, 24, 16, 16};
-    btnHelp = std::unique_ptr<GButton>(new GButton(uiElementsTexture.get(), btnHelp_rect, btnHelp_clips));
+    btnHelp = std::make_unique<GButton>(GButton(uiElementsTexture.get(), btnHelp_rect, btnHelp_clips));
     btnHelp->bindCallback(std::bind(&MenuScene::cbHelp, this));
 
     // --- btnInfo ---
-    SDL_Rect btnInfo_rect = {150, 150, 16 * winData.PXSCALE, 16 * winData.PXSCALE};
+    SDL_Rect btnInfo_rect = {(int)(cx + (btnW * 1.5)), (int)(winData.WINDOW_HEIGHT * 0.75), btnW, btnH};
     std::map<BtnState, SDL_Rect> btnInfo_clips;
     btnInfo_clips[BST_NORMAL] = {0, 56, 16, 16};
     btnInfo_clips[BST_HOVERED] = {16, 56, 16, 16};
-    btnInfo = std::unique_ptr<GButton>(new GButton(uiElementsTexture.get(), btnInfo_rect, btnInfo_clips));
+    btnInfo = std::make_unique<GButton>(GButton(uiElementsTexture.get(), btnInfo_rect, btnInfo_clips));
     btnInfo->bindCallback(std::bind(&MenuScene::cbInfo, this));
 }
 // *** CALLBACKS ***
@@ -143,6 +157,7 @@ void MenuScene::cbInfo()
 #pragma region PlayScene
 PlayScene::PlayScene()
 {
+    resetMouseState();
     loadAssets();
     createButtons();
 }
@@ -220,7 +235,7 @@ void PlayScene::createButtons()
     std::map<BtnState, SDL_Rect> btnToMenu_clips;
     btnToMenu_clips[BST_NORMAL] = {0, 16, 8, 8};
     btnToMenu_clips[BST_HOVERED] = {8, 16, 8, 8};
-    btnToMenu = std::unique_ptr<GButton>(new GButton(uiElementsTexture.get(), btnToMenu_rect, btnToMenu_clips));
+    btnToMenu = std::make_unique<GButton>(GButton(uiElementsTexture.get(), btnToMenu_rect, btnToMenu_clips));
     btnToMenu->bindCallback(std::bind(&PlayScene::cbToMenu, this));
 }
 // *** CALLBACKS ***

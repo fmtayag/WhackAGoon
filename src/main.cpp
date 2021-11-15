@@ -12,6 +12,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include "g_data.h"
 #include "scenes.h"
 #include "helpers.h"
@@ -48,6 +49,10 @@ void initializeGame()
         winMetadata.WINDOW_WIDTH, winMetadata.WINDOW_HEIGHT,
         SDL_WINDOW_SHOWN);
 
+    SDL_Surface *iconSurf = IMG_Load("assets/images/icon.png");
+    SDL_SetWindowIcon(gameWindow, iconSurf);
+    SDL_FreeSurface(iconSurf);
+
     gameRenderer = SDL_CreateRenderer(gameWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
 
     gameContext = new SceneContext(new MenuScene());
@@ -55,6 +60,8 @@ void initializeGame()
     IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
 
     TTF_Init();
+
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 }
 void runGame()
 {
