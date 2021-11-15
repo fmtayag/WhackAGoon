@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cassert>
-#include <unistd.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "helpers.h"
