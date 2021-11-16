@@ -116,7 +116,7 @@ private:
     void cbHelp();
     void cbInfo();
 
-    // Initializer functions
+    // Initializer methods
     void loadAssets();
     void createButtons();
 
@@ -158,7 +158,7 @@ private:
     // Callbacks
     void cbToMenu();
 
-    // Initializer functions
+    // Initializer methods
     void loadAssets();
     void createButtons();
     void initializeTimers();

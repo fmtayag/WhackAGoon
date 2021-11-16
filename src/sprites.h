@@ -3,8 +3,10 @@
 #pragma once
 
 #include <functional>
+#include <utility>
 #include <list>
 #include <map>
+#include <vector>
 #include <SDL.h>
 #include "g_data.h"
 #include "widgets.h"
@@ -62,8 +64,31 @@ public:
 class Hole
 {
 private:
+    enum HoleType
+    {
+        HT_NONE,
+        HT_GOON,
+        HT_TOWNIE,
+        HT_MAYOR
+    };
+    enum HoleAnimState
+    {
+        HAS_REST,
+        HAS_TOAWAKE,
+        HAS_AWAKE,
+        HAS_WHACKED,
+        HAS_TOREST,
+    };
+
+    // Spritesheet map stuff
+    typedef std::pair<HoleType, HoleAnimState> HoleState;
+    typedef std::map<HoleState, std::vector<SDL_Rect>> SheetMap;
+    static SheetMap m_sheetMap;
+    static SheetMap createSheetMap();
+
     std::shared_ptr<GTexture> m_texture;
     SDL_Rect m_rect;
+    HoleState m_state;
 
 public:
     Hole(std::shared_ptr<GTexture> texture, SDL_Point pos, PosCentering poscenter);

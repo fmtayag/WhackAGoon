@@ -2,6 +2,8 @@
 #include <functional>
 #include <map>
 #include <cassert>
+#include <algorithm>
+#include <vector>
 #include <SDL.h>
 #include "sprites.h"
 #include "g_data.h"
@@ -132,6 +134,8 @@ SDL_Point Particle::getPos()
 #pragma region Hole
 Hole::Hole(std::shared_ptr<GTexture> texture, SDL_Point pos, PosCentering poscenter)
 {
+    // Initialize m_sheetClips (static)
+
     WindowMetadata winData;
     m_texture = texture;
 
@@ -170,7 +174,101 @@ void Hole::update()
 }
 void Hole::draw()
 {
-    SDL_Rect clip = {0, 16, 16, 16};
-    m_texture->draw(&clip, &m_rect);
+    m_state = HoleState(HT_MAYOR, HAS_TOREST);
+    m_texture->draw(&m_sheetMap[m_state][1], &m_rect);
 }
+Hole::SheetMap Hole::createSheetMap()
+{
+    SheetMap smap;
+
+    // Empty hole sprite
+    smap[HoleState(HT_NONE, HAS_REST)] = {
+        {0, 16, 16, 16}};
+
+    // --- Goon sprites ---
+    smap[HoleState(HT_GOON, HAS_TOAWAKE)] = {
+        {0, 32, 16, 16},
+        {16, 32, 16, 16},
+        {32, 32, 16, 16},
+        {48, 32, 16, 16},
+        {64, 32, 16, 16},
+        {80, 32, 16, 16},
+        {96, 32, 16, 16},
+        {112, 32, 16, 16}};
+
+    smap[HoleState(HT_GOON, HAS_AWAKE)] = {
+        {0, 48, 16, 16},
+        {16, 48, 16, 16},
+        {32, 48, 16, 16},
+        {48, 48, 16, 16}};
+
+    smap[HoleState(HT_GOON, HAS_WHACKED)] = {
+        {0, 64, 16, 16},
+        {16, 64, 16, 16},
+        {32, 64, 16, 16},
+        {48, 64, 16, 16}};
+
+    // ... just reverse the "to awake" frames for the "to rest" frames.
+    smap[HoleState(HT_GOON, HAS_TOREST)] = smap[HoleState(HT_GOON, HAS_TOAWAKE)];
+    std::reverse(smap[HoleState(HT_GOON, HAS_TOREST)].begin(), smap[HoleState(HT_GOON, HAS_TOREST)].end());
+
+    // --- Townie sprites ---
+    smap[HoleState(HT_TOWNIE, HAS_TOAWAKE)] = {
+        {0, 128, 16, 16},
+        {16, 128, 16, 16},
+        {32, 128, 16, 16},
+        {48, 128, 16, 16},
+        {64, 128, 16, 16},
+        {80, 128, 16, 16},
+        {96, 128, 16, 16},
+        {112, 128, 16, 16}};
+
+    smap[HoleState(HT_TOWNIE, HAS_AWAKE)] = {
+        {0, 144, 16, 16},
+        {16, 144, 16, 16},
+        {32, 144, 16, 16},
+        {48, 144, 16, 16},
+        {64, 144, 16, 16},
+        {80, 144, 16, 16}};
+
+    smap[HoleState(HT_TOWNIE, HAS_WHACKED)] = {
+        {0, 160, 16, 16},
+        {16, 160, 16, 16},
+        {32, 160, 16, 16},
+        {48, 160, 16, 16}};
+
+    // ... just reverse the "to awake" frames for the "to rest" frames.
+    smap[HoleState(HT_TOWNIE, HAS_TOREST)] = smap[HoleState(HT_TOWNIE, HAS_TOAWAKE)];
+    std::reverse(smap[HoleState(HT_TOWNIE, HAS_TOREST)].begin(), smap[HoleState(HT_TOWNIE, HAS_TOREST)].end());
+
+    // --- Mayor sprites ---
+    smap[HoleState(HT_MAYOR, HAS_TOAWAKE)] = {
+        {0, 80, 16, 16},
+        {16, 80, 16, 16},
+        {32, 80, 16, 16},
+        {48, 80, 16, 16},
+        {64, 80, 16, 16},
+        {80, 80, 16, 16},
+        {96, 80, 16, 16},
+        {112, 80, 16, 16}};
+
+    smap[HoleState(HT_MAYOR, HAS_AWAKE)] = {
+        {0, 96, 16, 16},
+        {16, 96, 16, 16},
+        {32, 96, 16, 16},
+        {48, 96, 16, 16}};
+
+    smap[HoleState(HT_MAYOR, HAS_WHACKED)] = {
+        {0, 112, 16, 16},
+        {16, 112, 16, 16},
+        {32, 112, 16, 16},
+        {48, 112, 16, 16}};
+
+    // ... just reverse the "to awake" frames for the "to rest" frames.
+    smap[HoleState(HT_MAYOR, HAS_TOREST)] = smap[HoleState(HT_MAYOR, HAS_TOAWAKE)];
+    std::reverse(smap[HoleState(HT_MAYOR, HAS_TOREST)].begin(), smap[HoleState(HT_MAYOR, HAS_TOREST)].end());
+
+    return smap;
+}
+Hole::SheetMap Hole::m_sheetMap = Hole::createSheetMap();
 #pragma endregion Hole
