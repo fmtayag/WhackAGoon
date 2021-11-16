@@ -134,6 +134,7 @@ class PlayScene : public Scene
 private:
     // Sprite groups
     std::vector<std::shared_ptr<Particle>> m_particles;
+    std::vector<std::shared_ptr<Hole>> m_holes;
 
     // Buttons
     std::unique_ptr<GButton> btnToMenu;
@@ -142,6 +143,7 @@ private:
     std::unique_ptr<GTexture> uiElementsTexture;
     std::unique_ptr<GTexture> cityBGTexture;
     std::unique_ptr<GTexture> auraBGTexture;
+    std::shared_ptr<GTexture> holeSheetTexture;
 
     // Fonts
     std::unique_ptr<GFont> m_gFontInfo;
@@ -160,6 +162,7 @@ private:
     void loadAssets();
     void createButtons();
     void initializeTimers();
+    void createHoles();
 
 public:
     PlayScene();

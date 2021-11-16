@@ -128,3 +128,49 @@ SDL_Point Particle::getPos()
     return pos;
 }
 #pragma endregion Particle
+
+#pragma region Hole
+Hole::Hole(std::shared_ptr<GTexture> texture, SDL_Point pos, PosCentering poscenter)
+{
+    WindowMetadata winData;
+    m_texture = texture;
+
+    m_rect.x = pos.x;
+    m_rect.y = pos.y;
+    m_rect.w = 16 * winData.PXSCALE;
+    m_rect.h = 16 * winData.PXSCALE;
+
+    // Check for position centers
+    switch (poscenter)
+    {
+    case PosCentering::POSCEN_NONE:
+        // Do nothing
+        break;
+    case PosCentering::POSCEN_X:
+        m_rect.x = (pos.x / 2) - (m_rect.w / 2);
+        break;
+    case PosCentering::POSCEN_Y:
+        m_rect.y = pos.y - (m_rect.h / 2);
+        break;
+    case PosCentering::POSCEN_BOTH:
+        m_rect.x = pos.x - (m_rect.w / 2);
+        m_rect.y = pos.y - (m_rect.h / 2);
+        break;
+    default:
+        printf("WARNING: Hole::Hole() -> default case reached.\n");
+        break;
+    }
+}
+Hole::~Hole()
+{
+    m_texture = NULL;
+}
+void Hole::update()
+{
+}
+void Hole::draw()
+{
+    SDL_Rect clip = {0, 16, 16, 16};
+    m_texture->draw(&clip, &m_rect);
+}
+#pragma endregion Hole

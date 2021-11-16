@@ -173,9 +173,7 @@ PlayScene::PlayScene()
     loadAssets();
     createButtons();
     initializeTimers();
-
-    GameColors gColors;
-    WindowMetadata winData;
+    createHoles();
 }
 PlayScene::~PlayScene()
 {
@@ -228,6 +226,13 @@ void PlayScene::update()
         //printf("Warmup is overz!!\n");
     }
 
+    // Update holes
+    for (std::shared_ptr<Hole> hole : m_holes)
+    {
+        //printf("drawing particles\n");
+        hole->update();
+    }
+
     // Spawn particles
     if (m_tmrSpawnParticle.getTicks() > m_delaySpawnParticle)
     {
@@ -275,6 +280,13 @@ void PlayScene::draw()
 
     cityBGTexture->draw();
     btnToMenu->draw();
+
+    // Draw holes
+    for (std::shared_ptr<Hole> hole : m_holes)
+    {
+        hole->draw();
+    }
+
     m_gFontInfo->draw("Hello!", {winDat.HEIGHT / 2, 50}, gColors.WHITE, PosCentering::POSCEN_X);
 
     SDL_RenderPresent(gameRenderer);
@@ -290,6 +302,9 @@ void PlayScene::loadAssets()
 
     uiElementsTexture = std::unique_ptr<GTexture>(new GTexture());
     uiElementsTexture->loadFromFile("assets/images/ui_elements.png");
+
+    holeSheetTexture = std::unique_ptr<GTexture>(new GTexture());
+    holeSheetTexture->loadFromFile("assets/images/holeSheet.png");
 
     // Load fonts
     m_gFontInfo = std::unique_ptr<GFont>(new GFont());
@@ -315,6 +330,39 @@ void PlayScene::initializeTimers()
 {
     m_tmrWarmup.start();
     m_tmrSpawnParticle.start();
+}
+void PlayScene::createHoles()
+{
+    WindowMetadata winData;
+    const int cwx = winData.WIDTH / 2;
+    const int cwy = winData.HEIGHT / 2;
+    const int offy_row1 = winData.PXSCALE * 4;
+    const int offy_row2 = winData.PXSCALE * 20;
+    const int offx_col1 = winData.PXSCALE * 20;
+    const int offx_col2 = winData.PXSCALE * 40;
+
+    std::shared_ptr<Hole> hole1(new Hole(holeSheetTexture, {cwx - offx_col2, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole2(new Hole(holeSheetTexture, {cwx - offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole3(new Hole(holeSheetTexture, {cwx, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole4(new Hole(holeSheetTexture, {cwx + offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole5(new Hole(holeSheetTexture, {cwx + offx_col2, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+
+    std::shared_ptr<Hole> hole6(new Hole(holeSheetTexture, {cwx - offx_col2, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole7(new Hole(holeSheetTexture, {cwx - offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole8(new Hole(holeSheetTexture, {cwx, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole9(new Hole(holeSheetTexture, {cwx + offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole10(new Hole(holeSheetTexture, {cwx + offx_col2, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+
+    m_holes.push_back(hole1);
+    m_holes.push_back(hole2);
+    m_holes.push_back(hole3);
+    m_holes.push_back(hole4);
+    m_holes.push_back(hole5);
+    m_holes.push_back(hole6);
+    m_holes.push_back(hole7);
+    m_holes.push_back(hole8);
+    m_holes.push_back(hole9);
+    m_holes.push_back(hole10);
 }
 // *** CALLBACKS ***
 void PlayScene::cbToMenu()

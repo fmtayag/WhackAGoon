@@ -9,6 +9,8 @@
 #include "g_data.h"
 #include "widgets.h"
 
+enum PosCentering;
+
 enum BtnState
 {
     BST_DISABLED,
@@ -55,6 +57,19 @@ public:
     void draw();
 
     SDL_Point getPos();
+};
+
+class Hole
+{
+private:
+    std::shared_ptr<GTexture> m_texture;
+    SDL_Rect m_rect;
+
+public:
+    Hole(std::shared_ptr<GTexture> texture, SDL_Point pos, PosCentering poscenter);
+    ~Hole();
+    void update();
+    void draw();
 };
 
 #endif // SPRITES_H
