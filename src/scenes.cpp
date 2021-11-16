@@ -123,10 +123,10 @@ void MenuScene::createButtons()
     // Anchor points
     int btnW = 16 * winData.PXSCALE;
     int btnH = 16 * winData.PXSCALE;
-    int cx = (winData.WINDOW_WIDTH / 2) - (btnW / 2);
+    int cx = (winData.WIDTH / 2) - (btnW / 2);
 
     // --- btnPlay --
-    SDL_Rect btnPlay_rect = {cx, static_cast<int>(winData.WINDOW_HEIGHT * 0.70), btnW, btnH};
+    SDL_Rect btnPlay_rect = {cx, static_cast<int>(winData.HEIGHT * 0.70), btnW, btnH};
     std::map<BtnState, SDL_Rect> btnPlay_clips;
 
     btnPlay_clips[BST_NORMAL] = {0, 24, 16, 16};
@@ -135,7 +135,7 @@ void MenuScene::createButtons()
     btnPlay->bindCallback(std::bind(&MenuScene::cbPlay, this));
 
     // --- btnHelp ---
-    SDL_Rect btnHelp_rect = {static_cast<int>(cx - (btnW * 1.5)), static_cast<int>(winData.WINDOW_HEIGHT * 0.75), btnW, btnH};
+    SDL_Rect btnHelp_rect = {static_cast<int>(cx - (btnW * 1.5)), static_cast<int>(winData.HEIGHT * 0.75), btnW, btnH};
     std::map<BtnState, SDL_Rect> btnHelp_clips;
     btnHelp_clips[BST_NORMAL] = {32, 24, 16, 16};
     btnHelp_clips[BST_HOVERED] = {48, 24, 16, 16};
@@ -143,7 +143,7 @@ void MenuScene::createButtons()
     btnHelp->bindCallback(std::bind(&MenuScene::cbHelp, this));
 
     // --- btnInfo ---
-    SDL_Rect btnInfo_rect = {static_cast<int>(cx + (btnW * 1.5)), static_cast<int>(winData.WINDOW_HEIGHT * 0.75), btnW, btnH};
+    SDL_Rect btnInfo_rect = {static_cast<int>(cx + (btnW * 1.5)), static_cast<int>(winData.HEIGHT * 0.75), btnW, btnH};
     std::map<BtnState, SDL_Rect> btnInfo_clips;
     btnInfo_clips[BST_NORMAL] = {0, 56, 16, 16};
     btnInfo_clips[BST_HOVERED] = {16, 56, 16, 16};
@@ -171,6 +171,7 @@ PlayScene::PlayScene()
     resetMouseState();
     loadAssets();
     createButtons();
+    initializeTimers();
 }
 PlayScene::~PlayScene()
 {
@@ -213,20 +214,31 @@ void PlayScene::handleEvents(SDL_Event *e)
 void PlayScene::update()
 {
     btnToMenu->update(&m_gMouse);
+
+    // Update timers
+    if (m_tmrWarmup.getTicks() >= m_delayWarmup)
+    {
+        printf("Warmup is overz!!\n");
+    }
 }
 void PlayScene::draw()
 {
+    GameColors gColors;
+    WindowMetadata winDat;
+
     SDL_SetRenderDrawColor(gameRenderer, 200, 200, 0, 255);
     SDL_RenderClear(gameRenderer);
 
     auraBGTexture->draw();
     cityBGTexture->draw();
     btnToMenu->draw();
+    m_gFontInfo->draw("Hello!", {winDat.HEIGHT / 2, 50}, gColors.WHITE, PosCentering::POSCEN_X);
 
     SDL_RenderPresent(gameRenderer);
 }
 void PlayScene::loadAssets()
 {
+    // Load images
     cityBGTexture = std::unique_ptr<GTexture>(new GTexture());
     cityBGTexture->loadFromFile("assets/images/city_bg.png");
 
@@ -235,6 +247,10 @@ void PlayScene::loadAssets()
 
     uiElementsTexture = std::unique_ptr<GTexture>(new GTexture());
     uiElementsTexture->loadFromFile("assets/images/ui_elements.png");
+
+    // Load fonts
+    m_gFontInfo = std::unique_ptr<GFont>(new GFont());
+    m_gFontInfo->loadFontFromFile("assets/fonts/04B03.TTF", 48);
 }
 void PlayScene::createButtons()
 {
@@ -243,7 +259,7 @@ void PlayScene::createButtons()
     // --- btnToMenu --
     const int btnToMenu_rw = 8 * winData.PXSCALE;
     const int btnToMenu_rh = 8 * winData.PXSCALE;
-    const int btnToMenu_rx = (winData.WINDOW_WIDTH - winData.PXSCALE) - btnToMenu_rw;
+    const int btnToMenu_rx = (winData.WIDTH - winData.PXSCALE) - btnToMenu_rw;
     const int btnToMenu_ry = winData.PXSCALE;
     SDL_Rect btnToMenu_rect = {btnToMenu_rx, btnToMenu_ry, btnToMenu_rw, btnToMenu_rh};
     std::map<BtnState, SDL_Rect> btnToMenu_clips;
@@ -251,6 +267,10 @@ void PlayScene::createButtons()
     btnToMenu_clips[BST_HOVERED] = {8, 16, 8, 8};
     btnToMenu = std::make_unique<GButton>(GButton(uiElementsTexture.get(), btnToMenu_rect, btnToMenu_clips));
     btnToMenu->bindCallback(std::bind(&PlayScene::cbToMenu, this));
+}
+void PlayScene::initializeTimers()
+{
+    m_tmrWarmup.start();
 }
 // *** CALLBACKS ***
 void PlayScene::cbToMenu()

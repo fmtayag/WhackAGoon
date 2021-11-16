@@ -9,19 +9,12 @@
 extern SDL_Window *gameWindow;
 extern SDL_Renderer *gameRenderer;
 
-struct GameAssets
-{
-    GTexture brickBGTexture;
-    GTexture cityBGTexture;
-    GTexture uiTexture;
-};
-
 struct WindowMetadata
 {
     const std::string TITLE = "Whack-A-Goon!";
     const int PXSCALE = 8;
-    const int WINDOW_WIDTH = 100 * PXSCALE;
-    const int WINDOW_HEIGHT = 100 * PXSCALE;
+    const int WIDTH = 100 * PXSCALE;
+    const int HEIGHT = 100 * PXSCALE;
     const int FPS = 60;
 };
 
@@ -35,6 +28,14 @@ struct GameMouse
 {
     bool isClicked;
     SDL_Point position;
+};
+
+enum PosCentering
+{
+    POSCEN_NONE,
+    POSCEN_X,
+    POSCEN_Y,
+    POSCEN_BOTH
 };
 
 #endif // G_DATA_H

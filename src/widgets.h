@@ -2,6 +2,12 @@
 #define WIDGETS_H
 #pragma once
 
+#include <SDL.h>
+#include <SDL_ttf.h>
+#include "g_data.h"
+
+enum PosCentering; // MSBuild generates CE CS2061 if this isn't in place.
+
 class GTimer
 {
 private:
@@ -40,6 +46,20 @@ public:
     void draw(SDL_Rect *clip = NULL, SDL_Rect *dst = NULL);
     int fetchWidth();
     int fetchHeight();
+};
+
+class GFont
+{
+private:
+    TTF_Font *m_font;
+
+public:
+    GFont();
+    ~GFont();
+
+    void loadFontFromFile(std::string path, int fontSize);
+    void free();
+    void draw(std::string msg, SDL_Point pos, SDL_Color clr, PosCentering poscenter);
 };
 
 #endif // WIDGETS_H

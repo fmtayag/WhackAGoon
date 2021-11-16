@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include "widgets.h"
 #include "g_data.h"
 
@@ -71,7 +72,7 @@ void GTexture::loadFromFile(std::string path)
 }
 void GTexture::draw(SDL_Rect *clip, SDL_Rect *dst)
 {
-    if (this != nullptr)
+    if (m_texture != NULL)
         SDL_RenderCopy(gameRenderer, m_texture, clip, dst);
 }
 void GTexture::free()
@@ -83,3 +84,72 @@ void GTexture::free()
     }
 }
 #pragma endregion GTexture
+
+#pragma region GFont
+GFont::GFont()
+{
+    m_font = NULL;
+}
+GFont::~GFont()
+{
+    free();
+}
+void GFont::loadFontFromFile(std::string path, int fontSize)
+{
+    m_font = TTF_OpenFont(path.c_str(), fontSize);
+}
+void GFont::free()
+{
+    if (m_font != NULL)
+    {
+        TTF_CloseFont(m_font);
+        m_font = NULL;
+    }
+}
+void GFont::draw(std::string msg, SDL_Point pos, SDL_Color clr, PosCentering poscenter)
+{
+    if (m_font != NULL)
+    {
+        // Create temp surface
+        SDL_Surface *msgSurf = TTF_RenderText_Solid(m_font, msg.c_str(), clr);
+
+        // Get width and height
+        const int w = msgSurf->w;
+        const int h = msgSurf->h;
+
+        // Check for position centers
+        switch (poscenter)
+        {
+        case PosCentering::POSCEN_NONE:
+            // Do nothing
+            break;
+        case PosCentering::POSCEN_X:
+            pos.x = pos.x - (w / 2);
+            break;
+        case PosCentering::POSCEN_Y:
+            pos.y = pos.y - (h / 2);
+            break;
+        case PosCentering::POSCEN_BOTH:
+            pos.x = pos.x - (w / 2);
+            pos.y = pos.y - (h / 2);
+            break;
+        default:
+            printf("WARNING: GFont::draw() -> default case reached.\n");
+            break;
+        }
+
+        // Create rect
+        SDL_Rect msgRect = {pos.x, pos.y, w, h};
+
+        // Create texture
+        SDL_Texture *msgTexture = SDL_CreateTextureFromSurface(gameRenderer, msgSurf);
+
+        // Draw texture
+        SDL_RenderCopy(gameRenderer, msgTexture, NULL, &msgRect);
+
+        // Free texture and surface
+        SDL_FreeSurface(msgSurf);
+        SDL_DestroyTexture(msgTexture);
+    }
+}
+#pragma endregion GFont

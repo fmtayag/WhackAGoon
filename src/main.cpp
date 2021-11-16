@@ -49,7 +49,7 @@ void initializeGame()
     gameWindow = SDL_CreateWindow(
         winMetadata.TITLE.c_str(),
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        winMetadata.WINDOW_WIDTH, winMetadata.WINDOW_HEIGHT,
+        winMetadata.WIDTH, winMetadata.HEIGHT,
         SDL_WINDOW_SHOWN);
 
     SDL_Surface *iconSurf = IMG_Load("assets/images/icon.png");

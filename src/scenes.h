@@ -48,20 +48,17 @@ class SceneContext
 {
 private:
     Scene *m_scene;
-    GameAssets *m_gameAssets;
     bool m_flagQuitting;
 
 public:
     // Ctor & Dtor
     SceneContext(Scene *scene) : m_scene(nullptr)
     {
-        m_gameAssets = new GameAssets;
         this->transitionTo(scene);
     }
     ~SceneContext()
     {
         delete m_scene;
-        delete m_gameAssets;
     }
 
     // Scene transition
@@ -73,10 +70,6 @@ public:
         this->m_scene = scene;
         this->m_scene->setContext(this);
     }
-
-    // Game assets
-    void bindGameAssets(GameAssets &gameAssets) { *m_gameAssets = gameAssets; }
-    GameAssets *fetchGameAssets() { return m_gameAssets; }
 
     // Flags
     void setQuitFlag(bool value) { m_flagQuitting = value; }
@@ -146,12 +139,20 @@ private:
     std::unique_ptr<GTexture> cityBGTexture;
     std::unique_ptr<GTexture> auraBGTexture;
 
+    // Fonts
+    std::unique_ptr<GFont> m_gFontInfo;
+
+    // Timers
+    GTimer m_tmrWarmup;
+    Uint32 m_delayWarmup = 3000;
+
     // Callbacks
     void cbToMenu();
 
     // Initializer functions
     void loadAssets();
     void createButtons();
+    void initializeTimers();
 
 public:
     PlayScene();
