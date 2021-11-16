@@ -164,6 +164,12 @@ Hole::Hole(std::shared_ptr<GTexture> texture, SDL_Point pos, PosCentering poscen
         printf("WARNING: Hole::Hole() -> default case reached.\n");
         break;
     }
+
+    m_type = HT_TOWNIE;
+    m_animState = HAS_TOAWAKE;
+    m_state = HoleState(m_type, m_animState); // TODO: Remove later. Only for testing.
+    m_curF = 0;
+    m_tmrNxtF.start();
 }
 Hole::~Hole()
 {
@@ -171,11 +177,77 @@ Hole::~Hole()
 }
 void Hole::update()
 {
+    if (m_tmrNxtF.getTicks() > m_delayNxtF)
+    {
+        // Reset timer
+        m_tmrNxtF.stop();
+        m_tmrNxtF.start();
+
+        // Advance or reset current frame
+        const int vec_size = static_cast<int>(m_sheetMap[m_state].size());
+        if (m_curF < vec_size - 1)
+        {
+            m_curF++;
+        }
+        else
+        {
+            printf("Check.....................\n");
+            nextAS();
+            m_curF = 0;
+        }
+        // printf("m_curF: %d\n", m_curF);
+        // printf("vec_size: %d\n", vec_size);
+    }
 }
 void Hole::draw()
 {
-    m_state = HoleState(HT_MAYOR, HAS_TOREST);
-    m_texture->draw(&m_sheetMap[m_state][1], &m_rect);
+    m_texture->draw(&m_sheetMap[m_state][m_curF], &m_rect);
+}
+void Hole::nextAS()
+{
+    // --- Check for transition to next animation state ---
+
+    if (m_animState == HAS_TOAWAKE)
+    {
+        m_animState = HAS_AWAKE;
+        m_tmrAwake.start();
+
+        // Add tick offset to compensate for ticks lost finishing current animation state.
+        const int vec_size = static_cast<int>(m_sheetMap[m_state].size());
+        m_delayAwake = 1000 + (m_delayNxtF * vec_size);
+    }
+    else if (m_animState == HAS_AWAKE)
+    {
+        if (m_tmrAwake.getTicks() > m_delayAwake)
+        {
+            m_tmrAwake.stop();
+            m_animState = HAS_TOREST;
+        }
+    }
+    else if (m_animState == HAS_WHACKED)
+    {
+        // Don't transition to "TO REST" state until animation has played MAX_WHACKED_LOOP times.
+        if (whacked_loop >= MAX_WHACKED_LOOP)
+        {
+            whacked_loop = 0;
+            m_animState = HAS_TOREST;
+        }
+        else
+        {
+            whacked_loop++;
+        }
+    }
+    else if (m_animState == HAS_TOREST)
+    {
+        m_animState = HAS_REST;
+        m_type = HT_NONE;
+    }
+
+    updateHoleState();
+}
+void Hole::updateHoleState()
+{
+    m_state = HoleState(m_type, m_animState);
 }
 Hole::SheetMap Hole::createSheetMap()
 {

@@ -89,6 +89,23 @@ private:
     std::shared_ptr<GTexture> m_texture;
     SDL_Rect m_rect;
     HoleState m_state;
+    HoleType m_type;
+    HoleAnimState m_animState;
+    int m_curF;
+
+    // AnimState stuff
+    const int MAX_WHACKED_LOOP = 3;
+    int whacked_loop = 0;
+
+    // Timers
+    GTimer m_tmrNxtF;
+    const Uint32 m_delayNxtF = 80;
+    GTimer m_tmrAwake;
+    Uint32 m_delayAwake; // TODO: Randomize later.
+
+    // Helper methods
+    void nextAS();
+    void updateHoleState();
 
 public:
     Hole(std::shared_ptr<GTexture> texture, SDL_Point pos, PosCentering poscenter);
