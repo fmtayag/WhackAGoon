@@ -2,10 +2,28 @@
 #include <memory>
 #include <functional>
 #include <cassert>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "scenes.h"
 #include "widgets.h"
 #include "g_data.h"
+
+#pragma region Scene
+void Scene::checkTransition()
+{
+    switch (m_stflag)
+    {
+    case STF_TOPLAY:
+        m_context->transitionTo(new PlayScene());
+        break;
+    case STF_TOMENU:
+        m_context->transitionTo(new MenuScene());
+    default:
+        break;
+    }
+
+    m_stflag = STF_NONE;
+}
+#pragma endregion Scene
 
 #pragma region MenuScene
 MenuScene::MenuScene()
@@ -48,21 +66,14 @@ void MenuScene::handleEvents(SDL_Event *e)
             switch (e->key.keysym.sym)
             {
             case SDLK_F1:
-                m_context->transitionTo(new MenuScene());
+                m_stflag = STF_TOMENU;
                 break;
             case SDLK_F2:
-                m_context->transitionTo(new PlayScene());
+                m_stflag = STF_TOPLAY;
+                break;
             }
         }
     }
-
-    // Check for active transition flags
-    if (m_flagToPlay)
-        m_context->transitionTo(new PlayScene());
-    else if (m_flagToHelp)
-        printf("TODO.\n");
-    else if (m_flagToInfo)
-        printf("TODO.\n");
 
     // Get mouse state
     SDL_GetMouseState(&m_gMouse.position.x, &m_gMouse.position.y);
@@ -115,7 +126,7 @@ void MenuScene::createButtons()
     int cx = (winData.WINDOW_WIDTH / 2) - (btnW / 2);
 
     // --- btnPlay --
-    SDL_Rect btnPlay_rect = {cx, (int)(winData.WINDOW_HEIGHT * 0.70), btnW, btnH};
+    SDL_Rect btnPlay_rect = {cx, static_cast<int>(winData.WINDOW_HEIGHT * 0.70), btnW, btnH};
     std::map<BtnState, SDL_Rect> btnPlay_clips;
 
     btnPlay_clips[BST_NORMAL] = {0, 24, 16, 16};
@@ -124,7 +135,7 @@ void MenuScene::createButtons()
     btnPlay->bindCallback(std::bind(&MenuScene::cbPlay, this));
 
     // --- btnHelp ---
-    SDL_Rect btnHelp_rect = {(int)(cx - (btnW * 1.5)), (int)(winData.WINDOW_HEIGHT * 0.75), btnW, btnH};
+    SDL_Rect btnHelp_rect = {static_cast<int>(cx - (btnW * 1.5)), static_cast<int>(winData.WINDOW_HEIGHT * 0.75), btnW, btnH};
     std::map<BtnState, SDL_Rect> btnHelp_clips;
     btnHelp_clips[BST_NORMAL] = {32, 24, 16, 16};
     btnHelp_clips[BST_HOVERED] = {48, 24, 16, 16};
@@ -132,7 +143,7 @@ void MenuScene::createButtons()
     btnHelp->bindCallback(std::bind(&MenuScene::cbHelp, this));
 
     // --- btnInfo ---
-    SDL_Rect btnInfo_rect = {(int)(cx + (btnW * 1.5)), (int)(winData.WINDOW_HEIGHT * 0.75), btnW, btnH};
+    SDL_Rect btnInfo_rect = {static_cast<int>(cx + (btnW * 1.5)), static_cast<int>(winData.WINDOW_HEIGHT * 0.75), btnW, btnH};
     std::map<BtnState, SDL_Rect> btnInfo_clips;
     btnInfo_clips[BST_NORMAL] = {0, 56, 16, 16};
     btnInfo_clips[BST_HOVERED] = {16, 56, 16, 16};
@@ -142,15 +153,15 @@ void MenuScene::createButtons()
 // *** CALLBACKS ***
 void MenuScene::cbPlay()
 {
-    m_flagToPlay = true;
+    m_stflag = STF_TOPLAY;
 }
 void MenuScene::cbHelp()
 {
-    m_flagToHelp = true;
+    // --- TODO ---
 }
 void MenuScene::cbInfo()
 {
-    m_flagToInfo = true;
+    // --- TODO ---
 }
 #pragma endregion MenuScene
 
@@ -188,15 +199,14 @@ void PlayScene::handleEvents(SDL_Event *e)
             switch (e->key.keysym.sym)
             {
             case SDLK_F1:
-                m_context->transitionTo(new MenuScene());
+                m_stflag = STF_TOMENU;
+                break;
+            case SDLK_F2:
+                m_stflag = STF_TOPLAY;
                 break;
             }
         }
     }
-
-    // Check for active transition flags
-    if (m_flagToMenu)
-        m_context->transitionTo(new MenuScene());
 
     SDL_GetMouseState(&m_gMouse.position.x, &m_gMouse.position.y);
 }
@@ -209,6 +219,7 @@ void PlayScene::draw()
     SDL_SetRenderDrawColor(gameRenderer, 200, 200, 0, 255);
     SDL_RenderClear(gameRenderer);
 
+    auraBGTexture->draw();
     cityBGTexture->draw();
     btnToMenu->draw();
 
@@ -219,6 +230,9 @@ void PlayScene::loadAssets()
     cityBGTexture = std::unique_ptr<GTexture>(new GTexture());
     cityBGTexture->loadFromFile("assets/images/city_bg.png");
 
+    auraBGTexture = std::unique_ptr<GTexture>(new GTexture());
+    auraBGTexture->loadFromFile("assets/images/aura_bg.png");
+
     uiElementsTexture = std::unique_ptr<GTexture>(new GTexture());
     uiElementsTexture->loadFromFile("assets/images/ui_elements.png");
 }
@@ -227,10 +241,10 @@ void PlayScene::createButtons()
     WindowMetadata winData;
 
     // --- btnToMenu --
-    const uint16_t btnToMenu_rw = 8 * winData.PXSCALE;
-    const uint16_t btnToMenu_rh = 8 * winData.PXSCALE;
-    const uint16_t btnToMenu_rx = (winData.WINDOW_WIDTH - winData.PXSCALE) - btnToMenu_rw;
-    const uint16_t btnToMenu_ry = winData.PXSCALE;
+    const int btnToMenu_rw = 8 * winData.PXSCALE;
+    const int btnToMenu_rh = 8 * winData.PXSCALE;
+    const int btnToMenu_rx = (winData.WINDOW_WIDTH - winData.PXSCALE) - btnToMenu_rw;
+    const int btnToMenu_ry = winData.PXSCALE;
     SDL_Rect btnToMenu_rect = {btnToMenu_rx, btnToMenu_ry, btnToMenu_rw, btnToMenu_rh};
     std::map<BtnState, SDL_Rect> btnToMenu_clips;
     btnToMenu_clips[BST_NORMAL] = {0, 16, 8, 8};
@@ -241,6 +255,6 @@ void PlayScene::createButtons()
 // *** CALLBACKS ***
 void PlayScene::cbToMenu()
 {
-    m_flagToMenu = true;
+    m_stflag = STF_TOMENU;
 }
 #pragma endregion PlayScene

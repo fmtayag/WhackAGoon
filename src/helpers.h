@@ -3,7 +3,7 @@
 #pragma once
 
 #include <iostream>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 SDL_Texture *loadTextureFromFile(SDL_Renderer *renderer, std::string path);
 const bool isPointCollide(SDL_Point point, SDL_Rect box);

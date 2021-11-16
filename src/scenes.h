@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <memory>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "g_data.h"
 #include "widgets.h"
 #include "sprites.h"
@@ -13,10 +13,21 @@ class SceneContext;
 class Scene
 {
 protected:
+    enum SceneTransitionFlags
+    {
+        STF_NONE,
+        STF_TOPLAY,
+        STF_TOMENU
+    };
     SceneContext *m_context;
     GameMouse m_gMouse;
+    SceneTransitionFlags m_stflag = STF_NONE;
 
-    void resetMouseState() { SDL_GetMouseState(&m_gMouse.position.x, &m_gMouse.position.y); };
+    void resetMouseState()
+    {
+        SDL_GetMouseState(&m_gMouse.position.x, &m_gMouse.position.y);
+        m_gMouse.isClicked = false;
+    };
 
 public:
     virtual ~Scene() = default;
@@ -29,6 +40,8 @@ public:
     {
         this->m_context = context;
     }
+
+    virtual void checkTransition() final;
 };
 
 class SceneContext
@@ -84,6 +97,11 @@ public:
     {
         this->m_scene->draw();
     }
+
+    void checkTransition()
+    {
+        this->m_scene->checkTransition();
+    }
 };
 
 class MenuScene : public Scene
@@ -99,11 +117,6 @@ private:
     std::unique_ptr<GTexture> brickBGTexture;
     std::unique_ptr<GTexture> logoTexture;
 
-    // Flags
-    bool m_flagToPlay = false;
-    bool m_flagToHelp = false;
-    bool m_flagToInfo = false;
-
     // Callbacks
     void cbPlay();
     void cbHelp();
@@ -115,11 +128,11 @@ private:
 
 public:
     MenuScene();
-    ~MenuScene();
+    ~MenuScene() override;
 
-    void handleEvents(SDL_Event *e);
-    void update();
-    void draw();
+    void handleEvents(SDL_Event *e) override;
+    void update() override;
+    void draw() override;
 };
 
 class PlayScene : public Scene
@@ -131,9 +144,7 @@ private:
     // Textures
     std::unique_ptr<GTexture> uiElementsTexture;
     std::unique_ptr<GTexture> cityBGTexture;
-
-    // Flags
-    bool m_flagToMenu = false;
+    std::unique_ptr<GTexture> auraBGTexture;
 
     // Callbacks
     void cbToMenu();
@@ -144,11 +155,11 @@ private:
 
 public:
     PlayScene();
-    ~PlayScene();
+    ~PlayScene() override;
 
-    void handleEvents(SDL_Event *e);
-    void update();
-    void draw();
+    void handleEvents(SDL_Event *e) override;
+    void update() override;
+    void draw() override;
 };
 
 #endif // SCENES_H

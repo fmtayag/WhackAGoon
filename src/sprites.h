@@ -5,7 +5,7 @@
 #include <functional>
 #include <list>
 #include <map>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "g_data.h"
 #include "widgets.h"
 

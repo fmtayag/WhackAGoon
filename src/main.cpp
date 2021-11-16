@@ -9,10 +9,10 @@
 
 #include <iostream>
 #include <cassert>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_mixer.h>
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <SDL_mixer.h>
 #include "g_data.h"
 #include "scenes.h"
 #include "helpers.h"
@@ -28,8 +28,11 @@ void initializeGame();
 void runGame();
 void destroyGame();
 
-int main(int argv, char **args)
+int main(int argc, char *argv[])
 {
+    (void)argc;
+    (void)argv;
+
     initializeGame();
     runGame();
     destroyGame();
@@ -75,6 +78,7 @@ void runGame()
         gameContext->handleEvents(&event);
         gameContext->update();
         gameContext->draw();
+        gameContext->checkTransition();
     }
 }
 void destroyGame()

@@ -1,6 +1,6 @@
 #include <iostream>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL.h>
+#include <SDL_image.h>
 #include "widgets.h"
 #include "g_data.h"
 
@@ -71,7 +71,8 @@ void GTexture::loadFromFile(std::string path)
 }
 void GTexture::draw(SDL_Rect *clip, SDL_Rect *dst)
 {
-    SDL_RenderCopy(gameRenderer, m_texture, clip, dst);
+    if (this != nullptr)
+        SDL_RenderCopy(gameRenderer, m_texture, clip, dst);
 }
 void GTexture::free()
 {

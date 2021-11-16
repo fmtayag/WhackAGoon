@@ -2,7 +2,7 @@
 #include <functional>
 #include <map>
 #include <cassert>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "sprites.h"
 #include "g_data.h"
 #include "helpers.h"
@@ -40,13 +40,16 @@ GButton::~GButton()
 }
 void GButton::update(GameMouse *mouse_s)
 {
-    u_state(mouse_s);
-
-    if (m_state == BST_CLICKED)
+    if (this != nullptr)
     {
-        makeCallback();
-        m_state = BST_NORMAL;
-        mouse_s->isClicked = false;
+        u_state(mouse_s);
+
+        if (m_state == BST_CLICKED)
+        {
+            makeCallback();
+            m_state = BST_NORMAL;
+            mouse_s->isClicked = false;
+        }
     }
 }
 void GButton::u_state(GameMouse *mouse_s)
@@ -68,8 +71,11 @@ void GButton::u_state(GameMouse *mouse_s)
 }
 void GButton::draw()
 {
-    //printf("m_clips rect: (%d, %d, %d, %d) (xywh).\n", m_clips[m_state].x, m_clips[m_state].y, m_clips[m_state].w, m_clips[m_state].h);
-    m_texture->draw(&m_clips[m_state], &m_rect);
+    if (this != nullptr)
+    {
+        //printf("m_clips rect: (%d, %d, %d, %d) (xywh).\n", m_clips[m_state].x, m_clips[m_state].y, m_clips[m_state].w, m_clips[m_state].h);
+        m_texture->draw(&m_clips[m_state], &m_rect);
+    }
 }
 void GButton::setState(BtnState state)
 {
