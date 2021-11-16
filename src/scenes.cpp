@@ -2,6 +2,7 @@
 #include <memory>
 #include <functional>
 #include <cassert>
+#include <vector>
 #include <SDL.h>
 #include "scenes.h"
 #include "widgets.h"
@@ -175,8 +176,6 @@ PlayScene::PlayScene()
 
     GameColors gColors;
     WindowMetadata winData;
-
-    particle1 = std::unique_ptr<Particle>(new Particle({50, 50, 30, 30}, {0, -1}, gColors.WHITE));
 }
 PlayScene::~PlayScene()
 {
@@ -218,13 +217,43 @@ void PlayScene::handleEvents(SDL_Event *e)
 }
 void PlayScene::update()
 {
+    WindowMetadata winData;
+
+    // Update buttons
     btnToMenu->update(&m_gMouse);
-    particle1->update();
 
     // Update timers
     if (m_tmrWarmup.getTicks() >= m_delayWarmup)
     {
-        printf("Warmup is overz!!\n");
+        //printf("Warmup is overz!!\n");
+    }
+
+    // Spawn particles
+    if (m_tmrSpawnParticle.getTicks() > m_delaySpawnParticle)
+    {
+        m_tmrSpawnParticle.stop();
+        m_tmrSpawnParticle.start();
+
+        //printf("m_particles.size(): %zu\n", m_particles.size());
+        if (m_particles.size() < m_MAX_PARTICLES)
+        {
+            GameColors gColors;
+            const int xPos = (rand() % (winData.WIDTH / winData.PXSCALE)) * winData.PXSCALE; // generate rand number divisible by PXSCALE
+            const int yPos = rand() % static_cast<int>(winData.HEIGHT * 0.75) + static_cast<int>(winData.HEIGHT * 0.65);
+
+            std::shared_ptr<Particle> particle(new Particle({xPos, yPos, winData.PXSCALE, winData.PXSCALE}, {0, -1}, gColors.WHITE));
+            m_particles.push_back(particle);
+        }
+    }
+
+    // Update particles
+    for (auto iter = m_particles.begin(); iter != m_particles.end();)
+    {
+        (*iter)->update();
+        if ((*iter)->getPos().y <= winData.OUT_OF_BOUNDS)
+            iter = m_particles.erase(iter);
+        else
+            iter++;
     }
 }
 void PlayScene::draw()
@@ -236,10 +265,17 @@ void PlayScene::draw()
     SDL_RenderClear(gameRenderer);
 
     auraBGTexture->draw();
+
+    // Draw particles
+    for (std::shared_ptr<Particle> particle : m_particles)
+    {
+        //printf("drawing particles\n");
+        particle->draw();
+    }
+
     cityBGTexture->draw();
     btnToMenu->draw();
     m_gFontInfo->draw("Hello!", {winDat.HEIGHT / 2, 50}, gColors.WHITE, PosCentering::POSCEN_X);
-    particle1->draw();
 
     SDL_RenderPresent(gameRenderer);
 }
@@ -278,6 +314,7 @@ void PlayScene::createButtons()
 void PlayScene::initializeTimers()
 {
     m_tmrWarmup.start();
+    m_tmrSpawnParticle.start();
 }
 // *** CALLBACKS ***
 void PlayScene::cbToMenu()

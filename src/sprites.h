@@ -54,7 +54,7 @@ public:
     void update();
     void draw();
 
-    const SDL_Point getPos();
+    SDL_Point getPos();
 };
 
 #endif // SPRITES_H

@@ -107,6 +107,7 @@ Particle::Particle(SDL_Rect rect, Vector2 velocity, SDL_Color color)
 }
 Particle::~Particle()
 {
+    //printf("Particle deleted.\n");
 }
 void Particle::update()
 {
@@ -118,7 +119,7 @@ void Particle::draw()
     SDL_SetRenderDrawColor(gameRenderer, m_color.r, m_color.g, m_color.b, m_color.a);
     SDL_RenderFillRect(gameRenderer, &m_rect);
 }
-const SDL_Point Particle::getPos()
+SDL_Point Particle::getPos()
 {
     SDL_Point pos;
     pos.x = m_rect.x;

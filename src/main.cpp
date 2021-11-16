@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <cassert>
+#include <random>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -32,6 +33,8 @@ int main(int argc, char *argv[])
 {
     (void)argc;
     (void)argv;
+
+    srand(static_cast<unsigned int>(time(0)));
 
     initializeGame();
     runGame();

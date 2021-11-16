@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <memory>
+#include <vector>
 #include <SDL.h>
 #include "g_data.h"
 #include "widgets.h"
@@ -131,8 +132,8 @@ public:
 class PlayScene : public Scene
 {
 private:
-    // Other sprites
-    std::unique_ptr<Particle> particle1;
+    // Sprite groups
+    std::vector<std::shared_ptr<Particle>> m_particles;
 
     // Buttons
     std::unique_ptr<GButton> btnToMenu;
@@ -148,6 +149,9 @@ private:
     // Timers
     GTimer m_tmrWarmup;
     Uint32 m_delayWarmup = 3000;
+    GTimer m_tmrSpawnParticle;
+    Uint32 m_delaySpawnParticle = 1000;
+    const int m_MAX_PARTICLES = 10;
 
     // Callbacks
     void cbToMenu();

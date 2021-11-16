@@ -17,6 +17,7 @@ struct WindowMetadata
     const int HEIGHT = 100 * PXSCALE;
     const int FPS = 60;
     const int TICKS_PF = 1000 / FPS;
+    const int OUT_OF_BOUNDS = -32; // Used for determining if an object is out of the window's bounds.
 };
 
 struct GameColors
