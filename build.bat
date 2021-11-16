@@ -7,7 +7,7 @@ for /F "tokens=1,2 delims=#" %%a in ('"prompt #$H#$E# & echo on & for %%b in (1)
 )
 
 cd build
-msbuild %PROJECT%.sln 
+msbuild %PROJECT%.sln -property:Configuration=Debug
 
 if %errorlevel% == 0 (
     call :colorEcho a0 "Compilation is a success."

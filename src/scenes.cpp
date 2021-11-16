@@ -172,6 +172,11 @@ PlayScene::PlayScene()
     loadAssets();
     createButtons();
     initializeTimers();
+
+    GameColors gColors;
+    WindowMetadata winData;
+
+    particle1 = std::unique_ptr<Particle>(new Particle({50, 50, 30, 30}, {0, -1}, gColors.WHITE));
 }
 PlayScene::~PlayScene()
 {
@@ -214,6 +219,7 @@ void PlayScene::handleEvents(SDL_Event *e)
 void PlayScene::update()
 {
     btnToMenu->update(&m_gMouse);
+    particle1->update();
 
     // Update timers
     if (m_tmrWarmup.getTicks() >= m_delayWarmup)
@@ -233,6 +239,7 @@ void PlayScene::draw()
     cityBGTexture->draw();
     btnToMenu->draw();
     m_gFontInfo->draw("Hello!", {winDat.HEIGHT / 2, 50}, gColors.WHITE, PosCentering::POSCEN_X);
+    particle1->draw();
 
     SDL_RenderPresent(gameRenderer);
 }

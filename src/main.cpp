@@ -68,17 +68,40 @@ void initializeGame()
 }
 void runGame()
 {
-    WindowMetadata winMetadata;
+    WindowMetadata winData;
     SDL_Event event;
+
+    GTimer fpsTmr;
+    GTimer capTmr;
+
+    int countedFrames = 0;
+    fpsTmr.start();
 
     while (gameContext->fetchQuitFlag() != true)
     {
-        SDL_Delay(winMetadata.FPS);
+        capTmr.start();
+
+        // Calc and correct FPS
+        float avgFPS = countedFrames / (fpsTmr.getTicks() / 1000.0f);
+        if (avgFPS > 2000000.0f)
+        {
+            avgFPS = 0;
+        }
 
         gameContext->handleEvents(&event);
         gameContext->update();
         gameContext->draw();
         gameContext->checkTransition();
+
+        // Advance frame
+        countedFrames++;
+
+        // If frame finished early
+        int frameTicks = capTmr.getTicks();
+        if (frameTicks < winData.TICKS_PF)
+        {
+            SDL_Delay(winData.TICKS_PF - frameTicks);
+        }
     }
 }
 void destroyGame()

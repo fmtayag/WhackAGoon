@@ -19,7 +19,6 @@ enum BtnState
 
 class GButton
 {
-protected:
 private:
     SDL_Rect m_rect;
     GTexture *m_texture;
@@ -40,6 +39,22 @@ public:
 
     SDL_Rect getRect() { return m_rect; };
     void bindCallback(std::function<void()> cback);
+};
+
+class Particle
+{
+private:
+    SDL_Rect m_rect;
+    Vector2 m_velocity;
+    SDL_Color m_color;
+
+public:
+    Particle(SDL_Rect rect, Vector2 velocity, SDL_Color color);
+    ~Particle();
+    void update();
+    void draw();
+
+    const SDL_Point getPos();
 };
 
 #endif // SPRITES_H

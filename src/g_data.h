@@ -16,6 +16,7 @@ struct WindowMetadata
     const int WIDTH = 100 * PXSCALE;
     const int HEIGHT = 100 * PXSCALE;
     const int FPS = 60;
+    const int TICKS_PF = 1000 / FPS;
 };
 
 struct GameColors
@@ -36,6 +37,11 @@ enum PosCentering
     POSCEN_X,
     POSCEN_Y,
     POSCEN_BOTH
+};
+
+struct Vector2
+{
+    int x, y;
 };
 
 #endif // G_DATA_H

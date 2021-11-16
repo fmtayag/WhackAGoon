@@ -97,3 +97,33 @@ void GButton::makeCallback()
 }
 //}
 #pragma endregion GButton
+
+#pragma region Particle
+Particle::Particle(SDL_Rect rect, Vector2 velocity, SDL_Color color)
+{
+    m_rect = rect;
+    m_velocity = velocity;
+    m_color = color;
+}
+Particle::~Particle()
+{
+}
+void Particle::update()
+{
+    m_rect.x += m_velocity.x;
+    m_rect.y += m_velocity.y;
+}
+void Particle::draw()
+{
+    SDL_SetRenderDrawColor(gameRenderer, m_color.r, m_color.g, m_color.b, m_color.a);
+    SDL_RenderFillRect(gameRenderer, &m_rect);
+}
+const SDL_Point Particle::getPos()
+{
+    SDL_Point pos;
+    pos.x = m_rect.x;
+    pos.y = m_rect.y;
+
+    return pos;
+}
+#pragma endregion Particle

@@ -131,6 +131,9 @@ public:
 class PlayScene : public Scene
 {
 private:
+    // Other sprites
+    std::unique_ptr<Particle> particle1;
+
     // Buttons
     std::unique_ptr<GButton> btnToMenu;
 
