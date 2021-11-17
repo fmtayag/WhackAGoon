@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <functional>
+#include <string>
 #include <cassert>
 #include <vector>
 #include <SDL.h>
@@ -207,6 +208,18 @@ void PlayScene::handleEvents(SDL_Event *e)
             case SDLK_F2:
                 m_stflag = STF_TOPLAY;
                 break;
+            case SDLK_1:
+                m_holes[0]->awaken(Hole::HoleType::HT_GOON);
+                break;
+            case SDLK_2:
+                m_holes[0]->awaken(Hole::HoleType::HT_TOWNIE);
+                break;
+            case SDLK_3:
+                m_holes[0]->awaken(Hole::HoleType::HT_MAYOR);
+                break;
+            case SDLK_4:
+                m_holes[0]->awaken(Hole::HoleType::HT_NONE);
+                break;
             }
         }
     }
@@ -230,7 +243,32 @@ void PlayScene::update()
     for (std::shared_ptr<Hole> hole : m_holes)
     {
         //printf("drawing particles\n");
-        hole->update();
+        hole->update(m_gMouse);
+
+        Hole::HoleHitStatus hitStatus = hole->fetchHitStatus();
+        if (hitStatus == Hole::HoleHitStatus::HIT)
+        {
+            Hole::HoleType holeType = hole->fetchHoleType();
+            switch (holeType)
+            {
+            case Hole::HoleType::HT_GOON:
+                m_score++;
+                break;
+            case Hole::HoleType::HT_TOWNIE:
+                m_score -= m_PENALTY;
+                break;
+            case Hole::HoleType::HT_MAYOR:
+                printf("You hit the mayor, idiot!\n");
+                break;
+            default:
+                printf("Warning: reached default case in switch(holeType).\n");
+                break;
+            }
+
+            // Negative score check
+            if (m_score < 0)
+                m_score = 0;
+        }
     }
 
     // Spawn particles
@@ -287,7 +325,8 @@ void PlayScene::draw()
         hole->draw();
     }
 
-    m_gFontInfo->draw("Hello!", {winDat.HEIGHT / 2, 50}, gColors.WHITE, PosCentering::POSCEN_X);
+    std::string msgScore = std::to_string(m_score);
+    m_gFontInfo->draw(msgScore, {winDat.HEIGHT / 2, 50}, gColors.WHITE, PosCentering::POSCEN_X);
 
     SDL_RenderPresent(gameRenderer);
 }

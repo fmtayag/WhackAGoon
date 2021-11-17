@@ -153,7 +153,11 @@ private:
     Uint32 m_delayWarmup = 3000;
     GTimer m_tmrSpawnParticle;
     Uint32 m_delaySpawnParticle = 1000;
-    const int m_MAX_PARTICLES = 10;
+    static const int m_MAX_PARTICLES = 10;
+
+    // Scores and other stuff
+    int m_score = 0;
+    static const int m_PENALTY = 10;    
 
     // Callbacks
     void cbToMenu();

@@ -63,7 +63,7 @@ public:
 
 class Hole
 {
-private:
+public:
     enum HoleType
     {
         HT_NONE,
@@ -79,19 +79,36 @@ private:
         HAS_WHACKED,
         HAS_TOREST,
     };
+    enum HoleHitStatus
+    {
+        UNSET,
+        MISS,
+        HIT
+    };
 
+    Hole(std::shared_ptr<GTexture> texture, SDL_Point pos, PosCentering poscenter);
+    ~Hole();
+    void update(GameMouse &gMouse);
+    void draw();
+
+    void awaken(HoleType type);
+
+    HoleHitStatus fetchHitStatus() { return m_hitStat; };
+    HoleType fetchHoleType();
+
+private:
     // Spritesheet map stuff
     typedef std::pair<HoleType, HoleAnimState> HoleState;
     typedef std::map<HoleState, std::vector<SDL_Rect>> SheetMap;
     static SheetMap m_sheetMap;
     static SheetMap createSheetMap();
 
+    // Other crap
     std::shared_ptr<GTexture> m_texture;
     SDL_Rect m_rect;
     HoleState m_state;
-    HoleType m_type;
-    HoleAnimState m_animState;
     int m_curF;
+    HoleHitStatus m_hitStat = UNSET;
 
     // AnimState stuff
     const int MAX_WHACKED_LOOP = 3;
@@ -99,19 +116,18 @@ private:
 
     // Timers
     GTimer m_tmrNxtF;
-    const Uint32 m_delayNxtF = 80;
+    Uint32 m_delayNxtF = 80;
+    static const Uint32 m_SLOW_ANIM = 400;
+    static const Uint32 m_NORM_ANIM = 60;
     GTimer m_tmrAwake;
     Uint32 m_delayAwake; // TODO: Randomize later.
 
     // Helper methods
+    void whack();
     void nextAS();
-    void updateHoleState();
-
-public:
-    Hole(std::shared_ptr<GTexture> texture, SDL_Point pos, PosCentering poscenter);
-    ~Hole();
-    void update();
-    void draw();
+    void setHitStatus(HoleHitStatus status) { m_hitStat = status; };
+    void slowFrameDelay() { m_delayNxtF = m_SLOW_ANIM; };
+    void normalFrameDelay() { m_delayNxtF = m_NORM_ANIM; };
 };
 
 #endif // SPRITES_H

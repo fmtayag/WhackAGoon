@@ -165,9 +165,7 @@ Hole::Hole(std::shared_ptr<GTexture> texture, SDL_Point pos, PosCentering poscen
         break;
     }
 
-    m_type = HT_TOWNIE;
-    m_animState = HAS_TOAWAKE;
-    m_state = HoleState(m_type, m_animState); // TODO: Remove later. Only for testing.
+    m_state = HoleState(HT_TOWNIE, HAS_TOAWAKE); // TODO: Remove later. Only for testing.
     m_curF = 0;
     m_tmrNxtF.start();
 }
@@ -175,8 +173,21 @@ Hole::~Hole()
 {
     m_texture = NULL;
 }
-void Hole::update()
+void Hole::update(GameMouse &gMouse)
 {
+    // --- Collision stuff ---
+    setHitStatus(UNSET); // reset hit status
+    bool isColliding = isPointCollide(gMouse.position, m_rect);
+    if (isColliding)
+    {
+        if (gMouse.isClicked)
+        {
+            whack();
+            gMouse.isClicked = false;
+        }
+    }
+
+    // --- Update animation state ---
     if (m_tmrNxtF.getTicks() > m_delayNxtF)
     {
         // Reset timer
@@ -191,12 +202,21 @@ void Hole::update()
         }
         else
         {
-            printf("Check.....................\n");
             nextAS();
             m_curF = 0;
         }
-        // printf("m_curF: %d\n", m_curF);
-        // printf("vec_size: %d\n", vec_size);
+    }
+
+    // Awake->ToRest does not depend on the animation frames finishing.
+    if (m_state.second == HAS_AWAKE)
+    {
+        if (m_tmrAwake.getTicks() > m_delayAwake)
+        {
+            m_tmrAwake.stop();
+            m_state.second = HAS_TOREST;
+            normalFrameDelay(); // reset next frame delay back to normal
+            m_curF = 0;
+        }
     }
 }
 void Hole::draw()
@@ -207,48 +227,76 @@ void Hole::nextAS()
 {
     // --- Check for transition to next animation state ---
 
-    if (m_animState == HAS_TOAWAKE)
+    if (m_state.second == HAS_TOAWAKE)
     {
-        m_animState = HAS_AWAKE;
+        m_state.second = HAS_AWAKE;
         m_tmrAwake.start();
 
-        // Add tick offset to compensate for ticks lost finishing current animation state.
         const int vec_size = static_cast<int>(m_sheetMap[m_state].size());
-        m_delayAwake = 1000 + (m_delayNxtF * vec_size);
+        const int tick_offset = (m_delayNxtF * vec_size);
+        m_delayAwake = (rand() % 2000 + 200) + tick_offset; // Add tick offset to compensate for ticks lost finishing the "TO AWAKE" animation state.
+
+        slowFrameDelay(); // set next frame delay to slow, otherwise the awake animation will look silly
     }
-    else if (m_animState == HAS_AWAKE)
-    {
-        if (m_tmrAwake.getTicks() > m_delayAwake)
-        {
-            m_tmrAwake.stop();
-            m_animState = HAS_TOREST;
-        }
-    }
-    else if (m_animState == HAS_WHACKED)
+    else if (m_state.second == HAS_WHACKED)
     {
         // Don't transition to "TO REST" state until animation has played MAX_WHACKED_LOOP times.
         if (whacked_loop >= MAX_WHACKED_LOOP)
         {
             whacked_loop = 0;
-            m_animState = HAS_TOREST;
+            m_state.second = HAS_TOREST;
         }
         else
         {
             whacked_loop++;
         }
     }
-    else if (m_animState == HAS_TOREST)
+    else if (m_state.second == HAS_TOREST)
     {
-        m_animState = HAS_REST;
-        m_type = HT_NONE;
+        m_state.first = HT_NONE;
+        m_state.second = HAS_REST;
     }
-
-    updateHoleState();
 }
-void Hole::updateHoleState()
+void Hole::awaken(HoleType type)
 {
-    m_state = HoleState(m_type, m_animState);
+    if (type != HT_NONE)
+    {
+        if (m_state == HoleState(HT_NONE, HAS_REST))
+        {
+            m_state.first = type;
+            m_state.second = HAS_TOAWAKE;
+        }
+        else
+        {
+            printf("Stop!\n");
+        }
+    }
+    else
+    {
+        printf("Warning: awaken() received HT_NONE as parameter.\n");
+    }
 }
+void Hole::whack()
+{
+    if (m_state.second == HAS_AWAKE ||
+        (m_state.second == HAS_TOAWAKE && m_curF >= 3) &&
+            (m_state.second != HAS_WHACKED))
+    {
+        m_state.second = HAS_WHACKED;
+        m_curF = 0;
+        normalFrameDelay(); // reset next frame delay back to normal
+        setHitStatus(HIT);
+    }
+    else
+    {
+        setHitStatus(MISS);
+    }
+}
+Hole::HoleType Hole::fetchHoleType()
+{
+    return m_state.first;
+}
+// *** Create spritesheet map ***
 Hole::SheetMap Hole::createSheetMap()
 {
     SheetMap smap;
