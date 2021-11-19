@@ -41,7 +41,8 @@ add_executable(${PROJECT_NAME}
     "src/scenes.cpp"
     "src/sprites.cpp" 
     "src/widgets.cpp"
-    "src/helpers.cpp")
+    "src/helpers.cpp"
+    "src/managers.cpp")
 
 # Add all headers files under the include directory
 target_include_directories(${PROJECT_NAME} PRIVATE include)

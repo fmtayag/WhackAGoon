@@ -63,6 +63,8 @@ public:
 
 class Hole
 {
+    friend class HoleManager;
+
 public:
     enum HoleType
     {

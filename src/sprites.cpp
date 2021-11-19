@@ -165,12 +165,13 @@ Hole::Hole(std::shared_ptr<GTexture> texture, SDL_Point pos, PosCentering poscen
         break;
     }
 
-    m_state = HoleState(HT_TOWNIE, HAS_TOAWAKE); // TODO: Remove later. Only for testing.
+    m_state = HoleState(HT_NONE, HAS_REST);
     m_curF = 0;
     m_tmrNxtF.start();
 }
 Hole::~Hole()
 {
+    printf("Hole deleted ...\n");
     m_texture = NULL;
 }
 void Hole::update(GameMouse &gMouse)
@@ -268,7 +269,7 @@ void Hole::awaken(HoleType type)
         }
         else
         {
-            printf("Stop!\n");
+            //printf("Cannot awake this hole!\n");
         }
     }
     else

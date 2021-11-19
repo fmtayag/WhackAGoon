@@ -4,6 +4,7 @@
 #include <SDL_ttf.h>
 #include "widgets.h"
 #include "g_data.h"
+#include "sprites.h"
 
 #pragma region GTimer
 GTimer::GTimer()

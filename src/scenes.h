@@ -9,6 +9,7 @@
 #include "g_data.h"
 #include "widgets.h"
 #include "sprites.h"
+#include "managers.h"
 
 class SceneContext;
 class Scene
@@ -157,7 +158,10 @@ private:
 
     // Scores and other stuff
     int m_score = 0;
-    static const int m_PENALTY = 10;    
+    static const int m_PENALTY = 10;
+
+    // Hole Manager
+    std::unique_ptr<HoleManager> m_holeMgr;
 
     // Callbacks
     void cbToMenu();
@@ -167,6 +171,7 @@ private:
     void createButtons();
     void initializeTimers();
     void createHoles();
+    void initializeHoleMgr();
 
 public:
     PlayScene();

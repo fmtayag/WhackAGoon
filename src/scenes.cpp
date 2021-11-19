@@ -175,6 +175,7 @@ PlayScene::PlayScene()
     createButtons();
     initializeTimers();
     createHoles();
+    initializeHoleMgr();
 }
 PlayScene::~PlayScene()
 {
@@ -270,6 +271,9 @@ void PlayScene::update()
                 m_score = 0;
         }
     }
+
+    // Update hole manager
+    m_holeMgr->update();
 
     // Spawn particles
     if (m_tmrSpawnParticle.getTicks() > m_delaySpawnParticle)
@@ -376,32 +380,36 @@ void PlayScene::createHoles()
     const int cwx = winData.WIDTH / 2;
     const int cwy = winData.HEIGHT / 2;
     const int offy_row1 = winData.PXSCALE * 4;
-    //const int offy_row2 = winData.PXSCALE * 20;
-    //const int offx_col1 = winData.PXSCALE * 20;
+    const int offy_row2 = winData.PXSCALE * 20;
+    const int offx_col1 = winData.PXSCALE * 20;
     const int offx_col2 = winData.PXSCALE * 40;
 
     std::shared_ptr<Hole> hole1(new Hole(holeSheetTexture, {cwx - offx_col2, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
-    // std::shared_ptr<Hole> hole2(new Hole(holeSheetTexture, {cwx - offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
-    // std::shared_ptr<Hole> hole3(new Hole(holeSheetTexture, {cwx, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
-    // std::shared_ptr<Hole> hole4(new Hole(holeSheetTexture, {cwx + offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
-    // std::shared_ptr<Hole> hole5(new Hole(holeSheetTexture, {cwx + offx_col2, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole2(new Hole(holeSheetTexture, {cwx - offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole3(new Hole(holeSheetTexture, {cwx, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole4(new Hole(holeSheetTexture, {cwx + offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole5(new Hole(holeSheetTexture, {cwx + offx_col2, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
 
-    // std::shared_ptr<Hole> hole6(new Hole(holeSheetTexture, {cwx - offx_col2, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
-    // std::shared_ptr<Hole> hole7(new Hole(holeSheetTexture, {cwx - offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
-    // std::shared_ptr<Hole> hole8(new Hole(holeSheetTexture, {cwx, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
-    // std::shared_ptr<Hole> hole9(new Hole(holeSheetTexture, {cwx + offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
-    // std::shared_ptr<Hole> hole10(new Hole(holeSheetTexture, {cwx + offx_col2, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole6(new Hole(holeSheetTexture, {cwx - offx_col2, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole7(new Hole(holeSheetTexture, {cwx - offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole8(new Hole(holeSheetTexture, {cwx, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole9(new Hole(holeSheetTexture, {cwx + offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole10(new Hole(holeSheetTexture, {cwx + offx_col2, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
 
     m_holes.push_back(hole1);
-    // m_holes.push_back(hole2);
-    // m_holes.push_back(hole3);
-    // m_holes.push_back(hole4);
-    // m_holes.push_back(hole5);
-    // m_holes.push_back(hole6);
-    // m_holes.push_back(hole7);
-    // m_holes.push_back(hole8);
-    // m_holes.push_back(hole9);
-    // m_holes.push_back(hole10);
+    m_holes.push_back(hole2);
+    m_holes.push_back(hole3);
+    m_holes.push_back(hole4);
+    m_holes.push_back(hole5);
+    m_holes.push_back(hole6);
+    m_holes.push_back(hole7);
+    m_holes.push_back(hole8);
+    m_holes.push_back(hole9);
+    m_holes.push_back(hole10);
+}
+void PlayScene::initializeHoleMgr()
+{
+    m_holeMgr = std::unique_ptr<HoleManager>(new HoleManager(m_holes));
 }
 // *** CALLBACKS ***
 void PlayScene::cbToMenu()
