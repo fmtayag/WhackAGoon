@@ -177,7 +177,6 @@ PlayScene::PlayScene()
     createHoles();
     initializeHoleMgr();
     initializeCollisionMgr();
-    m_penaltyTexts.push_back(std::shared_ptr<PenaltyText>(new PenaltyText(m_gFontMedium.get(), {4, 4}, "-10")));
 }
 PlayScene::~PlayScene()
 {
@@ -244,6 +243,15 @@ void PlayScene::update()
 
     // Check for collisions
     m_collideMgr->update();
+
+    // Spawn penalty text if player whacked a Townie.
+    bool whackedTownie = m_collideMgr->didWhackTownie();
+    if (whackedTownie)
+    {
+        GameRules gRules;
+        std::string penaltyMsg = std::to_string(-gRules.SCORE_PENALTY);
+        m_penaltyTexts.push_back(std::shared_ptr<PenaltyText>(new PenaltyText(m_gFontMedium.get(), {4, 4}, penaltyMsg)));
+    }
 
     // Update hole manager
     m_holeMgr->update();

@@ -408,7 +408,7 @@ PenaltyText::PenaltyText(GFont *font, SDL_Point initpos, std::string msg)
 }
 PenaltyText::~PenaltyText()
 {
-    printf("Deleted PenaltyText.\n");
+    printf("Deleted PenaltyText. ************* \n");
 }
 void PenaltyText::update()
 {

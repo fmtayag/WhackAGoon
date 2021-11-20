@@ -158,7 +158,7 @@ private:
     static const int m_MAX_PARTICLES = 10;
 
     // Scores and other stuff
-    int m_score = 3000;
+    int m_score = 0;
 
     // Managers
     std::unique_ptr<HoleManager> m_holeMgr;

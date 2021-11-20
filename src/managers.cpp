@@ -92,6 +92,7 @@ HoleCollisionManager::HoleCollisionManager(std::vector<std::shared_ptr<Hole>> &h
     m_holesRef = holes;
     m_pMouse = gMouse;
     m_pScore = score;
+    m_flagWhackedTownie = false;
 }
 HoleCollisionManager::~HoleCollisionManager()
 {
@@ -99,6 +100,7 @@ HoleCollisionManager::~HoleCollisionManager()
 void HoleCollisionManager::update()
 {
     GameRules gRules;
+    m_flagWhackedTownie = false;
 
     for (std::shared_ptr<Hole> hole : m_holesRef)
     {
@@ -116,6 +118,7 @@ void HoleCollisionManager::update()
                 break;
             case Hole::HoleType::HT_TOWNIE:
                 (*m_pScore) -= gRules.SCORE_PENALTY;
+                m_flagWhackedTownie = true;
                 break;
             case Hole::HoleType::HT_MAYOR:
                 printf("You hit the mayor, idiot!\n");

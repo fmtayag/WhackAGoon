@@ -37,12 +37,15 @@ private:
     std::vector<std::shared_ptr<Hole>> m_holesRef;
     GameMouse *m_pMouse;
     int *m_pScore;
+    bool m_flagWhackedTownie;
 
 public:
     HoleCollisionManager(std::vector<std::shared_ptr<Hole>> &holes, GameMouse *gMouse, int *score);
     ~HoleCollisionManager();
 
     void update();
+
+    bool didWhackTownie() { return m_flagWhackedTownie; };
 };
 
 #endif // MANAGERS_H
