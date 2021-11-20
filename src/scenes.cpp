@@ -342,6 +342,7 @@ void PlayScene::draw()
         pentxt->draw();
     }
 
+    SDL_Point displacement = m_shakeGen.fetchDisplacement();
     SDL_Rect targRect = {displacement.x, displacement.y, winDat.WIDTH, winDat.HEIGHT};
 
     targetTexture->unsetAsTarget();
