@@ -45,6 +45,13 @@ enum PosCentering
     POSCEN_BOTH
 };
 
+enum DebugPrintLevels
+{
+    DEBUG,
+    WARNING,
+    ERROR
+};
+
 struct Vector2
 {
     int x, y;

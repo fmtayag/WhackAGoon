@@ -37,12 +37,20 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
 
 # Add cpp source files under the src directory
 add_executable(${PROJECT_NAME}
+
+    # WhackAGoon source files
 	"src/main.cpp"
     "src/scenes.cpp"
     "src/sprites.cpp" 
     "src/widgets.cpp"
     "src/helpers.cpp"
-    "src/managers.cpp")
+    "src/managers.cpp"
+    
+)
+
+# Add FMT library
+find_package(fmt REQUIRED)
+target_link_libraries(${PROJECT_NAME} fmt::fmt-header-only)
 
 # Add all headers files under the include directory
 target_include_directories(${PROJECT_NAME} PRIVATE include)

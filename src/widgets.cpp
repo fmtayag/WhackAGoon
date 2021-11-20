@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fmt/format.h>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -65,7 +66,7 @@ GTexture::GTexture()
 GTexture::~GTexture()
 {
     free();
-    printf("GTexture::~GTexture() | Deleted.\n");
+    //dbgPrint(DebugPrintLevels::DEBUG, "Deleted GTexture.");
 }
 void GTexture::loadFromFile(std::string path)
 {
@@ -75,6 +76,7 @@ void GTexture::loadFromFile(std::string path)
 void GTexture::loadAsTarget(SDL_Rect size)
 {
     m_texture = SDL_CreateTexture(gameRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, size.w, size.h);
+    loadedAsTarget = false;
 }
 void GTexture::draw(SDL_Rect *clip, SDL_Rect *dst)
 {
@@ -91,11 +93,27 @@ void GTexture::free()
 }
 void GTexture::setAsTarget()
 {
-    SDL_SetRenderTarget(gameRenderer, m_texture);
+    if (loadedAsTarget == false)
+    {
+        SDL_SetRenderTarget(gameRenderer, m_texture);
+        loadedAsTarget = true;
+    }
+    else
+    {
+        dbgPrint(DebugPrintLevels::WARNING, fmt::format("Cannot set {} as render target because it is already a target.", typeid(*this).name()));
+    }
 }
 void GTexture::unsetAsTarget()
 {
-    SDL_SetRenderTarget(gameRenderer, NULL);
+    if (loadedAsTarget == true)
+    {
+        SDL_SetRenderTarget(gameRenderer, NULL);
+        loadedAsTarget = false;
+    }
+    else
+    {
+        dbgPrint(DebugPrintLevels::WARNING, "Cannot unset %s as render target because it is not set as target.");
+    }
 }
 #pragma endregion GTexture
 

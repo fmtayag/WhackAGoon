@@ -37,6 +37,7 @@ class GTexture
 {
 private:
     SDL_Texture *m_texture;
+    bool loadedAsTarget = false;
 
 public:
     GTexture();

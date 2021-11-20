@@ -8,5 +8,6 @@
 
 const bool isPointCollide(SDL_Point point, SDL_Rect box);
 void centerPos(SDL_Point &pos, SDL_Rect &size, PosCentering poscenter);
+void dbgPrint(DebugPrintLevels dblevel, std::string msg);
 
 #endif // HELPERS_H
