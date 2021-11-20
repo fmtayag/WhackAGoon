@@ -242,7 +242,7 @@ void PlayScene::update()
     }
 
     // Check for collisions
-    m_collideMgr->update(m_gMouse, m_score);
+    m_collideMgr->update();
 
     // Update hole manager
     m_holeMgr->update();
@@ -385,7 +385,7 @@ void PlayScene::initializeHoleMgr()
 }
 void PlayScene::initializeCollisionMgr()
 {
-    m_collideMgr = std::unique_ptr<HoleCollisionManager>(new HoleCollisionManager(m_holes));
+    m_collideMgr = std::unique_ptr<HoleCollisionManager>(new HoleCollisionManager(m_holes, &m_gMouse, &m_score));
 }
 // *** CALLBACKS ***
 void PlayScene::cbToMenu()

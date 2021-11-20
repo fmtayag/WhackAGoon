@@ -35,12 +35,14 @@ class HoleCollisionManager
 {
 private:
     std::vector<std::shared_ptr<Hole>> m_holesRef;
+    GameMouse *m_pMouse;
+    int *m_pScore;
 
 public:
-    HoleCollisionManager(std::vector<std::shared_ptr<Hole>> &holes);
+    HoleCollisionManager(std::vector<std::shared_ptr<Hole>> &holes, GameMouse *gMouse, int *score);
     ~HoleCollisionManager();
 
-    void update(GameMouse &gMouseRef, int &scoreRef);
+    void update();
 };
 
 #endif // MANAGERS_H

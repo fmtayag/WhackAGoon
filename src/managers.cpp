@@ -87,21 +87,23 @@ bool HoleManager::checkForMayor()
 #pragma endregion HoleManager
 
 #pragma region HoleCollisionManager
-HoleCollisionManager::HoleCollisionManager(std::vector<std::shared_ptr<Hole>> &holes)
+HoleCollisionManager::HoleCollisionManager(std::vector<std::shared_ptr<Hole>> &holes, GameMouse *gMouse, int *score)
 {
     m_holesRef = holes;
+    m_pMouse = gMouse;
+    m_pScore = score;
 }
 HoleCollisionManager::~HoleCollisionManager()
 {
 }
-void HoleCollisionManager::update(GameMouse &gMouseRef, int &scoreRef)
+void HoleCollisionManager::update()
 {
     GameRules gRules;
 
     for (std::shared_ptr<Hole> hole : m_holesRef)
     {
         //printf("drawing particles\n");
-        hole->update(gMouseRef);
+        hole->update(*m_pMouse);
 
         Hole::HoleHitStatus hitStatus = hole->fetchHitStatus();
         if (hitStatus == Hole::HoleHitStatus::HIT)
@@ -110,10 +112,10 @@ void HoleCollisionManager::update(GameMouse &gMouseRef, int &scoreRef)
             switch (holeType)
             {
             case Hole::HoleType::HT_GOON:
-                scoreRef++;
+                (*m_pScore)++;
                 break;
             case Hole::HoleType::HT_TOWNIE:
-                scoreRef -= gRules.SCORE_PENALTY;
+                (*m_pScore) -= gRules.SCORE_PENALTY;
                 break;
             case Hole::HoleType::HT_MAYOR:
                 printf("You hit the mayor, idiot!\n");
@@ -124,8 +126,8 @@ void HoleCollisionManager::update(GameMouse &gMouseRef, int &scoreRef)
             }
 
             // Negative score check
-            if (scoreRef < 0)
-                scoreRef = 0;
+            if ((*m_pScore) < 0)
+                (*m_pScore) = 0;
         }
     }
 }
