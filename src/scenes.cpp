@@ -176,6 +176,7 @@ PlayScene::PlayScene()
     initializeTimers();
     createHoles();
     initializeHoleMgr();
+    initializeCollisionMgr();
 }
 PlayScene::~PlayScene()
 {
@@ -240,37 +241,8 @@ void PlayScene::update()
         //printf("Warmup is overz!!\n");
     }
 
-    // Update holes
-    for (std::shared_ptr<Hole> hole : m_holes)
-    {
-        //printf("drawing particles\n");
-        hole->update(m_gMouse);
-
-        Hole::HoleHitStatus hitStatus = hole->fetchHitStatus();
-        if (hitStatus == Hole::HoleHitStatus::HIT)
-        {
-            Hole::HoleType holeType = hole->fetchHoleType();
-            switch (holeType)
-            {
-            case Hole::HoleType::HT_GOON:
-                m_score++;
-                break;
-            case Hole::HoleType::HT_TOWNIE:
-                m_score -= m_PENALTY;
-                break;
-            case Hole::HoleType::HT_MAYOR:
-                printf("You hit the mayor, idiot!\n");
-                break;
-            default:
-                printf("Warning: reached default case in switch(holeType).\n");
-                break;
-            }
-
-            // Negative score check
-            if (m_score < 0)
-                m_score = 0;
-        }
-    }
+    // Check for collisions
+    m_collideMgr->update(m_gMouse, m_score);
 
     // Update hole manager
     m_holeMgr->update();
@@ -410,6 +382,10 @@ void PlayScene::createHoles()
 void PlayScene::initializeHoleMgr()
 {
     m_holeMgr = std::unique_ptr<HoleManager>(new HoleManager(m_holes));
+}
+void PlayScene::initializeCollisionMgr()
+{
+    m_collideMgr = std::unique_ptr<HoleCollisionManager>(new HoleCollisionManager(m_holes));
 }
 // *** CALLBACKS ***
 void PlayScene::cbToMenu()

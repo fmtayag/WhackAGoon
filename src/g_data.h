@@ -32,6 +32,11 @@ struct GameMouse
     SDL_Point position;
 };
 
+struct GameRules
+{
+    const int SCORE_PENALTY = 10;
+};
+
 enum PosCentering
 {
     POSCEN_NONE,

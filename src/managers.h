@@ -12,8 +12,8 @@ class HoleManager
 private:
     enum HoleChances
     {
-        HC_GOON = 70,
-        HC_TOWNIE = 20,
+        HC_GOON = 60,
+        HC_TOWNIE = 30,
         HC_MAYOR = 10
     };
 
@@ -29,6 +29,18 @@ public:
     ~HoleManager();
 
     void update();
+};
+
+class HoleCollisionManager
+{
+private:
+    std::vector<std::shared_ptr<Hole>> m_holesRef;
+
+public:
+    HoleCollisionManager(std::vector<std::shared_ptr<Hole>> &holes);
+    ~HoleCollisionManager();
+
+    void update(GameMouse &gMouseRef, int &scoreRef);
 };
 
 #endif // MANAGERS_H

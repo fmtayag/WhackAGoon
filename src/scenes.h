@@ -158,10 +158,10 @@ private:
 
     // Scores and other stuff
     int m_score = 0;
-    static const int m_PENALTY = 10;
 
-    // Hole Manager
+    // Managers
     std::unique_ptr<HoleManager> m_holeMgr;
+    std::unique_ptr<HoleCollisionManager> m_collideMgr;
 
     // Callbacks
     void cbToMenu();
@@ -172,6 +172,7 @@ private:
     void initializeTimers();
     void createHoles();
     void initializeHoleMgr();
+    void initializeCollisionMgr();
 
 public:
     PlayScene();
