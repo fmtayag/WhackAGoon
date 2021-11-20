@@ -72,6 +72,10 @@ void GTexture::loadFromFile(std::string path)
     m_texture = IMG_LoadTexture(gameRenderer, path.c_str());
     printf("GTexture::loadFromFile() | IMG_Error: %s\n", IMG_GetError());
 }
+void GTexture::loadAsTarget(SDL_Rect size)
+{
+    m_texture = SDL_CreateTexture(gameRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, size.w, size.h);
+}
 void GTexture::draw(SDL_Rect *clip, SDL_Rect *dst)
 {
     if (m_texture != NULL)
@@ -84,6 +88,14 @@ void GTexture::free()
         SDL_DestroyTexture(m_texture);
         m_texture = NULL;
     }
+}
+void GTexture::setAsTarget()
+{
+    SDL_SetRenderTarget(gameRenderer, m_texture);
+}
+void GTexture::unsetAsTarget()
+{
+    SDL_SetRenderTarget(gameRenderer, NULL);
 }
 #pragma endregion GTexture
 
@@ -173,3 +185,47 @@ void GFont::drawWithAlpha(std::string msg, SDL_Point pos, SDL_Color clr, PosCent
     }
 }
 #pragma endregion GFont
+
+#pragma region ShakeGenerator
+ShakeGenerator::ShakeGenerator()
+{
+    m_shakeIntensity = 10;
+    m_displacement = {0, 0};
+}
+ShakeGenerator::~ShakeGenerator()
+{
+}
+void ShakeGenerator::update()
+{
+    if (m_tmrShakeRect.getTicks() > m_delayShakeRect)
+    {
+        m_tmrShakeRect.stop();
+        m_tmrShakeRect.start();
+
+        if (m_shakevalues.size() != 0)
+        {
+            m_displacement.x = m_shakevalues.back();
+            m_shakevalues.pop_back();
+        }
+        else
+        {
+            m_displacement = {0, 0};
+        }
+    }
+    //printf("m_shakevalues.size() = %zu\n", m_shakevalues.size());
+}
+void ShakeGenerator::generateShake()
+{
+    for (int i = 0; i < MAX_SHAKE; i++)
+    {
+        int shakeValue = m_shakeIntensity;
+        if (i % 2 == 0)
+        {
+            shakeValue = -shakeValue;
+        }
+
+        m_shakevalues.push_back(shakeValue);
+    }
+    m_tmrShakeRect.start();
+}
+#pragma endregion ShakeGenerator

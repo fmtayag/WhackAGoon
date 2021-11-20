@@ -159,6 +159,7 @@ private:
 
     // Scores and other stuff
     int m_score = 0;
+    ShakeGenerator m_shakeGen;
 
     // Managers
     std::unique_ptr<HoleManager> m_holeMgr;

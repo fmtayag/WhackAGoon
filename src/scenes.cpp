@@ -244,14 +244,22 @@ void PlayScene::update()
     // Check for collisions
     m_collideMgr->update();
 
-    // Spawn penalty text if player whacked a Townie.
+    // Create effects if player whacked a Townie.
     bool whackedTownie = m_collideMgr->didWhackTownie();
     if (whackedTownie)
     {
         GameRules gRules;
+
+        // Spawn penalty text
         std::string penaltyMsg = std::to_string(-gRules.SCORE_PENALTY);
         m_penaltyTexts.push_back(std::shared_ptr<PenaltyText>(new PenaltyText(m_gFontMedium.get(), {4, 4}, penaltyMsg)));
+
+        // Generate shake
+        m_shakeGen.generateShake();
     }
+
+    // Update shake generator
+    m_shakeGen.update();
 
     // Update hole manager
     m_holeMgr->update();
@@ -302,6 +310,10 @@ void PlayScene::draw()
     SDL_SetRenderDrawColor(gameRenderer, 200, 200, 0, 255);
     SDL_RenderClear(gameRenderer);
 
+    std::unique_ptr<GTexture> targetTexture = std::unique_ptr<GTexture>(new GTexture());
+    targetTexture->loadAsTarget({0, 0, winDat.WIDTH, winDat.HEIGHT});
+    targetTexture->setAsTarget();
+
     auraBGTexture->draw();
 
     // Draw particles
@@ -329,6 +341,11 @@ void PlayScene::draw()
         //printf("drawing particles\n");
         pentxt->draw();
     }
+
+    SDL_Rect targRect = {displacement.x, displacement.y, winDat.WIDTH, winDat.HEIGHT};
+
+    targetTexture->unsetAsTarget();
+    targetTexture->draw(NULL, &targRect);
 
     SDL_RenderPresent(gameRenderer);
 }
