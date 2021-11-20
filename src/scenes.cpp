@@ -177,6 +177,7 @@ PlayScene::PlayScene()
     createHoles();
     initializeHoleMgr();
     initializeCollisionMgr();
+    m_penaltyTexts.push_back(std::shared_ptr<PenaltyText>(new PenaltyText(m_gFontMedium.get(), {4, 4}, "-10")));
 }
 PlayScene::~PlayScene()
 {
@@ -274,6 +275,16 @@ void PlayScene::update()
         else
             iter++;
     }
+
+    // Update penalty texts
+    for (auto iter = m_penaltyTexts.begin(); iter != m_penaltyTexts.end();)
+    {
+        (*iter)->update();
+        if ((*iter)->fetchAlpha() == 0)
+            iter = m_penaltyTexts.erase(iter);
+        else
+            iter++;
+    }
 }
 void PlayScene::draw()
 {
@@ -302,7 +313,14 @@ void PlayScene::draw()
     }
 
     std::string msgScore = std::to_string(m_score);
-    m_gFontInfo->draw(msgScore, {winDat.HEIGHT / 2, 50}, gColors.WHITE, PosCentering::POSCEN_X);
+    m_gFontMedium->draw(msgScore, {winDat.HEIGHT / 2, 50}, gColors.WHITE, PosCentering::POSCEN_X);
+
+    // Draw penaltyTexts
+    for (std::shared_ptr<PenaltyText> pentxt : m_penaltyTexts)
+    {
+        //printf("drawing particles\n");
+        pentxt->draw();
+    }
 
     SDL_RenderPresent(gameRenderer);
 }
@@ -322,8 +340,8 @@ void PlayScene::loadAssets()
     holeSheetTexture->loadFromFile("assets/images/holeSheet.png");
 
     // Load fonts
-    m_gFontInfo = std::unique_ptr<GFont>(new GFont());
-    m_gFontInfo->loadFontFromFile("assets/fonts/04B03.TTF", 48);
+    m_gFontMedium = std::unique_ptr<GFont>(new GFont());
+    m_gFontMedium->loadFontFromFile("assets/fonts/04B03.TTF", 48);
 }
 void PlayScene::createButtons()
 {

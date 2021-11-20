@@ -5,6 +5,7 @@
 #include "widgets.h"
 #include "g_data.h"
 #include "sprites.h"
+#include "helpers.h"
 
 #pragma region GTimer
 GTimer::GTimer()
@@ -117,33 +118,51 @@ void GFont::draw(std::string msg, SDL_Point pos, SDL_Color clr, PosCentering pos
         // Get width and height
         const int w = msgSurf->w;
         const int h = msgSurf->h;
+        SDL_Rect size = {0, 0, w, h};
 
-        // Check for position centers
-        switch (poscenter)
-        {
-        case PosCentering::POSCEN_NONE:
-            // Do nothing
-            break;
-        case PosCentering::POSCEN_X:
-            pos.x = pos.x - (w / 2);
-            break;
-        case PosCentering::POSCEN_Y:
-            pos.y = pos.y - (h / 2);
-            break;
-        case PosCentering::POSCEN_BOTH:
-            pos.x = pos.x - (w / 2);
-            pos.y = pos.y - (h / 2);
-            break;
-        default:
-            printf("WARNING: GFont::draw() -> default case reached.\n");
-            break;
-        }
+        // Center position if applicable
+        centerPos(pos, size, poscenter);
 
         // Create rect
-        SDL_Rect msgRect = {pos.x, pos.y, w, h};
+        SDL_Rect msgRect = {pos.x, pos.y, size.w, size.h};
 
         // Create texture
         SDL_Texture *msgTexture = SDL_CreateTextureFromSurface(gameRenderer, msgSurf);
+
+        // Draw texture
+        SDL_RenderCopy(gameRenderer, msgTexture, NULL, &msgRect);
+
+        // Free texture and surface
+        SDL_FreeSurface(msgSurf);
+        SDL_DestroyTexture(msgTexture);
+    }
+}
+void GFont::drawWithAlpha(std::string msg, SDL_Point pos, SDL_Color clr, PosCentering poscenter, Uint8 alpha)
+{
+    if (m_font != NULL)
+    {
+        // Create temp surface
+        SDL_Surface *msgSurf = TTF_RenderText_Solid(m_font, msg.c_str(), clr);
+
+        // Get width and height
+        const int w = msgSurf->w;
+        const int h = msgSurf->h;
+        SDL_Rect size = {0, 0, w, h};
+
+        // Center position if applicable
+        centerPos(pos, size, poscenter);
+
+        // Create rect
+        SDL_Rect msgRect = {pos.x, pos.y, size.w, size.h};
+
+        // Create texture
+        SDL_Texture *msgTexture = SDL_CreateTextureFromSurface(gameRenderer, msgSurf);
+
+        // Set Blend Mode
+        SDL_SetTextureBlendMode(msgTexture, SDL_BLENDMODE_BLEND);
+
+        // Set Alpha
+        SDL_SetTextureAlphaMod(msgTexture, alpha);
 
         // Draw texture
         SDL_RenderCopy(gameRenderer, msgTexture, NULL, &msgRect);

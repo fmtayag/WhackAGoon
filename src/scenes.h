@@ -136,6 +136,7 @@ private:
     // Sprite groups
     std::vector<std::shared_ptr<Particle>> m_particles;
     std::vector<std::shared_ptr<Hole>> m_holes;
+    std::vector<std::shared_ptr<PenaltyText>> m_penaltyTexts;
 
     // Buttons
     std::unique_ptr<GButton> btnToMenu;
@@ -147,7 +148,7 @@ private:
     std::shared_ptr<GTexture> holeSheetTexture;
 
     // Fonts
-    std::unique_ptr<GFont> m_gFontInfo;
+    std::unique_ptr<GFont> m_gFontMedium;
 
     // Timers
     GTimer m_tmrWarmup;
@@ -157,7 +158,7 @@ private:
     static const int m_MAX_PARTICLES = 10;
 
     // Scores and other stuff
-    int m_score = 0;
+    int m_score = 3000;
 
     // Managers
     std::unique_ptr<HoleManager> m_holeMgr;

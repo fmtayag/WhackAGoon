@@ -393,3 +393,46 @@ Hole::SheetMap Hole::createSheetMap()
 }
 Hole::SheetMap Hole::m_sheetMap = Hole::createSheetMap();
 #pragma endregion Hole
+
+#pragma region PenaltyText
+PenaltyText::PenaltyText(GFont *font, SDL_Point initpos, std::string msg)
+{
+    GameColors gColors;
+
+    m_font = font;
+    m_msg = msg;
+    m_color = gColors.WHITE;
+    m_pos = initpos;
+    m_velocity = {0, 2};
+    m_alpha = 255;
+}
+PenaltyText::~PenaltyText()
+{
+    printf("Deleted PenaltyText.\n");
+}
+void PenaltyText::update()
+{
+    // Update alpha
+    if (m_alpha > 0)
+    {
+        m_alpha -= ALPHA_DECREASE;
+    }
+
+    if (m_alpha <= 0)
+    {
+        m_alpha = 0;
+    }
+
+    // Update position
+    m_pos.x += m_velocity.x;
+    m_pos.y += m_velocity.y;
+}
+void PenaltyText::draw()
+{
+    m_font->drawWithAlpha(m_msg, m_pos, m_color, PosCentering::POSCEN_NONE, m_alpha);
+}
+Uint8 PenaltyText::fetchAlpha()
+{
+    return m_alpha;
+}
+#pragma endregion PenaltyText

@@ -20,3 +20,24 @@ const bool isPointCollide(SDL_Point point, SDL_Rect box)
 
     return true;
 }
+void centerPos(SDL_Point &pos, SDL_Rect &size, PosCentering poscenter)
+{
+    switch (poscenter)
+    {
+    case PosCentering::POSCEN_NONE:
+        // Do nothing
+        break;
+    case PosCentering::POSCEN_X:
+        pos.x = pos.x - (size.w / 2);
+        break;
+    case PosCentering::POSCEN_Y:
+        pos.y = pos.y - (size.h / 2);
+        break;
+    case PosCentering::POSCEN_BOTH:
+        pos.x = pos.x - (size.w / 2);
+        pos.y = pos.y - (size.h / 2);
+        break;
+    default:
+        break;
+    }
+}

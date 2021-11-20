@@ -132,4 +132,25 @@ private:
     void normalFrameDelay() { m_delayNxtF = m_NORM_ANIM; };
 };
 
+class PenaltyText
+{
+private:
+    GFont *m_font;
+    std::string m_msg;
+    SDL_Point m_pos;
+    SDL_Color m_color;
+    Vector2 m_velocity;
+    Uint8 m_alpha;
+    static const Uint8 ALPHA_DECREASE = 5;
+
+public:
+    PenaltyText(GFont *font, SDL_Point pos, std::string msg);
+    ~PenaltyText();
+
+    void update();
+    void draw();
+
+    Uint8 fetchAlpha();
+};
+
 #endif // SPRITES_H
