@@ -153,4 +153,48 @@ public:
     Uint8 fetchAlpha();
 };
 
+class TimerBar
+{
+private:
+    enum TimerBar_State
+    {
+        DISABLED,
+        ENABLED
+    };
+    enum FlickerState
+    {
+        FLICKER_SHOW,
+        FLICKER_HIDE
+    };
+    GTexture *m_clockTexture;
+    int m_clockFrame;
+    GTimer m_tmrAdvanceFrame;
+    static const Uint32 FRAME_DELAY = 50;
+
+    SDL_Rect m_rect;
+    std::vector<SDL_Rect> m_clips;
+    int m_origWidth;
+
+    GTimer m_tmrDoFlicker;
+    static const Uint32 FLICKER_DELAY = 150;
+
+    GTimer m_tmrStopFlicker;
+    static const Uint32 FLICKER_DURATION = FLICKER_DELAY * 10;
+
+    TimerBar_State m_state;
+    FlickerState m_flickerState;
+
+public:
+    TimerBar(GTexture *clockTexture, CSize size, std::vector<SDL_Rect> clips);
+    ~TimerBar();
+
+    void update(Uint32 timerTicks, Uint32 delayTicks);
+    void draw();
+
+    void enable();
+    void disable();
+
+    void doFlicker();
+};
+
 #endif // SPRITES_H

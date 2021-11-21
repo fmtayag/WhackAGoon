@@ -159,6 +159,8 @@ private:
     GTimer m_tmrSpawnParticle;
     Uint32 m_delaySpawnParticle = 1000;
     static const int m_MAX_PARTICLES = 10;
+    GTimer m_tmrAntiIdle;
+    Uint32 m_delayAntiIdle = 8000;
 
     // Scores and other stuff
     int m_score = 0;
@@ -167,6 +169,9 @@ private:
     // Managers
     std::unique_ptr<HoleManager> m_holeMgr;
     std::unique_ptr<HoleCollisionManager> m_collideMgr;
+
+    // UI Stuff
+    std::unique_ptr<TimerBar> m_timerBar;
 
     // Callbacks
     void cbToMenu();
@@ -179,6 +184,7 @@ private:
     void initializeHoleMgr();
     void initializeCollisionMgr();
     void initializeTargetTexture();
+    void initializeTimerBar();
 
 public:
     PlayScene();

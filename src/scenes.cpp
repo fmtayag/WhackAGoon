@@ -173,6 +173,7 @@ PlayScene::PlayScene()
     initializeHoleMgr();
     initializeCollisionMgr();
     initializeTargetTexture();
+    initializeTimerBar();
 }
 PlayScene::~PlayScene()
 {
@@ -209,10 +210,10 @@ void PlayScene::handleEvents(SDL_Event *e)
                 m_stflag = STF_TOPLAY;
                 break;
             case SDLK_1:
-                m_holes[0]->awaken(Hole::HoleType::HT_GOON);
+                m_timerBar->enable();
                 break;
             case SDLK_2:
-                m_holes[0]->awaken(Hole::HoleType::HT_TOWNIE);
+                m_timerBar->disable();
                 break;
             case SDLK_3:
                 m_holes[0]->awaken(Hole::HoleType::HT_MAYOR);
@@ -298,6 +299,9 @@ void PlayScene::update()
         else
             iter++;
     }
+
+    // Update timer bar
+    m_timerBar->update(m_tmrAntiIdle.getTicks(), m_delayAntiIdle);
 }
 void PlayScene::draw()
 {
@@ -334,6 +338,9 @@ void PlayScene::draw()
     {
         pentxt->draw();
     }
+
+    // Draw timer bar
+    m_timerBar->draw();
 
     SDL_Point displacement = m_shakeGen.fetchDisplacement();
     SDL_Rect targRect = {displacement.x, displacement.y, winDat.WIDTH, winDat.HEIGHT};
@@ -383,6 +390,7 @@ void PlayScene::initializeTimers()
 {
     m_tmrWarmup.start();
     m_tmrSpawnParticle.start();
+    //m_tmrAntiIdle.start();
 }
 void PlayScene::createHoles()
 {
@@ -430,6 +438,18 @@ void PlayScene::initializeTargetTexture()
     WindowMetadata winDat;
     targetTexture = std::unique_ptr<GTexture>(new GTexture());
     targetTexture->loadAsTarget({0, 0, winDat.WIDTH, winDat.HEIGHT});
+}
+void PlayScene::initializeTimerBar()
+{
+    WindowMetadata winDat;
+
+    CSize timerBarSize = {48 * winDat.PXSCALE, 3 * winDat.PXSCALE};
+    std::vector<SDL_Rect> timerBarClips = {
+        {32, 8, 8, 8},
+        {40, 8, 8, 8},
+        {48, 8, 8, 8},
+        {56, 8, 8, 8}};
+    m_timerBar = std::unique_ptr<TimerBar>(new TimerBar(uiElementsTexture.get(), timerBarSize, timerBarClips));
 }
 // *** CALLBACKS ***
 void PlayScene::cbToMenu()

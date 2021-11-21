@@ -9,5 +9,6 @@
 const bool isPointCollide(SDL_Point point, SDL_Rect box);
 void centerPos(SDL_Point &pos, SDL_Rect &size, PosCentering poscenter);
 void dbgPrint(DPL dblevel, std::string msg);
+float normalizeValue(float val, float min, float max, bool inverse = false);
 
 #endif // HELPERS_H

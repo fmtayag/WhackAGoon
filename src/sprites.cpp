@@ -411,7 +411,8 @@ PenaltyText::PenaltyText(GFont *font, SDL_Point initpos, std::string msg)
 }
 PenaltyText::~PenaltyText()
 {
-    dbgPrint(DPL::DEBUG, fmt::format("Deleted {}.", typeid(*this).name()));
+    std::string dbgMsg = fmt::format("{} destructor called.", typeid(*this).name());
+    dbgPrint(DPL::DEBUG, dbgMsg);
 }
 void PenaltyText::update()
 {
@@ -439,3 +440,140 @@ Uint8 PenaltyText::fetchAlpha()
     return m_alpha;
 }
 #pragma endregion PenaltyText
+
+#pragma region TimerBar
+TimerBar::TimerBar(GTexture *clockTexture, CSize size, std::vector<SDL_Rect> clips)
+{
+    m_clockTexture = clockTexture;
+    m_clips = clips;
+
+    WindowMetadata winDat;
+    m_rect.x = (winDat.WIDTH / 2) - (m_rect.w / 2);
+    m_rect.y = 3 * winDat.PXSCALE;
+    m_origWidth = size.w;
+    m_rect.w = m_origWidth;
+    m_rect.h = size.h;
+
+    m_clockFrame = 0;
+    m_tmrAdvanceFrame.start();
+    m_state = TimerBar_State::DISABLED;
+    m_flickerState = FlickerState::FLICKER_HIDE;
+}
+TimerBar::~TimerBar()
+{
+    std::string dbgMsg = fmt::format("{} destructor called.", typeid(*this).name());
+    dbgPrint(DPL::DEBUG, dbgMsg);
+}
+void TimerBar::update(Uint32 timerTicks, Uint32 delayTicks)
+{
+    if (m_state == TimerBar_State::ENABLED)
+    {
+        WindowMetadata winDat;
+
+        // *** Flicker effect ***
+        if (m_tmrStopFlicker.getTicks() >= FLICKER_DURATION)
+        {
+            m_tmrStopFlicker.stop();
+            m_tmrDoFlicker.stop();
+            m_flickerState = FLICKER_SHOW;
+        }
+
+        //dbgPrint(DPL::DEBUG, fmt::format("doFlicker: {} delay: {}", m_tmrDoFlicker.getTicks(), FLICKER_DELAY));
+        if (m_tmrDoFlicker.getTicks() >= FLICKER_DELAY)
+        {
+            m_tmrDoFlicker.stop();
+            m_tmrDoFlicker.start();
+            doFlicker();
+        }
+
+        // *** The clock ***
+        if (m_tmrAdvanceFrame.getTicks() >= FRAME_DELAY)
+        {
+            m_tmrAdvanceFrame.stop();
+            m_tmrAdvanceFrame.start();
+
+            if (m_clockFrame < m_clips.size() - 1)
+                m_clockFrame++;
+            else
+                m_clockFrame = 0;
+        }
+        //dbgPrint(DPL::DEBUG, fmt::format("clockFrame: {}", m_clockFrame));
+
+        // *** The bar ***
+        // Normalize ticks
+        float normalizedTicks = normalizeValue(static_cast<float>(timerTicks), 0.0f, static_cast<float>(delayTicks), true);
+
+        // Update bar length
+        float newBarWidth = static_cast<float>(m_origWidth) * normalizedTicks;
+
+        if (newBarWidth <= static_cast<float>(winDat.PXSCALE))
+            newBarWidth = 8.0f;
+
+        m_rect.w = static_cast<int>(newBarWidth);
+
+        // Center the bar
+        m_rect.x = (winDat.WIDTH / 2) - (m_rect.w / 2);
+        m_rect.y = 3 * winDat.PXSCALE;
+    }
+}
+void TimerBar::draw()
+{
+    if (m_state == TimerBar_State::ENABLED)
+    {
+        GameColors gColors;
+        WindowMetadata winDat;
+
+        if (m_flickerState == FlickerState::FLICKER_SHOW)
+        {
+            // *** Draw the bar ***
+            SDL_SetRenderDrawColor(gameRenderer, gColors.WHITE.r, gColors.WHITE.g, gColors.WHITE.b, gColors.WHITE.a);
+            SDL_RenderFillRect(gameRenderer, &m_rect);
+
+            // So the bar appears rounded ... yeah i know there are better ways to do this but fuck it
+            SDL_Rect leftPixelRect = {m_rect.x - winDat.PXSCALE, m_rect.y + winDat.PXSCALE, winDat.PXSCALE, winDat.PXSCALE};
+            SDL_RenderFillRect(gameRenderer, &leftPixelRect);
+
+            SDL_Rect rightPixelRect = {m_rect.x + m_rect.w, m_rect.y + winDat.PXSCALE, winDat.PXSCALE, winDat.PXSCALE};
+            SDL_RenderFillRect(gameRenderer, &rightPixelRect);
+
+            // *** Draw the clock
+            const int clockW = m_clips[m_clockFrame].w * winDat.PXSCALE;
+            const int clockH = m_clips[m_clockFrame].h * winDat.PXSCALE;
+            const int clockX = (winDat.WIDTH / 2) - (clockW / 2);
+            const int clockY = 1 * winDat.PXSCALE;
+            SDL_Rect clockRect = {clockX, clockY, clockW, clockH};
+            m_clockTexture->draw(&m_clips[m_clockFrame], &clockRect);
+        }
+    }
+}
+void TimerBar::enable()
+{
+    if (m_state == TimerBar_State::DISABLED)
+    {
+        m_state = TimerBar_State::ENABLED;
+        m_tmrDoFlicker.start();
+        m_tmrStopFlicker.start();
+    }
+}
+void TimerBar::disable()
+{
+    if (m_state == TimerBar_State::ENABLED)
+    {
+        m_state = TimerBar_State::DISABLED;
+    }
+}
+void TimerBar::doFlicker()
+{
+    switch (m_flickerState)
+    {
+    case FlickerState::FLICKER_SHOW:
+        m_flickerState = FLICKER_HIDE;
+        printf("hiding...\n");
+        break;
+    case FlickerState::FLICKER_HIDE:
+        m_flickerState = FLICKER_SHOW;
+        printf("showing...\n");
+        break;
+    }
+}
+#pragma endregion TimerBar

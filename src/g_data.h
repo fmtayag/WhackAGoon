@@ -57,4 +57,9 @@ struct Vector2
     int x, y;
 };
 
+struct CSize
+{
+    int w, h;
+};
+
 #endif // G_DATA_H

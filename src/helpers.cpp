@@ -63,3 +63,10 @@ void dbgPrint(DPL dblevel, std::string msg)
 
     printf(finalMsg.c_str());
 }
+float normalizeValue(float val, float min, float max, bool inverse)
+{
+    if (inverse)
+        return (max - val) / (max - min); // 1 lowest, 0 highest
+    else
+        return (val - min) / (max - min); // 0 lowest, 1 highest
+}
