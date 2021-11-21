@@ -75,11 +75,11 @@ target_link_libraries(${PROJECT_NAME} SDL2::TTF)
 find_package(SDL2_mixer REQUIRED)
 target_link_libraries(${PROJECT_NAME} SDL2::Mixer)
 
-# Copy assets
-file(COPY assets DESTINATION ${CMAKE_BINARY_DIR}/Debug)
+# # Copy assets
+# file(COPY assets DESTINATION ${CMAKE_BINARY_DIR}/Debug)
 
-# Copy libraries
-file(GLOB DLLFILES
-    "libraries/*.dll"
-)
-file(COPY ${DLLFILES} DESTINATION ${CMAKE_BINARY_DIR}/Debug)
+# # Copy libraries
+# file(GLOB DLLFILES
+    # "libraries/*.dll"
+# )
+# file(COPY ${DLLFILES} DESTINATION ${CMAKE_BINARY_DIR}/Debug)

@@ -211,9 +211,11 @@ void PlayScene::handleEvents(SDL_Event *e)
                 break;
             case SDLK_1:
                 m_timerBar->enable();
+                m_tmrAntiIdle.start();
                 break;
             case SDLK_2:
                 m_timerBar->disable();
+                m_tmrAntiIdle.stop();
                 break;
             case SDLK_3:
                 m_holes[0]->awaken(Hole::HoleType::HT_MAYOR);
@@ -321,7 +323,7 @@ void PlayScene::draw()
         particle->draw();
     }
 
-    cityBGTexture->draw();
+    cityhallBGTexture->draw();
     btnToMenu->draw();
 
     // Draw holes
@@ -353,8 +355,8 @@ void PlayScene::draw()
 void PlayScene::loadAssets()
 {
     // Load images
-    cityBGTexture = std::unique_ptr<GTexture>(new GTexture());
-    cityBGTexture->loadFromFile("assets/images/city_bg.png");
+    cityhallBGTexture = std::unique_ptr<GTexture>(new GTexture());
+    cityhallBGTexture->loadFromFile("assets/images/cityhall_bg.png");
 
     auraBGTexture = std::unique_ptr<GTexture>(new GTexture());
     auraBGTexture->loadFromFile("assets/images/aura_bg.png");
@@ -390,29 +392,29 @@ void PlayScene::initializeTimers()
 {
     m_tmrWarmup.start();
     m_tmrSpawnParticle.start();
-    //m_tmrAntiIdle.start();
+    m_tmrAntiIdle.start();
 }
 void PlayScene::createHoles()
 {
     WindowMetadata winData;
     const int cwx = winData.WIDTH / 2;
-    const int cwy = winData.HEIGHT / 2;
+    const int cwy = static_cast<int>(winData.HEIGHT * 0.50f);
     const int offy_row1 = winData.PXSCALE * 4;
     const int offy_row2 = winData.PXSCALE * 20;
+    const int offy_row3 = winData.PXSCALE * 36;
     const int offx_col1 = winData.PXSCALE * 20;
-    const int offx_col2 = winData.PXSCALE * 40;
 
-    std::shared_ptr<Hole> hole1(new Hole(holeSheetTexture, {cwx - offx_col2, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
-    std::shared_ptr<Hole> hole2(new Hole(holeSheetTexture, {cwx - offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
-    std::shared_ptr<Hole> hole3(new Hole(holeSheetTexture, {cwx, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
-    std::shared_ptr<Hole> hole4(new Hole(holeSheetTexture, {cwx + offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
-    std::shared_ptr<Hole> hole5(new Hole(holeSheetTexture, {cwx + offx_col2, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole1(new Hole(holeSheetTexture, {cwx - offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole2(new Hole(holeSheetTexture, {cwx, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole3(new Hole(holeSheetTexture, {cwx + offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
 
-    std::shared_ptr<Hole> hole6(new Hole(holeSheetTexture, {cwx - offx_col2, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
-    std::shared_ptr<Hole> hole7(new Hole(holeSheetTexture, {cwx - offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
-    std::shared_ptr<Hole> hole8(new Hole(holeSheetTexture, {cwx, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
-    std::shared_ptr<Hole> hole9(new Hole(holeSheetTexture, {cwx + offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
-    std::shared_ptr<Hole> hole10(new Hole(holeSheetTexture, {cwx + offx_col2, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole4(new Hole(holeSheetTexture, {cwx - offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole5(new Hole(holeSheetTexture, {cwx, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole6(new Hole(holeSheetTexture, {cwx + offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+
+    std::shared_ptr<Hole> hole7(new Hole(holeSheetTexture, {cwx - offx_col1, cwy + offy_row3}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole8(new Hole(holeSheetTexture, {cwx, cwy + offy_row3}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole9(new Hole(holeSheetTexture, {cwx + offx_col1, cwy + offy_row3}, PosCentering::POSCEN_BOTH));
 
     m_holes.push_back(hole1);
     m_holes.push_back(hole2);
@@ -423,7 +425,6 @@ void PlayScene::createHoles()
     m_holes.push_back(hole7);
     m_holes.push_back(hole8);
     m_holes.push_back(hole9);
-    m_holes.push_back(hole10);
 }
 void PlayScene::initializeHoleMgr()
 {
@@ -443,7 +444,7 @@ void PlayScene::initializeTimerBar()
 {
     WindowMetadata winDat;
 
-    CSize timerBarSize = {48 * winDat.PXSCALE, 3 * winDat.PXSCALE};
+    CSize timerBarSize = {40 * winDat.PXSCALE, 3 * winDat.PXSCALE};
     std::vector<SDL_Rect> timerBarClips = {
         {32, 8, 8, 8},
         {40, 8, 8, 8},

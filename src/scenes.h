@@ -145,7 +145,7 @@ private:
 
     // Textures
     std::unique_ptr<GTexture> uiElementsTexture;
-    std::unique_ptr<GTexture> cityBGTexture;
+    std::unique_ptr<GTexture> cityhallBGTexture;
     std::unique_ptr<GTexture> auraBGTexture;
     std::shared_ptr<GTexture> holeSheetTexture;
     std::unique_ptr<GTexture> targetTexture; // for render targeting
@@ -160,7 +160,7 @@ private:
     Uint32 m_delaySpawnParticle = 1000;
     static const int m_MAX_PARTICLES = 10;
     GTimer m_tmrAntiIdle;
-    Uint32 m_delayAntiIdle = 8000;
+    Uint32 m_delayAntiIdle = 5000;
 
     // Scores and other stuff
     int m_score = 0;

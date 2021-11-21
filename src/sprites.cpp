@@ -568,11 +568,9 @@ void TimerBar::doFlicker()
     {
     case FlickerState::FLICKER_SHOW:
         m_flickerState = FLICKER_HIDE;
-        printf("hiding...\n");
         break;
     case FlickerState::FLICKER_HIDE:
         m_flickerState = FLICKER_SHOW;
-        printf("showing...\n");
         break;
     }
 }

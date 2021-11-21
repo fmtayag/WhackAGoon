@@ -169,7 +169,7 @@ private:
     GTexture *m_clockTexture;
     int m_clockFrame;
     GTimer m_tmrAdvanceFrame;
-    static const Uint32 FRAME_DELAY = 50;
+    static const Uint32 FRAME_DELAY = 60;
 
     SDL_Rect m_rect;
     std::vector<SDL_Rect> m_clips;
