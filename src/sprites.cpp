@@ -224,6 +224,10 @@ void Hole::update(GameMouse &gMouse)
 }
 void Hole::draw()
 {
+    // Draw hole
+    m_texture->draw(&m_sheetMap[HoleState(HT_NONE, HAS_REST)][0], &m_rect);
+
+    // Draw person
     m_texture->draw(&m_sheetMap[m_state][m_curF], &m_rect);
 }
 void Hole::nextAS()
