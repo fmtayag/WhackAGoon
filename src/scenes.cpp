@@ -371,11 +371,12 @@ void PlayScene::createButtons()
     const int btnToMenu_rh = 8 * winData.PXSCALE;
     const int btnToMenu_rx = (winData.WIDTH - winData.PXSCALE) - btnToMenu_rw;
     const int btnToMenu_ry = winData.PXSCALE;
+
     SDL_Rect btnToMenu_rect = {btnToMenu_rx, btnToMenu_ry, btnToMenu_rw, btnToMenu_rh};
     std::map<BtnState, SDL_Rect> btnToMenu_clips;
     btnToMenu_clips[BST_NORMAL] = {0, 16, 8, 8};
     btnToMenu_clips[BST_HOVERED] = {8, 16, 8, 8};
-    btnToMenu = std::make_unique<GButton>(GButton(uiElementsTexture.get(), btnToMenu_rect, btnToMenu_clips));
+    btnToMenu = std::unique_ptr<GButton>(new GButton(uiElementsTexture.get(), btnToMenu_rect, btnToMenu_clips));
     btnToMenu->bindCallback(std::bind(&PlayScene::cbToMenu, this));
 }
 void PlayScene::initializeTimers()
