@@ -24,6 +24,7 @@ struct GameColors
 {
     const SDL_Color WHITE = {255, 255, 255, 255};
     const SDL_Color BLACK = {0, 0, 0, 255};
+    const SDL_Color NEON_TOXICGREEN = {175, 196, 33, 255};
 };
 
 struct GameMouse

@@ -277,7 +277,7 @@ void PlayScene::update()
             const int xPos = (rand() % (winData.WIDTH / winData.PXSCALE)) * winData.PXSCALE; // generate rand number divisible by PXSCALE
             const int yPos = rand() % static_cast<int>(winData.HEIGHT * 0.65) + static_cast<int>(winData.HEIGHT * 0.45);
 
-            std::shared_ptr<Particle> particle(new Particle({xPos, yPos, winData.PXSCALE, winData.PXSCALE}, {0, -1}, gColors.WHITE));
+            std::shared_ptr<Particle> particle(new Particle({xPos, yPos, winData.PXSCALE, winData.PXSCALE}, {0, -1}, gColors.NEON_TOXICGREEN));
             m_particles.push_back(particle);
         }
     }

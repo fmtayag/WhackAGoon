@@ -158,7 +158,7 @@ private:
     Uint32 m_delayWarmup = 3000;
     GTimer m_tmrSpawnParticle;
     Uint32 m_delaySpawnParticle = 1000;
-    static const int m_MAX_PARTICLES = 10;
+    static const int m_MAX_PARTICLES = 20;
     GTimer m_tmrAntiIdle;
     Uint32 m_delayAntiIdle = 5000;
 
