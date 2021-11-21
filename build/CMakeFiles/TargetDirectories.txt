@@ -1,0 +1,3 @@
+C:/Users/Francis/Documents/_gameprojects/Whack-A-Goon/build/CMakeFiles/WhackAGoon.dir
+C:/Users/Francis/Documents/_gameprojects/Whack-A-Goon/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/Francis/Documents/_gameprojects/Whack-A-Goon/build/CMakeFiles/ZERO_CHECK.dir

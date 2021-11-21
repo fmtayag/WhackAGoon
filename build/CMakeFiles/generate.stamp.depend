@@ -1,0 +1,37 @@
+# CMake generation dependency list for this directory.
+C:/Dev/fmt-8.0.1/build/fmt-config-version.cmake
+C:/Dev/fmt-8.0.1/build/fmt-config.cmake
+C:/Dev/fmt-8.0.1/build/fmt-targets.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeCInformation.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeCXXInformation.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeCommonLanguageInclude.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeGenericSystem.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeInitializeConfigs.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeLanguageInformation.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeRCInformation.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeSystemSpecificInformation.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeSystemSpecificInitialize.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CheckCSourceCompiles.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CheckIncludeFile.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CheckLibraryExists.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/Compiler/CMakeCommonCompilerMacros.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/Compiler/MSVC-C.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/Compiler/MSVC-CXX.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/FindPackageHandleStandardArgs.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/FindPackageMessage.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/FindThreads.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/Internal/CheckSourceCompiles.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/Platform/Windows-MSVC-C.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/Platform/Windows-MSVC-CXX.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/Platform/Windows-MSVC.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/Platform/Windows.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/Platform/WindowsPaths.cmake
+C:/Users/Francis/Documents/_gameprojects/Whack-A-Goon/CMakeLists.txt
+C:/Users/Francis/Documents/_gameprojects/Whack-A-Goon/build/CMakeFiles/3.22.0-rc2/CMakeCCompiler.cmake
+C:/Users/Francis/Documents/_gameprojects/Whack-A-Goon/build/CMakeFiles/3.22.0-rc2/CMakeCXXCompiler.cmake
+C:/Users/Francis/Documents/_gameprojects/Whack-A-Goon/build/CMakeFiles/3.22.0-rc2/CMakeRCCompiler.cmake
+C:/Users/Francis/Documents/_gameprojects/Whack-A-Goon/build/CMakeFiles/3.22.0-rc2/CMakeSystem.cmake
+C:/Users/Francis/Documents/_gameprojects/Whack-A-Goon/cmake/sdl2/FindSDL2.cmake
+C:/Users/Francis/Documents/_gameprojects/Whack-A-Goon/cmake/sdl2/FindSDL2_image.cmake
+C:/Users/Francis/Documents/_gameprojects/Whack-A-Goon/cmake/sdl2/FindSDL2_mixer.cmake
+C:/Users/Francis/Documents/_gameprojects/Whack-A-Goon/cmake/sdl2/FindSDL2_ttf.cmake
