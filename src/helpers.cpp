@@ -41,19 +41,19 @@ void centerPos(SDL_Point &pos, SDL_Rect &size, PosCentering poscenter)
         break;
     }
 }
-void dbgPrint(DebugPrintLevels dblevel, std::string msg)
+void dbgPrint(DPL dblevel, std::string msg)
 {
     std::string finalMsg;
 
     switch (dblevel)
     {
-    case DebugPrintLevels::DEBUG:
+    case DPL::DEBUG:
         finalMsg.append("[DEBUG]: ");
         break;
-    case DebugPrintLevels::WARNING:
+    case DPL::WARNING:
         finalMsg.append("[WARNING]: ");
         break;
-    case DebugPrintLevels::ERROR:
+    case DPL::ERROR:
         finalMsg.append("[ERROR]: ");
         break;
     }

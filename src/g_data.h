@@ -45,7 +45,7 @@ enum PosCentering
     POSCEN_BOTH
 };
 
-enum DebugPrintLevels
+enum DPL // Debug Print Levels
 {
     DEBUG,
     WARNING,

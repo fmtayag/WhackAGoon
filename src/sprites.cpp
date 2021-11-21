@@ -4,6 +4,7 @@
 #include <cassert>
 #include <algorithm>
 #include <vector>
+#include <fmt/format.h>
 #include <SDL.h>
 #include "sprites.h"
 #include "g_data.h"
@@ -37,8 +38,8 @@ GButton::GButton(GTexture *texture, SDL_Rect rect, std::map<BtnState, SDL_Rect> 
 }
 GButton::~GButton()
 {
-    m_texture = NULL;
-    printf("GButton::~GButton() | GButton deleted.\n");
+    std::string dbgMsg = fmt::format("{} destructor called.", typeid(*this).name());
+    dbgPrint(DPL::DEBUG, dbgMsg);
 }
 void GButton::update(GameMouse *mouse_s)
 {
@@ -75,7 +76,6 @@ void GButton::draw()
 {
     if (this != nullptr)
     {
-        //printf("m_clips rect: (%d, %d, %d, %d) (xywh).\n", m_clips[m_state].x, m_clips[m_state].y, m_clips[m_state].w, m_clips[m_state].h);
         m_texture->draw(&m_clips[m_state], &m_rect);
     }
 }
@@ -109,7 +109,8 @@ Particle::Particle(SDL_Rect rect, Vector2 velocity, SDL_Color color)
 }
 Particle::~Particle()
 {
-    //printf("Particle deleted.\n");
+    std::string dbgMsg = fmt::format("{} destructor called.", typeid(*this).name());
+    dbgPrint(DPL::DEBUG, dbgMsg);
 }
 void Particle::update()
 {
@@ -161,7 +162,8 @@ Hole::Hole(std::shared_ptr<GTexture> texture, SDL_Point pos, PosCentering poscen
         m_rect.y = pos.y - (m_rect.h / 2);
         break;
     default:
-        printf("WARNING: Hole::Hole() -> default case reached.\n");
+        std::string dbgMsg = fmt::format("{}() -> switch case reached default case.", __FUNCTION__);
+        dbgPrint(DPL::WARNING, dbgMsg);
         break;
     }
 
@@ -171,8 +173,8 @@ Hole::Hole(std::shared_ptr<GTexture> texture, SDL_Point pos, PosCentering poscen
 }
 Hole::~Hole()
 {
-    printf("Hole deleted ...\n");
-    m_texture = NULL;
+    std::string dbgMsg = fmt::format("{} destructor called.", typeid(*this).name());
+    dbgPrint(DPL::DEBUG, dbgMsg);
 }
 void Hole::update(GameMouse &gMouse)
 {
@@ -269,12 +271,13 @@ void Hole::awaken(HoleType type)
         }
         else
         {
-            //printf("Cannot awake this hole!\n");
+            dbgPrint(DPL::WARNING, "Cannot awaken Hole because it is not of type HT_NONE, and not of state HAS_REST");
         }
     }
     else
     {
-        printf("Warning: awaken() received HT_NONE as parameter.\n");
+        std::string dbgMsg = fmt::format("Cannot awaken Hole. {}() received HT_NONE as argument.", __FUNCTION__);
+        dbgPrint(DPL::WARNING, dbgMsg);
     }
 }
 void Hole::whack()
@@ -408,7 +411,7 @@ PenaltyText::PenaltyText(GFont *font, SDL_Point initpos, std::string msg)
 }
 PenaltyText::~PenaltyText()
 {
-    printf("Deleted PenaltyText. ************* \n");
+    dbgPrint(DPL::DEBUG, fmt::format("Deleted {}.", typeid(*this).name()));
 }
 void PenaltyText::update()
 {

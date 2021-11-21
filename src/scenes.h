@@ -5,11 +5,13 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <fmt/format.h>
 #include <SDL.h>
 #include "g_data.h"
 #include "widgets.h"
 #include "sprites.h"
 #include "managers.h"
+#include "helpers.h"
 
 class SceneContext;
 class Scene
@@ -66,7 +68,7 @@ public:
     // Scene transition
     void transitionTo(Scene *scene)
     {
-        printf("Context: Transition to %s.\n", typeid(*scene).name());
+        dbgPrint(DPL::DEBUG, fmt::format("Context: Transition to {}.", typeid(*scene).name()));
         if (this->m_scene != nullptr)
             delete this->m_scene;
         this->m_scene = scene;
@@ -146,6 +148,7 @@ private:
     std::unique_ptr<GTexture> cityBGTexture;
     std::unique_ptr<GTexture> auraBGTexture;
     std::shared_ptr<GTexture> holeSheetTexture;
+    std::unique_ptr<GTexture> targetTexture; // for render targeting
 
     // Fonts
     std::unique_ptr<GFont> m_gFontMedium;
@@ -175,6 +178,7 @@ private:
     void createHoles();
     void initializeHoleMgr();
     void initializeCollisionMgr();
+    void initializeTargetTexture();
 
 public:
     PlayScene();

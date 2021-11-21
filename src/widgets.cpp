@@ -66,12 +66,21 @@ GTexture::GTexture()
 GTexture::~GTexture()
 {
     free();
-    //dbgPrint(DebugPrintLevels::DEBUG, "Deleted GTexture.");
+
+    std::string dbgMsg = fmt::format("{} destructor called.", typeid(*this).name());
+    dbgPrint(DPL::DEBUG, dbgMsg);
 }
 void GTexture::loadFromFile(std::string path)
 {
     m_texture = IMG_LoadTexture(gameRenderer, path.c_str());
-    printf("GTexture::loadFromFile() | IMG_Error: %s\n", IMG_GetError());
+    if (m_texture != NULL)
+    {
+        dbgPrint(DPL::DEBUG, "Successfully loaded GTexture.");
+    }
+    else
+    {
+        dbgPrint(DPL::WARNING, fmt::format("Unable to load GTexture. IMG_Error: {}.", IMG_GetError()));
+    }
 }
 void GTexture::loadAsTarget(SDL_Rect size)
 {
@@ -100,7 +109,7 @@ void GTexture::setAsTarget()
     }
     else
     {
-        dbgPrint(DebugPrintLevels::WARNING, fmt::format("Cannot set {} as render target because it is already a target.", typeid(*this).name()));
+        dbgPrint(DPL::WARNING, fmt::format("Cannot set {} as render target because it is already a target.", typeid(*this).name()));
     }
 }
 void GTexture::unsetAsTarget()
@@ -112,7 +121,7 @@ void GTexture::unsetAsTarget()
     }
     else
     {
-        dbgPrint(DebugPrintLevels::WARNING, "Cannot unset %s as render target because it is not set as target.");
+        dbgPrint(DPL::WARNING, "Cannot unset %s as render target because it is not set as target.");
     }
 }
 #pragma endregion GTexture
@@ -230,7 +239,6 @@ void ShakeGenerator::update()
             m_displacement = {0, 0};
         }
     }
-    //printf("m_shakevalues.size() = %zu\n", m_shakevalues.size());
 }
 void ShakeGenerator::generateShake()
 {

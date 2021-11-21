@@ -36,13 +36,8 @@ MenuScene::MenuScene()
 }
 MenuScene::~MenuScene()
 {
-    //delete brickBGTexture;
-    //delete uiElementsTexture;
-
-    //delete btnPlay;
-    //delete btnHelp;
-    //delete btnInfo;
-    printf("MenuScene deleted.\n");
+    std::string dbgMsg = fmt::format("{} destructor called.", typeid(*this).name());
+    dbgPrint(DPL::DEBUG, dbgMsg);
 }
 void MenuScene::handleEvents(SDL_Event *e)
 {
@@ -177,9 +172,12 @@ PlayScene::PlayScene()
     createHoles();
     initializeHoleMgr();
     initializeCollisionMgr();
+    initializeTargetTexture();
 }
 PlayScene::~PlayScene()
 {
+    std::string dbgMsg = fmt::format("{} destructor called.", typeid(*this).name());
+    dbgPrint(DPL::DEBUG, dbgMsg);
 }
 void PlayScene::handleEvents(SDL_Event *e)
 {
@@ -238,7 +236,7 @@ void PlayScene::update()
     // Update timers
     if (m_tmrWarmup.getTicks() >= m_delayWarmup)
     {
-        //printf("Warmup is overz!!\n");
+        // dbgPrint(DPL::DEBUG, "Warmup is over!");
     }
 
     // Check for collisions
@@ -270,7 +268,6 @@ void PlayScene::update()
         m_tmrSpawnParticle.stop();
         m_tmrSpawnParticle.start();
 
-        //printf("m_particles.size(): %zu\n", m_particles.size());
         if (m_particles.size() < m_MAX_PARTICLES)
         {
             GameColors gColors;
@@ -310,8 +307,6 @@ void PlayScene::draw()
     SDL_SetRenderDrawColor(gameRenderer, 200, 200, 0, 255);
     SDL_RenderClear(gameRenderer);
 
-    std::unique_ptr<GTexture> targetTexture = std::unique_ptr<GTexture>(new GTexture());
-    targetTexture->loadAsTarget({0, 0, winDat.WIDTH, winDat.HEIGHT});
     targetTexture->setAsTarget();
 
     auraBGTexture->draw();
@@ -319,7 +314,6 @@ void PlayScene::draw()
     // Draw particles
     for (std::shared_ptr<Particle> particle : m_particles)
     {
-        //printf("drawing particles\n");
         particle->draw();
     }
 
@@ -338,7 +332,6 @@ void PlayScene::draw()
     // Draw penaltyTexts
     for (std::shared_ptr<PenaltyText> pentxt : m_penaltyTexts)
     {
-        //printf("drawing particles\n");
         pentxt->draw();
     }
 
@@ -430,6 +423,12 @@ void PlayScene::initializeHoleMgr()
 void PlayScene::initializeCollisionMgr()
 {
     m_collideMgr = std::unique_ptr<HoleCollisionManager>(new HoleCollisionManager(m_holes, &m_gMouse, &m_score));
+}
+void PlayScene::initializeTargetTexture()
+{
+    WindowMetadata winDat;
+    targetTexture = std::unique_ptr<GTexture>(new GTexture());
+    targetTexture->loadAsTarget({0, 0, winDat.WIDTH, winDat.HEIGHT});
 }
 // *** CALLBACKS ***
 void PlayScene::cbToMenu()
