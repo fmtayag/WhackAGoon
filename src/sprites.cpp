@@ -12,15 +12,10 @@
 
 #pragma region GButton
 //{ GButton
-GButton::GButton(GTexture *texture, SDL_Rect rect, std::map<BtnState, SDL_Rect> clips)
+GButton::GButton(std::shared_ptr<GTexture> texture, SDL_Rect rect, std::map<BtnState, SDL_Rect> clips)
+    : m_texture(texture)
 {
-    // m_texture = new GTexture();
-    // m_texture->loadFromFile(imgpath);
-
-    // Reminder: don't bother deep copying this...
-    // You can deep copy the GTexture object but not the SDL_Texture inside it
-    // Incomplete types like SDL_Texture can't be deep copied, it seems.
-    m_texture = texture;
+    dbgPrint(DPL::DEBUG, fmt::format("{} constructor called.", typeid(*this).name()));
 
     m_rect.x = rect.x;
     m_rect.y = rect.y;
@@ -103,6 +98,8 @@ void GButton::makeCallback()
 #pragma region Particle
 Particle::Particle(SDL_Rect rect, Vector2 velocity, SDL_Color color)
 {
+    dbgPrint(DPL::DEBUG, fmt::format("{} constructor called.", typeid(*this).name()));
+
     m_rect = rect;
     m_velocity = velocity;
     m_color = color;
@@ -135,7 +132,7 @@ SDL_Point Particle::getPos()
 #pragma region Hole
 Hole::Hole(std::shared_ptr<GTexture> texture, SDL_Point pos, PosCentering poscenter)
 {
-    // Initialize m_sheetClips (static)
+    dbgPrint(DPL::DEBUG, fmt::format("{} constructor called.", typeid(*this).name()));
 
     WindowMetadata winData;
     m_texture = texture;
@@ -402,8 +399,10 @@ Hole::SheetMap Hole::m_sheetMap = Hole::createSheetMap();
 #pragma endregion Hole
 
 #pragma region PenaltyText
-PenaltyText::PenaltyText(GFont *font, SDL_Point initpos, std::string msg)
+PenaltyText::PenaltyText(std::shared_ptr<GFont> font, SDL_Point initpos, std::string msg)
 {
+    dbgPrint(DPL::DEBUG, fmt::format("{} constructor called.", typeid(*this).name()));
+
     GameColors gColors;
 
     m_font = font;
@@ -446,9 +445,11 @@ Uint8 PenaltyText::fetchAlpha()
 #pragma endregion PenaltyText
 
 #pragma region TimerBar
-TimerBar::TimerBar(GTexture *clockTexture, CSize size, std::vector<SDL_Rect> clips)
+TimerBar::TimerBar(std::shared_ptr<GTexture> clockTexture, CSize size, std::vector<SDL_Rect> clips)
+    : m_clockTexture(clockTexture)
 {
-    m_clockTexture = clockTexture;
+    dbgPrint(DPL::DEBUG, fmt::format("{} constructor called.", typeid(*this).name()));
+
     m_clips = clips;
 
     WindowMetadata winDat;
@@ -543,7 +544,7 @@ void TimerBar::draw()
             // *** Draw the clock
             const int clockW = m_clips[m_clockFrame].w * winDat.PXSCALE;
             const int clockH = m_clips[m_clockFrame].h * winDat.PXSCALE;
-            const int clockX = (winDat.WIDTH / 2) - (clockW / 2);
+            const int clockX = ((winDat.WIDTH / 2) - (clockW / 2)) + 1; // the + 1 is an offset to center the clock
             const int clockY = 1 * winDat.PXSCALE;
             SDL_Rect clockRect = {clockX, clockY, clockW, clockH};
             m_clockTexture->draw(&m_clips[m_clockFrame], &clockRect);

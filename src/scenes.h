@@ -69,8 +69,8 @@ public:
     void transitionTo(Scene *scene)
     {
         dbgPrint(DPL::DEBUG, fmt::format("Context: Transition to {}.", typeid(*scene).name()));
-        if (this->m_scene != nullptr)
-            delete this->m_scene;
+        if (m_scene != nullptr)
+            delete m_scene;
         this->m_scene = scene;
         this->m_scene->setContext(this);
     }
@@ -110,7 +110,7 @@ private:
     std::unique_ptr<GButton> btnInfo;
 
     // Textures
-    std::unique_ptr<GTexture> uiElementsTexture;
+    std::shared_ptr<GTexture> uiElementsTexture;
     std::unique_ptr<GTexture> brickBGTexture;
     std::unique_ptr<GTexture> logoTexture;
 
@@ -144,14 +144,14 @@ private:
     std::unique_ptr<GButton> btnToMenu;
 
     // Textures
-    std::unique_ptr<GTexture> uiElementsTexture;
+    std::shared_ptr<GTexture> uiElementsTexture;
     std::unique_ptr<GTexture> cityhallBGTexture;
     std::unique_ptr<GTexture> auraBGTexture;
     std::shared_ptr<GTexture> holeSheetTexture;
     std::unique_ptr<GTexture> targetTexture; // for render targeting
 
     // Fonts
-    std::unique_ptr<GFont> m_gFontMedium;
+    std::shared_ptr<GFont> m_gFontMedium;
 
     // Timers
     GTimer m_tmrWarmup;
@@ -163,7 +163,7 @@ private:
     Uint32 m_delayAntiIdle = 5000;
 
     // Scores and other stuff
-    int m_score = 0;
+    int m_score = 1000;
     ShakeGenerator m_shakeGen;
 
     // Managers
@@ -189,6 +189,18 @@ private:
 public:
     PlayScene();
     ~PlayScene() override;
+
+    void handleEvents(SDL_Event *e) override;
+    void update() override;
+    void draw() override;
+};
+
+class DebugScene : public Scene
+{
+private:
+public:
+    DebugScene();
+    ~DebugScene() override;
 
     void handleEvents(SDL_Event *e) override;
     void update() override;

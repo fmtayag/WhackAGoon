@@ -59,27 +59,24 @@ Uint32 GTimer::getTicks()
 #pragma endregion GTimer
 
 #pragma region GTexture
-GTexture::GTexture()
+GTexture::GTexture() : m_texture(nullptr)
 {
-    m_texture = NULL;
 }
 GTexture::~GTexture()
 {
     free();
-
-    std::string dbgMsg = fmt::format("{} destructor called.", typeid(*this).name());
-    dbgPrint(DPL::DEBUG, dbgMsg);
+    dbgPrint(DPL::DEBUG, fmt::format("{} destructor called.", typeid(*this).name()));
 }
 void GTexture::loadFromFile(std::string path)
 {
     m_texture = IMG_LoadTexture(gameRenderer, path.c_str());
-    if (m_texture != NULL)
+    if (m_texture != nullptr)
     {
-        dbgPrint(DPL::DEBUG, "Successfully loaded GTexture.");
+        dbgPrint(DPL::DEBUG, "Successfully loaded image from file.");
     }
     else
     {
-        dbgPrint(DPL::WARNING, fmt::format("Unable to load GTexture. IMG_Error: {}.", IMG_GetError()));
+        dbgPrint(DPL::ERROR, fmt::format("Unable to load image from file. IMG_Error: {}.", IMG_GetError()));
     }
 }
 void GTexture::loadAsTarget(SDL_Rect size)
@@ -89,15 +86,24 @@ void GTexture::loadAsTarget(SDL_Rect size)
 }
 void GTexture::draw(SDL_Rect *clip, SDL_Rect *dst)
 {
-    if (m_texture != NULL)
+    if (m_texture != nullptr)
         SDL_RenderCopy(gameRenderer, m_texture, clip, dst);
 }
 void GTexture::free()
 {
-    if (m_texture != NULL)
+    if (m_texture != nullptr)
     {
         SDL_DestroyTexture(m_texture);
-        m_texture = NULL;
+        m_texture = nullptr;
+
+        if (m_texture == nullptr)
+            dbgPrint(DPL::DEBUG, "Successfully freed m_texture.");
+        else
+            dbgPrint(DPL::ERROR, fmt::format("Failed to free m_texture. SDL_Error: {}", SDL_GetError()));
+    }
+    else
+    {
+        dbgPrint(DPL::WARNING, "Cannot free m_texture since it is a nullptr.");
     }
 }
 void GTexture::setAsTarget()
@@ -116,7 +122,7 @@ void GTexture::unsetAsTarget()
 {
     if (loadedAsTarget == true)
     {
-        SDL_SetRenderTarget(gameRenderer, NULL);
+        SDL_SetRenderTarget(gameRenderer, nullptr);
         loadedAsTarget = false;
     }
     else
@@ -127,29 +133,45 @@ void GTexture::unsetAsTarget()
 #pragma endregion GTexture
 
 #pragma region GFont
-GFont::GFont()
+GFont::GFont() : m_font(nullptr)
 {
-    m_font = NULL;
 }
 GFont::~GFont()
 {
     free();
+    dbgPrint(DPL::DEBUG, fmt::format("{} destructor called.", typeid(*this).name()));
 }
 void GFont::loadFontFromFile(std::string path, int fontSize)
 {
     m_font = TTF_OpenFont(path.c_str(), fontSize);
+    if (m_font != nullptr)
+    {
+        dbgPrint(DPL::DEBUG, "Successfully loaded font from file.");
+    }
+    else
+    {
+        dbgPrint(DPL::ERROR, fmt::format("Failed to load font from file. TTF_Error: {}", TTF_GetError()));
+    }
 }
 void GFont::free()
 {
-    if (m_font != NULL)
+    if (m_font != nullptr)
     {
         TTF_CloseFont(m_font);
-        m_font = NULL;
+        m_font = nullptr;
+        if (m_font == nullptr)
+            dbgPrint(DPL::DEBUG, "Successfully freed m_font.");
+        else
+            dbgPrint(DPL::ERROR, fmt::format("Failed to free m_font. TTF_Error: {}", TTF_GetError()));
+    }
+    else
+    {
+        dbgPrint(DPL::WARNING, "Cannot free m_font since it is a nullptr.");
     }
 }
 void GFont::draw(std::string msg, SDL_Point pos, SDL_Color clr, PosCentering poscenter)
 {
-    if (m_font != NULL)
+    if (m_font != nullptr)
     {
         // Create temp surface
         SDL_Surface *msgSurf = TTF_RenderText_Solid(m_font, msg.c_str(), clr);
@@ -169,7 +191,7 @@ void GFont::draw(std::string msg, SDL_Point pos, SDL_Color clr, PosCentering pos
         SDL_Texture *msgTexture = SDL_CreateTextureFromSurface(gameRenderer, msgSurf);
 
         // Draw texture
-        SDL_RenderCopy(gameRenderer, msgTexture, NULL, &msgRect);
+        SDL_RenderCopy(gameRenderer, msgTexture, nullptr, &msgRect);
 
         // Free texture and surface
         SDL_FreeSurface(msgSurf);
@@ -178,7 +200,7 @@ void GFont::draw(std::string msg, SDL_Point pos, SDL_Color clr, PosCentering pos
 }
 void GFont::drawWithAlpha(std::string msg, SDL_Point pos, SDL_Color clr, PosCentering poscenter, Uint8 alpha)
 {
-    if (m_font != NULL)
+    if (m_font != nullptr)
     {
         // Create temp surface
         SDL_Surface *msgSurf = TTF_RenderText_Solid(m_font, msg.c_str(), clr);
@@ -204,7 +226,7 @@ void GFont::drawWithAlpha(std::string msg, SDL_Point pos, SDL_Color clr, PosCent
         SDL_SetTextureAlphaMod(msgTexture, alpha);
 
         // Draw texture
-        SDL_RenderCopy(gameRenderer, msgTexture, NULL, &msgRect);
+        SDL_RenderCopy(gameRenderer, msgTexture, nullptr, &msgRect);
 
         // Free texture and surface
         SDL_FreeSurface(msgSurf);

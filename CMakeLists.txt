@@ -26,6 +26,9 @@
 # DEALINGS IN THE SOFTWARE.
 #
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Define the project name
 project(WhackAGoon)
 

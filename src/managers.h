@@ -12,8 +12,8 @@ class HoleManager
 private:
     enum HoleChances
     {
-        HC_GOON = 60,
-        HC_TOWNIE = 30,
+        HC_GOON = 70,
+        HC_TOWNIE = 20,
         HC_MAYOR = 10
     };
 

@@ -25,7 +25,7 @@ class GButton
 {
 private:
     SDL_Rect m_rect;
-    GTexture *m_texture;
+    std::shared_ptr<GTexture> m_texture;
     BtnState m_state;
     std::map<BtnState, SDL_Rect> m_clips;
     std::function<void()> m_callback;
@@ -35,8 +35,7 @@ private:
     void makeCallback();
 
 public:
-    //GButton(std::string imgpath, SDL_Rect rect, std::map<BtnState, SDL_Rect> clips);
-    GButton(GTexture *texture, SDL_Rect rect, std::map<BtnState, SDL_Rect> clips);
+    GButton(std::shared_ptr<GTexture> texture, SDL_Rect rect, std::map<BtnState, SDL_Rect> clips);
     ~GButton();
     void update(GameMouse *mouse_s);
     void draw();
@@ -135,7 +134,7 @@ private:
 class PenaltyText
 {
 private:
-    GFont *m_font;
+    std::shared_ptr<GFont> m_font;
     std::string m_msg;
     SDL_Point m_pos;
     SDL_Color m_color;
@@ -144,7 +143,7 @@ private:
     static const Uint8 ALPHA_DECREASE = 5;
 
 public:
-    PenaltyText(GFont *font, SDL_Point pos, std::string msg);
+    PenaltyText(std::shared_ptr<GFont> font, SDL_Point pos, std::string msg);
     ~PenaltyText();
 
     void update();
@@ -166,7 +165,7 @@ private:
         FLICKER_SHOW,
         FLICKER_HIDE
     };
-    GTexture *m_clockTexture;
+    std::shared_ptr<GTexture> m_clockTexture;
     int m_clockFrame;
     GTimer m_tmrAdvanceFrame;
     static const Uint32 FRAME_DELAY = 60;
@@ -185,7 +184,7 @@ private:
     FlickerState m_flickerState;
 
 public:
-    TimerBar(GTexture *clockTexture, CSize size, std::vector<SDL_Rect> clips);
+    TimerBar(std::shared_ptr<GTexture> clockTexture, CSize size, std::vector<SDL_Rect> clips);
     ~TimerBar();
 
     void update(Uint32 timerTicks, Uint32 delayTicks);

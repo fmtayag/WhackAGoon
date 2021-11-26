@@ -19,6 +19,7 @@ void Scene::checkTransition()
         break;
     case STF_TOMENU:
         m_context->transitionTo(new MenuScene());
+
     default:
         break;
     }
@@ -30,6 +31,10 @@ void Scene::checkTransition()
 #pragma region MenuScene
 MenuScene::MenuScene()
 {
+    // Debug print
+    std::string dbgMsg = fmt::format("{} constructor called.", typeid(*this).name());
+    dbgPrint(DPL::DEBUG, dbgMsg);
+
     resetMouseState();
     loadAssets();
     createButtons();
@@ -128,7 +133,7 @@ void MenuScene::createButtons()
 
     btnPlay_clips[BST_NORMAL] = {0, 24, 16, 16};
     btnPlay_clips[BST_HOVERED] = {16, 24, 16, 16};
-    btnPlay = std::make_unique<GButton>(GButton(uiElementsTexture.get(), btnPlay_rect, btnPlay_clips));
+    btnPlay = std::make_unique<GButton>(GButton(uiElementsTexture, btnPlay_rect, btnPlay_clips));
     btnPlay->bindCallback(std::bind(&MenuScene::cbPlay, this));
 
     // --- btnHelp ---
@@ -136,7 +141,7 @@ void MenuScene::createButtons()
     std::map<BtnState, SDL_Rect> btnHelp_clips;
     btnHelp_clips[BST_NORMAL] = {32, 24, 16, 16};
     btnHelp_clips[BST_HOVERED] = {48, 24, 16, 16};
-    btnHelp = std::make_unique<GButton>(GButton(uiElementsTexture.get(), btnHelp_rect, btnHelp_clips));
+    btnHelp = std::make_unique<GButton>(GButton(uiElementsTexture, btnHelp_rect, btnHelp_clips));
     btnHelp->bindCallback(std::bind(&MenuScene::cbHelp, this));
 
     // --- btnInfo ---
@@ -144,7 +149,7 @@ void MenuScene::createButtons()
     std::map<BtnState, SDL_Rect> btnInfo_clips;
     btnInfo_clips[BST_NORMAL] = {0, 56, 16, 16};
     btnInfo_clips[BST_HOVERED] = {16, 56, 16, 16};
-    btnInfo = std::make_unique<GButton>(GButton(uiElementsTexture.get(), btnInfo_rect, btnInfo_clips));
+    btnInfo = std::make_unique<GButton>(GButton(uiElementsTexture, btnInfo_rect, btnInfo_clips));
     btnInfo->bindCallback(std::bind(&MenuScene::cbInfo, this));
 }
 // *** CALLBACKS ***
@@ -165,6 +170,10 @@ void MenuScene::cbInfo()
 #pragma region PlayScene
 PlayScene::PlayScene()
 {
+    // Debug print
+    std::string dbgMsg = fmt::format("{} constructor called.", typeid(*this).name());
+    dbgPrint(DPL::DEBUG, dbgMsg);
+
     resetMouseState();
     loadAssets();
     createButtons();
@@ -253,7 +262,7 @@ void PlayScene::update()
 
         // Spawn penalty text
         std::string penaltyMsg = std::to_string(-gRules.SCORE_PENALTY);
-        m_penaltyTexts.push_back(std::shared_ptr<PenaltyText>(new PenaltyText(m_gFontMedium.get(), {4, 4}, penaltyMsg)));
+        m_penaltyTexts.push_back(std::shared_ptr<PenaltyText>(new PenaltyText(m_gFontMedium, {4, 4}, penaltyMsg)));
 
         // Generate shake
         m_shakeGen.generateShake();
@@ -332,8 +341,10 @@ void PlayScene::draw()
         hole->draw();
     }
 
+    std::string msgLabel = "SCORE";
     std::string msgScore = std::to_string(m_score);
-    m_gFontMedium->draw(msgScore, {winDat.HEIGHT / 2, 50}, gColors.WHITE, PosCentering::POSCEN_X);
+    m_gFontMedium->draw(msgLabel, {16 * winDat.PXSCALE, 2 * winDat.PXSCALE}, gColors.WHITE, PosCentering::POSCEN_X);
+    m_gFontMedium->draw(msgScore, {16 * winDat.PXSCALE, 8 * winDat.PXSCALE}, gColors.WHITE, PosCentering::POSCEN_X);
 
     // Draw penaltyTexts
     for (std::shared_ptr<PenaltyText> pentxt : m_penaltyTexts)
@@ -354,6 +365,8 @@ void PlayScene::draw()
 }
 void PlayScene::loadAssets()
 {
+    WindowMetadata winDat;
+
     // Load images
     cityhallBGTexture = std::unique_ptr<GTexture>(new GTexture());
     cityhallBGTexture->loadFromFile("assets/images/cityhall_bg.png");
@@ -369,7 +382,7 @@ void PlayScene::loadAssets()
 
     // Load fonts
     m_gFontMedium = std::unique_ptr<GFont>(new GFont());
-    m_gFontMedium->loadFontFromFile("assets/fonts/04B03.TTF", 48);
+    m_gFontMedium->loadFontFromFile("assets/fonts/04B03.TTF", 5 * winDat.PXSCALE);
 }
 void PlayScene::createButtons()
 {
@@ -385,7 +398,7 @@ void PlayScene::createButtons()
     std::map<BtnState, SDL_Rect> btnToMenu_clips;
     btnToMenu_clips[BST_NORMAL] = {0, 16, 8, 8};
     btnToMenu_clips[BST_HOVERED] = {8, 16, 8, 8};
-    btnToMenu = std::unique_ptr<GButton>(new GButton(uiElementsTexture.get(), btnToMenu_rect, btnToMenu_clips));
+    btnToMenu = std::unique_ptr<GButton>(new GButton(uiElementsTexture, btnToMenu_rect, btnToMenu_clips));
     btnToMenu->bindCallback(std::bind(&PlayScene::cbToMenu, this));
 }
 void PlayScene::initializeTimers()
@@ -450,7 +463,7 @@ void PlayScene::initializeTimerBar()
         {40, 8, 8, 8},
         {48, 8, 8, 8},
         {56, 8, 8, 8}};
-    m_timerBar = std::unique_ptr<TimerBar>(new TimerBar(uiElementsTexture.get(), timerBarSize, timerBarClips));
+    m_timerBar = std::unique_ptr<TimerBar>(new TimerBar(uiElementsTexture, timerBarSize, timerBarClips));
 }
 // *** CALLBACKS ***
 void PlayScene::cbToMenu()
@@ -458,3 +471,22 @@ void PlayScene::cbToMenu()
     m_stflag = STF_TOMENU;
 }
 #pragma endregion PlayScene
+
+#pragma region DebugScene
+DebugScene::DebugScene()
+{
+}
+DebugScene::~DebugScene()
+{
+}
+void DebugScene::handleEvents(SDL_Event *e)
+{
+    (void)e;
+}
+void DebugScene::update()
+{
+}
+void DebugScene::draw()
+{
+}
+#pragma endregion DebugScene
