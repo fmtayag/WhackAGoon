@@ -7,8 +7,6 @@
 #include <SDL_ttf.h>
 #include "g_data.h"
 
-enum PosCentering; // MSBuild generates CE CS2061 if this isn't in place.
-
 class GTimer
 {
 private:

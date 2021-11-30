@@ -9,6 +9,7 @@
 #include "sprites.h"
 #include "g_data.h"
 #include "helpers.h"
+#include "renderdata.h"
 
 #pragma region GButton
 //{ GButton
@@ -139,8 +140,8 @@ Hole::Hole(std::shared_ptr<GTexture> texture, SDL_Point pos, PosCentering poscen
 
     m_rect.x = pos.x;
     m_rect.y = pos.y;
-    m_rect.w = 16 * winData.PXSCALE;
-    m_rect.h = 16 * winData.PXSCALE;
+    m_rect.w = 16;
+    m_rect.h = 16;
 
     // Check for position centers
     switch (poscenter)
@@ -409,7 +410,7 @@ PenaltyText::PenaltyText(std::shared_ptr<GFont> font, SDL_Point initpos, std::st
     m_msg = msg;
     m_color = gColors.WHITE;
     m_pos = initpos;
-    m_velocity = {0, 2};
+    m_velocity = {0, 1};
     m_alpha = 255;
 }
 PenaltyText::~PenaltyText()
@@ -453,8 +454,8 @@ TimerBar::TimerBar(std::shared_ptr<GTexture> clockTexture, CSize size, std::vect
     m_clips = clips;
 
     WindowMetadata winDat;
-    m_rect.x = (winDat.WIDTH / 2) - (m_rect.w / 2);
-    m_rect.y = 3 * winDat.PXSCALE;
+    m_rect.x = (winDat.NATIVE_WIDTH / 2) - (m_rect.w / 2);
+    m_rect.y = 3;
     m_origWidth = size.w;
     m_rect.w = m_origWidth;
     m_rect.h = size.h;
@@ -517,8 +518,9 @@ void TimerBar::update(Uint32 timerTicks, Uint32 delayTicks)
         m_rect.w = static_cast<int>(newBarWidth);
 
         // Center the bar
-        m_rect.x = (winDat.WIDTH / 2) - (m_rect.w / 2);
-        m_rect.y = 3 * winDat.PXSCALE;
+        m_rect.x = (winDat.NATIVE_WIDTH / 2) - (m_rect.w / 2);
+        //dbgPrint(DPL::DEBUG, fmt::format("m_rect.x: {}", m_rect.x));
+        m_rect.y = 3;
     }
 }
 void TimerBar::draw()
@@ -535,17 +537,17 @@ void TimerBar::draw()
             SDL_RenderFillRect(gameRenderer, &m_rect);
 
             // So the bar appears rounded ... yeah i know there are better ways to do this but fuck it
-            SDL_Rect leftPixelRect = {m_rect.x - winDat.PXSCALE, m_rect.y + winDat.PXSCALE, winDat.PXSCALE, winDat.PXSCALE};
+            SDL_Rect leftPixelRect = {m_rect.x - 1, m_rect.y + 1, 1, 1};
             SDL_RenderFillRect(gameRenderer, &leftPixelRect);
 
-            SDL_Rect rightPixelRect = {m_rect.x + m_rect.w, m_rect.y + winDat.PXSCALE, winDat.PXSCALE, winDat.PXSCALE};
+            SDL_Rect rightPixelRect = {m_rect.x + m_rect.w, m_rect.y + 1, 1, 1};
             SDL_RenderFillRect(gameRenderer, &rightPixelRect);
 
             // *** Draw the clock
-            const int clockW = m_clips[m_clockFrame].w * winDat.PXSCALE;
-            const int clockH = m_clips[m_clockFrame].h * winDat.PXSCALE;
-            const int clockX = ((winDat.WIDTH / 2) - (clockW / 2)) + 1; // the + 1 is an offset to center the clock
-            const int clockY = 1 * winDat.PXSCALE;
+            const int clockW = m_clips[m_clockFrame].w;
+            const int clockH = m_clips[m_clockFrame].h;
+            const int clockX = ((winDat.NATIVE_WIDTH / 2) - (clockW / 2));
+            const int clockY = 1;
             SDL_Rect clockRect = {clockX, clockY, clockW, clockH};
             m_clockTexture->draw(&m_clips[m_clockFrame], &clockRect);
         }

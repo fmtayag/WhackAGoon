@@ -4,10 +4,6 @@
 
 #include <string>
 #include <SDL.h>
-#include "widgets.h"
-
-extern SDL_Window *gameWindow;
-extern SDL_Renderer *gameRenderer;
 
 struct WindowMetadata
 {
@@ -18,6 +14,11 @@ struct WindowMetadata
     const int FPS = 60;
     const int TICKS_PF = 1000 / FPS;
     const int OUT_OF_BOUNDS = -32; // Used for determining if an object is out of the window's bounds.
+
+    const int NATIVE_WIDTH = 100;
+    const int NATIVE_HEIGHT = 100;
+    const int TARG_WIDTH = NATIVE_WIDTH * PXSCALE;
+    const int TARG_HEIGHT = NATIVE_HEIGHT * PXSCALE;
 };
 
 struct GameColors

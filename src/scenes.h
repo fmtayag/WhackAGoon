@@ -12,6 +12,7 @@
 #include "sprites.h"
 #include "managers.h"
 #include "helpers.h"
+#include "renderdata.h"
 
 class SceneContext;
 class Scene
@@ -144,11 +145,10 @@ private:
     std::unique_ptr<GButton> btnToMenu;
 
     // Textures
-    std::shared_ptr<GTexture> uiElementsTexture;
-    std::unique_ptr<GTexture> cityhallBGTexture;
-    std::unique_ptr<GTexture> auraBGTexture;
-    std::shared_ptr<GTexture> holeSheetTexture;
-    std::unique_ptr<GTexture> targetTexture; // for render targeting
+    std::shared_ptr<GTexture> m_uiElementsTexture;
+    std::unique_ptr<GTexture> m_cityhallBGTexture;
+    std::unique_ptr<GTexture> m_auraBGTexture;
+    std::shared_ptr<GTexture> m_holeSheetTexture;
 
     // Fonts
     std::shared_ptr<GFont> m_gFontMedium;
@@ -198,6 +198,18 @@ public:
 class DebugScene : public Scene
 {
 private:
+    // Sprite groups
+    std::vector<std::shared_ptr<Hole>> m_holes;
+
+    // Textures
+    std::shared_ptr<GTexture> m_holeSheetTexture;
+    std::unique_ptr<GTexture> m_cityhallBGTexture;
+    std::unique_ptr<GTexture> m_targetTexture;
+
+    // Initializers
+    void loadAssets();
+    void createHoles();
+
 public:
     DebugScene();
     ~DebugScene() override;

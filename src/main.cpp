@@ -8,6 +8,7 @@
  */
 
 #include <iostream>
+#include <memory>
 #include <cassert>
 #include <random>
 #include <SDL.h>
@@ -17,9 +18,12 @@
 #include "g_data.h"
 #include "scenes.h"
 #include "helpers.h"
+#include "renderdata.h"
+#include "widgets.h"
 
 SDL_Window *gameWindow;
 SDL_Renderer *gameRenderer;
+std::shared_ptr<GTexture> targetTexture;
 SceneContext *gameContext;
 
 // Textures
@@ -52,7 +56,7 @@ void initializeGame()
     gameWindow = SDL_CreateWindow(
         winMetadata.TITLE.c_str(),
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        winMetadata.WIDTH, winMetadata.HEIGHT,
+        winMetadata.TARG_WIDTH, winMetadata.TARG_HEIGHT,
         SDL_WINDOW_SHOWN);
 
     gameRenderer = SDL_CreateRenderer(gameWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
@@ -63,11 +67,17 @@ void initializeGame()
 
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 
+    // Set icon
     SDL_Surface *iconSurf = IMG_Load("assets/images/icon.png");
     SDL_SetWindowIcon(gameWindow, iconSurf);
     SDL_FreeSurface(iconSurf);
 
-    gameContext = new SceneContext(new PlayScene());
+    // Create target texture
+    targetTexture = std::make_shared<GTexture>(GTexture());
+    targetTexture->loadAsTarget({0, 0, winMetadata.NATIVE_WIDTH, winMetadata.NATIVE_HEIGHT});
+
+    // Create context
+    gameContext = new SceneContext(new MenuScene());
 }
 void runGame()
 {

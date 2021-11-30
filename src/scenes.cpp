@@ -8,6 +8,7 @@
 #include "scenes.h"
 #include "widgets.h"
 #include "g_data.h"
+#include "renderdata.h"
 
 #pragma region Scene
 void Scene::checkTransition()
@@ -79,6 +80,11 @@ void MenuScene::handleEvents(SDL_Event *e)
 
     // Get mouse state
     SDL_GetMouseState(&m_gMouse.position.x, &m_gMouse.position.y);
+
+    // Constrict the mouse position within the native window size.
+    WindowMetadata winDat;
+    m_gMouse.position.x = m_gMouse.position.x / winDat.PXSCALE;
+    m_gMouse.position.y = m_gMouse.position.y / winDat.PXSCALE;
 }
 void MenuScene::update()
 {
@@ -90,7 +96,13 @@ void MenuScene::draw()
 {
     // Rects
     WindowMetadata winData;
-    SDL_Rect logoRect = {50, 50, 80 * winData.PXSCALE, 50 * winData.PXSCALE};
+    SDL_Rect logoRect;
+    logoRect.w = 80;
+    logoRect.h = 50;
+    logoRect.x = (winData.NATIVE_WIDTH / 2) - (logoRect.w / 2);
+    logoRect.y = 0;
+
+    targetTexture->setAsTarget();
 
     SDL_SetRenderDrawColor(gameRenderer, 0, 0, 0, 255);
     SDL_RenderClear(gameRenderer);
@@ -100,6 +112,9 @@ void MenuScene::draw()
     btnPlay->draw();
     btnHelp->draw();
     btnInfo->draw();
+
+    targetTexture->unsetAsTarget();
+    targetTexture->draw();
 
     SDL_RenderPresent(gameRenderer);
 };
@@ -123,12 +138,12 @@ void MenuScene::createButtons()
     WindowMetadata winData;
 
     // Anchor points
-    int btnW = 16 * winData.PXSCALE;
-    int btnH = 16 * winData.PXSCALE;
-    int cx = (winData.WIDTH / 2) - (btnW / 2);
+    int btnW = 16;
+    int btnH = 16;
+    int cx = (winData.NATIVE_WIDTH / 2) - (btnW / 2);
 
     // --- btnPlay --
-    SDL_Rect btnPlay_rect = {cx, static_cast<int>(winData.HEIGHT * 0.70), btnW, btnH};
+    SDL_Rect btnPlay_rect = {cx, static_cast<int>(winData.NATIVE_HEIGHT * 0.70), btnW, btnH};
     std::map<BtnState, SDL_Rect> btnPlay_clips;
 
     btnPlay_clips[BST_NORMAL] = {0, 24, 16, 16};
@@ -137,7 +152,7 @@ void MenuScene::createButtons()
     btnPlay->bindCallback(std::bind(&MenuScene::cbPlay, this));
 
     // --- btnHelp ---
-    SDL_Rect btnHelp_rect = {static_cast<int>(cx - (btnW * 1.5)), static_cast<int>(winData.HEIGHT * 0.75), btnW, btnH};
+    SDL_Rect btnHelp_rect = {static_cast<int>(cx - (btnW * 1.5)), static_cast<int>(winData.NATIVE_HEIGHT * 0.75), btnW, btnH};
     std::map<BtnState, SDL_Rect> btnHelp_clips;
     btnHelp_clips[BST_NORMAL] = {32, 24, 16, 16};
     btnHelp_clips[BST_HOVERED] = {48, 24, 16, 16};
@@ -145,7 +160,7 @@ void MenuScene::createButtons()
     btnHelp->bindCallback(std::bind(&MenuScene::cbHelp, this));
 
     // --- btnInfo ---
-    SDL_Rect btnInfo_rect = {static_cast<int>(cx + (btnW * 1.5)), static_cast<int>(winData.HEIGHT * 0.75), btnW, btnH};
+    SDL_Rect btnInfo_rect = {static_cast<int>(cx + (btnW * 1.5)), static_cast<int>(winData.NATIVE_HEIGHT * 0.75), btnW, btnH};
     std::map<BtnState, SDL_Rect> btnInfo_clips;
     btnInfo_clips[BST_NORMAL] = {0, 56, 16, 16};
     btnInfo_clips[BST_HOVERED] = {16, 56, 16, 16};
@@ -181,7 +196,6 @@ PlayScene::PlayScene()
     createHoles();
     initializeHoleMgr();
     initializeCollisionMgr();
-    initializeTargetTexture();
     initializeTimerBar();
 }
 PlayScene::~PlayScene()
@@ -237,6 +251,10 @@ void PlayScene::handleEvents(SDL_Event *e)
     }
 
     SDL_GetMouseState(&m_gMouse.position.x, &m_gMouse.position.y);
+    // Constrict the mouse position within the native window size.
+    WindowMetadata winDat;
+    m_gMouse.position.x = m_gMouse.position.x / winDat.PXSCALE;
+    m_gMouse.position.y = m_gMouse.position.y / winDat.PXSCALE;
 }
 void PlayScene::update()
 {
@@ -319,12 +337,11 @@ void PlayScene::draw()
     GameColors gColors;
     WindowMetadata winDat;
 
+    targetTexture->setAsTarget();
     SDL_SetRenderDrawColor(gameRenderer, 200, 200, 0, 255);
     SDL_RenderClear(gameRenderer);
 
-    targetTexture->setAsTarget();
-
-    auraBGTexture->draw();
+    m_auraBGTexture->draw();
 
     // Draw particles
     for (std::shared_ptr<Particle> particle : m_particles)
@@ -332,7 +349,7 @@ void PlayScene::draw()
         particle->draw();
     }
 
-    cityhallBGTexture->draw();
+    m_cityhallBGTexture->draw();
     btnToMenu->draw();
 
     // Draw holes
@@ -343,8 +360,8 @@ void PlayScene::draw()
 
     std::string msgLabel = "SCORE";
     std::string msgScore = std::to_string(m_score);
-    m_gFontMedium->draw(msgLabel, {16 * winDat.PXSCALE, 2 * winDat.PXSCALE}, gColors.WHITE, PosCentering::POSCEN_X);
-    m_gFontMedium->draw(msgScore, {16 * winDat.PXSCALE, 8 * winDat.PXSCALE}, gColors.WHITE, PosCentering::POSCEN_X);
+    m_gFontMedium->draw(msgLabel, {16, 2}, gColors.WHITE, PosCentering::POSCEN_X);
+    m_gFontMedium->draw(msgScore, {16, 8}, gColors.WHITE, PosCentering::POSCEN_X);
 
     // Draw penaltyTexts
     for (std::shared_ptr<PenaltyText> pentxt : m_penaltyTexts)
@@ -355,50 +372,52 @@ void PlayScene::draw()
     // Draw timer bar
     m_timerBar->draw();
 
-    SDL_Point displacement = m_shakeGen.fetchDisplacement();
-    SDL_Rect targRect = {displacement.x, displacement.y, winDat.WIDTH, winDat.HEIGHT};
-
     targetTexture->unsetAsTarget();
+
+    // Render target texture
+    SDL_Point displacement = m_shakeGen.fetchDisplacement();
+    SDL_Rect targRect = {displacement.x, displacement.y, winDat.TARG_WIDTH, winDat.TARG_HEIGHT};
     targetTexture->draw(NULL, &targRect);
 
     SDL_RenderPresent(gameRenderer);
 }
+// *** INITIALIZERS ***
 void PlayScene::loadAssets()
 {
     WindowMetadata winDat;
 
     // Load images
-    cityhallBGTexture = std::unique_ptr<GTexture>(new GTexture());
-    cityhallBGTexture->loadFromFile("assets/images/cityhall_bg.png");
+    m_cityhallBGTexture = std::unique_ptr<GTexture>(new GTexture());
+    m_cityhallBGTexture->loadFromFile("assets/images/cityhall_bg.png");
 
-    auraBGTexture = std::unique_ptr<GTexture>(new GTexture());
-    auraBGTexture->loadFromFile("assets/images/aura_bg.png");
+    m_auraBGTexture = std::unique_ptr<GTexture>(new GTexture());
+    m_auraBGTexture->loadFromFile("assets/images/aura_bg.png");
 
-    uiElementsTexture = std::unique_ptr<GTexture>(new GTexture());
-    uiElementsTexture->loadFromFile("assets/images/ui_elements.png");
+    m_uiElementsTexture = std::unique_ptr<GTexture>(new GTexture());
+    m_uiElementsTexture->loadFromFile("assets/images/ui_elements.png");
 
-    holeSheetTexture = std::unique_ptr<GTexture>(new GTexture());
-    holeSheetTexture->loadFromFile("assets/images/holeSheet.png");
+    m_holeSheetTexture = std::unique_ptr<GTexture>(new GTexture());
+    m_holeSheetTexture->loadFromFile("assets/images/holeSheet.png");
 
     // Load fonts
     m_gFontMedium = std::unique_ptr<GFont>(new GFont());
-    m_gFontMedium->loadFontFromFile("assets/fonts/04B03.TTF", 5 * winDat.PXSCALE);
+    m_gFontMedium->loadFontFromFile("assets/fonts/04B03.TTF", 8);
 }
 void PlayScene::createButtons()
 {
     WindowMetadata winData;
 
     // --- btnToMenu --
-    const int btnToMenu_rw = 8 * winData.PXSCALE;
-    const int btnToMenu_rh = 8 * winData.PXSCALE;
-    const int btnToMenu_rx = (winData.WIDTH - winData.PXSCALE) - btnToMenu_rw;
-    const int btnToMenu_ry = winData.PXSCALE;
+    const int btnToMenu_rw = 8;
+    const int btnToMenu_rh = 8;
+    const int btnToMenu_rx = (winData.NATIVE_WIDTH) - btnToMenu_rw - 1;
+    const int btnToMenu_ry = 1;
 
     SDL_Rect btnToMenu_rect = {btnToMenu_rx, btnToMenu_ry, btnToMenu_rw, btnToMenu_rh};
     std::map<BtnState, SDL_Rect> btnToMenu_clips;
     btnToMenu_clips[BST_NORMAL] = {0, 16, 8, 8};
     btnToMenu_clips[BST_HOVERED] = {8, 16, 8, 8};
-    btnToMenu = std::unique_ptr<GButton>(new GButton(uiElementsTexture, btnToMenu_rect, btnToMenu_clips));
+    btnToMenu = std::unique_ptr<GButton>(new GButton(m_uiElementsTexture, btnToMenu_rect, btnToMenu_clips));
     btnToMenu->bindCallback(std::bind(&PlayScene::cbToMenu, this));
 }
 void PlayScene::initializeTimers()
@@ -410,24 +429,24 @@ void PlayScene::initializeTimers()
 void PlayScene::createHoles()
 {
     WindowMetadata winData;
-    const int cwx = winData.WIDTH / 2;
-    const int cwy = static_cast<int>(winData.HEIGHT * 0.50f);
-    const int offy_row1 = winData.PXSCALE * 4;
-    const int offy_row2 = winData.PXSCALE * 20;
-    const int offy_row3 = winData.PXSCALE * 36;
-    const int offx_col1 = winData.PXSCALE * 20;
+    const int cwx = winData.NATIVE_WIDTH / 2;
+    const int cwy = static_cast<int>(winData.NATIVE_HEIGHT * 0.50f);
+    const int offy_row1 = winData.PXSCALE * 1;
+    const int offy_row2 = winData.PXSCALE * 2;
+    const int offy_row3 = winData.PXSCALE * 4;
+    const int offx_col1 = winData.PXSCALE * 3;
 
-    std::shared_ptr<Hole> hole1(new Hole(holeSheetTexture, {cwx - offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
-    std::shared_ptr<Hole> hole2(new Hole(holeSheetTexture, {cwx, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
-    std::shared_ptr<Hole> hole3(new Hole(holeSheetTexture, {cwx + offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole1(new Hole(m_holeSheetTexture, {cwx - offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole2(new Hole(m_holeSheetTexture, {cwx, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole3(new Hole(m_holeSheetTexture, {cwx + offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
 
-    std::shared_ptr<Hole> hole4(new Hole(holeSheetTexture, {cwx - offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
-    std::shared_ptr<Hole> hole5(new Hole(holeSheetTexture, {cwx, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
-    std::shared_ptr<Hole> hole6(new Hole(holeSheetTexture, {cwx + offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole4(new Hole(m_holeSheetTexture, {cwx - offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole5(new Hole(m_holeSheetTexture, {cwx, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole6(new Hole(m_holeSheetTexture, {cwx + offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
 
-    std::shared_ptr<Hole> hole7(new Hole(holeSheetTexture, {cwx - offx_col1, cwy + offy_row3}, PosCentering::POSCEN_BOTH));
-    std::shared_ptr<Hole> hole8(new Hole(holeSheetTexture, {cwx, cwy + offy_row3}, PosCentering::POSCEN_BOTH));
-    std::shared_ptr<Hole> hole9(new Hole(holeSheetTexture, {cwx + offx_col1, cwy + offy_row3}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole7(new Hole(m_holeSheetTexture, {cwx - offx_col1, cwy + offy_row3}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole8(new Hole(m_holeSheetTexture, {cwx, cwy + offy_row3}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole9(new Hole(m_holeSheetTexture, {cwx + offx_col1, cwy + offy_row3}, PosCentering::POSCEN_BOTH));
 
     m_holes.push_back(hole1);
     m_holes.push_back(hole2);
@@ -447,23 +466,17 @@ void PlayScene::initializeCollisionMgr()
 {
     m_collideMgr = std::unique_ptr<HoleCollisionManager>(new HoleCollisionManager(m_holes, &m_gMouse, &m_score));
 }
-void PlayScene::initializeTargetTexture()
-{
-    WindowMetadata winDat;
-    targetTexture = std::unique_ptr<GTexture>(new GTexture());
-    targetTexture->loadAsTarget({0, 0, winDat.WIDTH, winDat.HEIGHT});
-}
 void PlayScene::initializeTimerBar()
 {
     WindowMetadata winDat;
 
-    CSize timerBarSize = {40 * winDat.PXSCALE, 3 * winDat.PXSCALE};
+    CSize timerBarSize = {40, 3};
     std::vector<SDL_Rect> timerBarClips = {
         {32, 8, 8, 8},
         {40, 8, 8, 8},
         {48, 8, 8, 8},
         {56, 8, 8, 8}};
-    m_timerBar = std::unique_ptr<TimerBar>(new TimerBar(uiElementsTexture, timerBarSize, timerBarClips));
+    m_timerBar = std::unique_ptr<TimerBar>(new TimerBar(m_uiElementsTexture, timerBarSize, timerBarClips));
 }
 // *** CALLBACKS ***
 void PlayScene::cbToMenu()
@@ -475,18 +488,122 @@ void PlayScene::cbToMenu()
 #pragma region DebugScene
 DebugScene::DebugScene()
 {
+    resetMouseState();
+    loadAssets();
+    createHoles();
 }
 DebugScene::~DebugScene()
 {
 }
 void DebugScene::handleEvents(SDL_Event *e)
 {
-    (void)e;
+    while (SDL_PollEvent(e))
+    {
+        if (e->type == SDL_QUIT)
+        {
+            m_context->setQuitFlag(true);
+        }
+        if (e->type == SDL_MOUSEBUTTONDOWN)
+        {
+            m_gMouse.isClicked = true;
+        }
+        if (e->type == SDL_MOUSEBUTTONUP)
+        {
+            m_gMouse.isClicked = false;
+        }
+        if (e->type == SDL_KEYDOWN)
+        {
+            switch (e->key.keysym.sym)
+            {
+            case SDLK_1:
+                m_holes[0]->awaken(Hole::HoleType::HT_GOON);
+                break;
+            }
+        }
+    }
+
+    SDL_GetMouseState(&m_gMouse.position.x, &m_gMouse.position.y);
+
+    // Constrict the mouse position within the native window size.
+    WindowMetadata winDat;
+    m_gMouse.position.x = m_gMouse.position.x / winDat.PXSCALE;
+    m_gMouse.position.y = m_gMouse.position.y / winDat.PXSCALE;
+    dbgPrint(DPL::DEBUG, fmt::format("mouse.x: {}, mouse.y: {}", m_gMouse.position.x, m_gMouse.position.y));
 }
 void DebugScene::update()
 {
+    // Update holes
+    for (std::shared_ptr<Hole> hole : m_holes)
+    {
+        hole->update(m_gMouse);
+    }
 }
 void DebugScene::draw()
 {
+    WindowMetadata winDat;
+    m_targetTexture->setAsTarget();
+    SDL_SetRenderDrawColor(gameRenderer, 200, 200, 0, 255);
+    SDL_RenderClear(gameRenderer);
+
+    m_cityhallBGTexture->draw();
+
+    // Draw holes
+    for (std::shared_ptr<Hole> hole : m_holes)
+    {
+        hole->draw();
+    }
+
+    m_targetTexture->unsetAsTarget();
+
+    SDL_Rect targdst = {0, 0, winDat.WIDTH, winDat.HEIGHT};
+    m_targetTexture->draw(NULL, &targdst);
+
+    SDL_RenderPresent(gameRenderer);
+}
+// *** INITIALIZERS ***
+void DebugScene::loadAssets()
+{
+    WindowMetadata winDat;
+
+    m_holeSheetTexture = std::make_shared<GTexture>(GTexture());
+    m_holeSheetTexture->loadFromFile("assets/images/holeSheet.png");
+
+    m_cityhallBGTexture = std::make_unique<GTexture>(GTexture());
+    m_cityhallBGTexture->loadFromFile("assets/images/cityhall_bg.png");
+
+    m_targetTexture = std::make_unique<GTexture>(GTexture());
+    m_targetTexture->loadAsTarget({0, 0, 100, 100});
+}
+void DebugScene::createHoles()
+{
+    WindowMetadata winData;
+    const int cwx = winData.NATIVE_WIDTH / 2;
+    const int cwy = static_cast<int>(winData.NATIVE_HEIGHT * 0.50f);
+    const int offy_row1 = winData.PXSCALE * 1;
+    const int offy_row2 = winData.PXSCALE * 2;
+    const int offy_row3 = winData.PXSCALE * 3;
+    const int offx_col1 = winData.PXSCALE * 2;
+
+    std::shared_ptr<Hole> hole1(new Hole(m_holeSheetTexture, {cwx - offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole2(new Hole(m_holeSheetTexture, {cwx, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole3(new Hole(m_holeSheetTexture, {cwx + offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
+
+    std::shared_ptr<Hole> hole4(new Hole(m_holeSheetTexture, {cwx - offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole5(new Hole(m_holeSheetTexture, {cwx, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole6(new Hole(m_holeSheetTexture, {cwx + offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
+
+    std::shared_ptr<Hole> hole7(new Hole(m_holeSheetTexture, {cwx - offx_col1, cwy + offy_row3}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole8(new Hole(m_holeSheetTexture, {cwx, cwy + offy_row3}, PosCentering::POSCEN_BOTH));
+    std::shared_ptr<Hole> hole9(new Hole(m_holeSheetTexture, {cwx + offx_col1, cwy + offy_row3}, PosCentering::POSCEN_BOTH));
+
+    m_holes.push_back(hole1);
+    m_holes.push_back(hole2);
+    m_holes.push_back(hole3);
+    m_holes.push_back(hole4);
+    m_holes.push_back(hole5);
+    m_holes.push_back(hole6);
+    m_holes.push_back(hole7);
+    m_holes.push_back(hole8);
+    m_holes.push_back(hole9);
 }
 #pragma endregion DebugScene

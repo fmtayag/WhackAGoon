@@ -7,6 +7,7 @@
 #include "g_data.h"
 #include "sprites.h"
 #include "helpers.h"
+#include "renderdata.h"
 
 #pragma region GTimer
 GTimer::GTimer()
@@ -82,7 +83,6 @@ void GTexture::loadFromFile(std::string path)
 void GTexture::loadAsTarget(SDL_Rect size)
 {
     m_texture = SDL_CreateTexture(gameRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, size.w, size.h);
-    loadedAsTarget = false;
 }
 void GTexture::draw(SDL_Rect *clip, SDL_Rect *dst)
 {
