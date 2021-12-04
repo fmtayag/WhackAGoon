@@ -592,3 +592,39 @@ void TimerBar::doFlicker()
     }
 }
 #pragma endregion TimerBar
+
+#pragma region Scoreboard
+Scoreboard::Scoreboard(std::shared_ptr<GFont> font, SDL_Rect rect)
+{
+    GameColors gColors;
+
+    m_font = font;
+    m_rect = rect;
+    m_boardColor = gColors.BRIGHTEST;
+    m_textColor = gColors.DARKEST;
+}
+Scoreboard::~Scoreboard()
+{
+}
+void Scoreboard::update()
+{
+}
+void Scoreboard::draw(std::string score)
+{
+    // Draw board
+    SDL_SetRenderDrawColor(gameRenderer, m_boardColor.r, m_boardColor.g, m_boardColor.b, m_boardColor.a);
+    SDL_RenderFillRect(gameRenderer, &m_rect);
+
+    // Draw side pixels to make it look oval
+    SDL_Rect leftSidePixels = {m_rect.x - 1, m_rect.y + 1, 1, 5};
+    SDL_Rect rightSidePixels = {m_rect.x + m_rect.w, m_rect.y + 1, 1, 5};
+    SDL_RenderFillRect(gameRenderer, &leftSidePixels);
+    SDL_RenderFillRect(gameRenderer, &rightSidePixels);
+
+    // Draw text
+    SDL_Rect fontRect = m_font->getRect();
+    SDL_Point textPos = {m_rect.x + ((m_rect.w / 2) - (fontRect.w / 2)), m_rect.y};
+    printf("x pos: %d\n", textPos.x);
+    m_font->draw(score, textPos, m_textColor, PosCentering::POSCEN_NONE);
+}
+#pragma endregion Scoreboard

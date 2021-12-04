@@ -197,6 +197,7 @@ PlayScene::PlayScene()
     initializeHoleMgr();
     initializeCollisionMgr();
     initializeTimerBar();
+    initializeScoreboard();
 }
 PlayScene::~PlayScene()
 {
@@ -245,6 +246,9 @@ void PlayScene::handleEvents(SDL_Event *e)
                 break;
             case SDLK_4:
                 m_holes[0]->awaken(Hole::HoleType::HT_NONE);
+                break;
+            case SDLK_F5:
+                m_score++;
                 break;
             }
         }
@@ -331,6 +335,9 @@ void PlayScene::update()
 
     // Update timer bar
     m_timerBar->update(m_tmrAntiIdle.getTicks(), m_delayAntiIdle);
+
+    // Update score board
+    m_scoreboard->update();
 }
 void PlayScene::draw()
 {
@@ -358,11 +365,6 @@ void PlayScene::draw()
         hole->draw();
     }
 
-    std::string msgLabel = "SCORE";
-    std::string msgScore = std::to_string(m_score);
-    m_gFontMedium->draw(msgLabel, {16, 2}, gColors.WHITE, PosCentering::POSCEN_X);
-    m_gFontMedium->draw(msgScore, {16, 8}, gColors.WHITE, PosCentering::POSCEN_X);
-
     // Draw penaltyTexts
     for (std::shared_ptr<PenaltyText> pentxt : m_penaltyTexts)
     {
@@ -371,6 +373,14 @@ void PlayScene::draw()
 
     // Draw timer bar
     m_timerBar->draw();
+
+    // Draw scoreboard
+    std::string msgLabel = "SCORE";
+    std::string msgScore = std::to_string(m_score);
+    // m_gFontMedium->draw(msgLabel, {16, 2}, gColors.WHITE, PosCentering::POSCEN_X);
+    // m_gFontMedium->draw(msgScore, {16, 8}, gColors.WHITE, PosCentering::POSCEN_X);
+
+    m_scoreboard->draw(msgScore);
 
     targetTexture->unsetAsTarget();
 
@@ -480,6 +490,11 @@ void PlayScene::initializeTimerBar()
         {48, 8, 8, 8},
         {56, 8, 8, 8}};
     m_timerBar = std::unique_ptr<TimerBar>(new TimerBar(m_uiElementsTexture, timerBarSize, timerBarClips));
+}
+void PlayScene::initializeScoreboard()
+{
+    SDL_Rect scoreboardRect = {3, 1, 18, 7};
+    m_scoreboard = std::make_unique<Scoreboard>(Scoreboard(m_gFontMedium, scoreboardRect));
 }
 // *** CALLBACKS ***
 void PlayScene::cbToMenu()

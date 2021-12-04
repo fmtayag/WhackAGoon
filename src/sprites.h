@@ -196,4 +196,20 @@ public:
     void doFlicker();
 };
 
+class Scoreboard
+{
+private:
+    std::shared_ptr<GFont> m_font;
+    SDL_Rect m_rect;
+    SDL_Color m_boardColor;
+    SDL_Color m_textColor;
+
+public:
+    Scoreboard(std::shared_ptr<GFont> font, SDL_Rect rect);
+    ~Scoreboard();
+
+    void update();
+    void draw(std::string score);
+};
+
 #endif // SPRITES_H

@@ -135,6 +135,7 @@ void GTexture::unsetAsTarget()
 #pragma region GFont
 GFont::GFont() : m_font(nullptr)
 {
+    m_rect = {0, 0, 0, 0};
 }
 GFont::~GFont()
 {
@@ -147,10 +148,12 @@ void GFont::loadFontFromFile(std::string path, int fontSize)
     if (m_font != nullptr)
     {
         dbgPrint(DPL::DEBUG, "Successfully loaded font from file.");
+        m_fontSize = fontSize;
     }
     else
     {
         dbgPrint(DPL::ERROR, fmt::format("Failed to load font from file. TTF_Error: {}", TTF_GetError()));
+        m_fontSize = 0;
     }
 }
 void GFont::free()
@@ -175,6 +178,9 @@ void GFont::draw(std::string msg, SDL_Point pos, SDL_Color clr, PosCentering pos
     {
         // Create temp surface
         SDL_Surface *msgSurf = TTF_RenderText_Solid(m_font, msg.c_str(), clr);
+
+        // Update m_rect
+        m_rect = {0, 0, msgSurf->w, msgSurf->h};
 
         // Get width and height
         const int w = msgSurf->w;
@@ -204,6 +210,9 @@ void GFont::drawWithAlpha(std::string msg, SDL_Point pos, SDL_Color clr, PosCent
     {
         // Create temp surface
         SDL_Surface *msgSurf = TTF_RenderText_Solid(m_font, msg.c_str(), clr);
+
+        // Update m_rect
+        m_rect = {0, 0, msgSurf->w, msgSurf->h};
 
         // Get width and height
         const int w = msgSurf->w;

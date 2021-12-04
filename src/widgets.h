@@ -56,6 +56,8 @@ class GFont
 {
 private:
     TTF_Font *m_font;
+    int m_fontSize;
+    SDL_Rect m_rect;
 
 public:
     GFont();
@@ -65,6 +67,9 @@ public:
     void free();
     void draw(std::string msg, SDL_Point pos, SDL_Color clr, PosCentering poscenter);
     void drawWithAlpha(std::string msg, SDL_Point pos, SDL_Color clr, PosCentering poscenter, Uint8 alpha);
+
+    int getFontSize() { return m_fontSize; };
+    SDL_Rect getRect() { return m_rect; };
 };
 
 class ShakeGenerator

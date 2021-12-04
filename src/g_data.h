@@ -26,6 +26,12 @@ struct GameColors
     const SDL_Color WHITE = {255, 255, 255, 255};
     const SDL_Color BLACK = {0, 0, 0, 255};
     const SDL_Color NEON_TOXICGREEN = {175, 196, 33, 255};
+
+    // 4 color palette for Whack-a-Thief!
+    const SDL_Color BRIGHTEST = {182, 227, 104, 255};
+    const SDL_Color BRIGHT = {150, 146, 12, 255};
+    const SDL_Color DARK = {102, 62, 48, 255};
+    const SDL_Color DARKEST = {51, 20, 20, 255};
 };
 
 struct GameMouse

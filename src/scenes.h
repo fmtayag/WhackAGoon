@@ -144,6 +144,10 @@ private:
     // Buttons
     std::unique_ptr<GButton> btnToMenu;
 
+    // UI Stuff
+    std::unique_ptr<TimerBar> m_timerBar;
+    std::unique_ptr<Scoreboard> m_scoreboard;
+
     // Textures
     std::shared_ptr<GTexture> m_uiElementsTexture;
     std::unique_ptr<GTexture> m_cityhallBGTexture;
@@ -163,15 +167,12 @@ private:
     Uint32 m_delayAntiIdle = 5000;
 
     // Scores and other stuff
-    int m_score = 1000;
+    int m_score = 0;
     ShakeGenerator m_shakeGen;
 
     // Managers
     std::unique_ptr<HoleManager> m_holeMgr;
     std::unique_ptr<HoleCollisionManager> m_collideMgr;
-
-    // UI Stuff
-    std::unique_ptr<TimerBar> m_timerBar;
 
     // Callbacks
     void cbToMenu();
@@ -185,6 +186,7 @@ private:
     void initializeCollisionMgr();
     void initializeTargetTexture();
     void initializeTimerBar();
+    void initializeScoreboard();
 
 public:
     PlayScene();
