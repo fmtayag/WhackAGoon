@@ -7,7 +7,7 @@
 
 struct WindowMetadata
 {
-    const std::string TITLE = "Whack-A-Goon!";
+    const std::string TITLE = "Whack-A-Thief!";
     const int PXSCALE = 8;
     const int WIDTH = 100 * PXSCALE;
     const int HEIGHT = 100 * PXSCALE;

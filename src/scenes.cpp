@@ -431,19 +431,22 @@ void PlayScene::createHoles()
     WindowMetadata winData;
     const int cwx = winData.NATIVE_WIDTH / 2;
     const int cwy = static_cast<int>(winData.NATIVE_HEIGHT * 0.50f);
-    const int offy_row1 = winData.PXSCALE * 1;
-    const int offy_row2 = winData.PXSCALE * 2;
-    const int offy_row3 = winData.PXSCALE * 4;
+    const int offy_row1 = -4;
+    const int offy_row2 = 16;
+    const int offy_row3 = 36;
     const int offx_col1 = winData.PXSCALE * 3;
 
+    // Row 1
     std::shared_ptr<Hole> hole1(new Hole(m_holeSheetTexture, {cwx - offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
     std::shared_ptr<Hole> hole2(new Hole(m_holeSheetTexture, {cwx, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
     std::shared_ptr<Hole> hole3(new Hole(m_holeSheetTexture, {cwx + offx_col1, cwy + offy_row1}, PosCentering::POSCEN_BOTH));
 
+    // Row 2
     std::shared_ptr<Hole> hole4(new Hole(m_holeSheetTexture, {cwx - offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
     std::shared_ptr<Hole> hole5(new Hole(m_holeSheetTexture, {cwx, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
     std::shared_ptr<Hole> hole6(new Hole(m_holeSheetTexture, {cwx + offx_col1, cwy + offy_row2}, PosCentering::POSCEN_BOTH));
 
+    // Row 3
     std::shared_ptr<Hole> hole7(new Hole(m_holeSheetTexture, {cwx - offx_col1, cwy + offy_row3}, PosCentering::POSCEN_BOTH));
     std::shared_ptr<Hole> hole8(new Hole(m_holeSheetTexture, {cwx, cwy + offy_row3}, PosCentering::POSCEN_BOTH));
     std::shared_ptr<Hole> hole9(new Hole(m_holeSheetTexture, {cwx + offx_col1, cwy + offy_row3}, PosCentering::POSCEN_BOTH));

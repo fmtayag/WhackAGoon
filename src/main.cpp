@@ -77,7 +77,7 @@ void initializeGame()
     targetTexture->loadAsTarget({0, 0, winMetadata.NATIVE_WIDTH, winMetadata.NATIVE_HEIGHT});
 
     // Create context
-    gameContext = new SceneContext(new MenuScene());
+    gameContext = new SceneContext(new PlayScene());
 }
 void runGame()
 {
